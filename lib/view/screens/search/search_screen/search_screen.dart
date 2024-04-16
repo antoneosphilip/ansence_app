@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core_widget/custom_app_bar/custom_App_bar.dart';
+import '../screen_widget/custom_searc_App_bar.dart';
 import '../screen_widget/search_widget.dart';
 
 class SearchScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  const Scaffold(
-      appBar: CustomAppBar(title: 'Search',),
+      appBar: CustomSearchAppBar(title: 'Search',),
       body: SingleChildScrollView(
         child: SearchScreenWidget(),
       ),

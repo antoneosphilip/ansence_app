@@ -2,9 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:summer_school_app/core/Custom_Text/custom_text.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
+import 'package:summer_school_app/core/route_manager/page_name.dart';
 import 'package:summer_school_app/view/core_widget/text_form_field/text_form_field_custom.dart';
+import 'package:summer_school_app/view/screens/search/screen_widget/student_search_result_list_view.dart';
 
 class SearchScreenWidget extends StatelessWidget {
   const SearchScreenWidget({super.key});
@@ -22,31 +25,9 @@ class SearchScreenWidget extends StatelessWidget {
             hint: "Search for a student",
             suffix: true,
             suffixIcon: const Icon(Icons.search),
-
-
           ),
-          SizedBox(height: 20.h,),
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 25.sp,
-                backgroundImage: const NetworkImage('https://th.bing.com/th/id/OIP.j8yd8dJ5215WbgQ0NsLzuAHaNK?rs=1&pid=ImgDetMain'),
-              ),
-              SizedBox(width: 10.w,),
-               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextWidget(text: "name",textStyle: Theme.of(context).textTheme.bodyLarge!,),
-                  TextWidget(text: "address", textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 15.sp,color: ColorManager.colorGrey)!,),
-
-                ],
-              ),
-              const Spacer(),
-              const Icon(CupertinoIcons.arrow_right),
-
-
-            ],
-          )
+          SizedBox(height: 25.h,),
+          const StudentSearchResultListView(),
 
         ],
       ),

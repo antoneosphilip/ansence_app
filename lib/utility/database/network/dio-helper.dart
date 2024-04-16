@@ -41,7 +41,7 @@ class DioHelper {
           if( error.response!.data['message'] ==  "You are not authenticated" && error.response!.statusCode == 401)
           {
             CacheHelper.clearData();
-            Get.offAllNamed(PageName.login);
+            // Get.offAllNamed(PageName.login);
           }
           return handle.next(error);
         },

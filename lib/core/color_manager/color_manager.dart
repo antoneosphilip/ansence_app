@@ -36,6 +36,7 @@ class   ColorManager
   static const Color colorGreen = Color(0xff008000);
   static const Color colorRed = Color(0xffFF0000);
 
+  static const Color colorBlue = Colors.blue;
 
 
 }

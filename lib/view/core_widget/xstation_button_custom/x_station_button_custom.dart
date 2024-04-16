@@ -30,7 +30,7 @@ class XStationButtonCustom extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
            Text(textButton.tr!,style: const TextStyle(color: Colors.white),),
-          SizedBox(width: 11.w,),
+           SizedBox(width: 11.w,),
         ],
       ),
       colors: ColorManager.colorPrimary,
