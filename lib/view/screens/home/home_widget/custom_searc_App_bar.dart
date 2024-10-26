@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:summer_school_app/core/route_manager/page_name.dart';
 
 
 class CustomSearchAppBar extends StatelessWidget
@@ -21,9 +23,15 @@ class CustomSearchAppBar extends StatelessWidget
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20),
       ),
       actions: [
-        Padding(
-          padding:  EdgeInsets.only(right: 30.w),
-          child: const Icon(Icons.add),
+        InkWell(
+          onTap: ()
+          {
+            Get.toNamed(PageName.addStudent);
+          },
+          child: Padding(
+            padding:  EdgeInsets.only(right: 30.w),
+            child: const Icon(Icons.add),
+          ),
         ),
       ],
     );

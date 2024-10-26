@@ -5,22 +5,24 @@ import 'package:summer_school_app/core/text_manager/text_manager.dart';
 import 'package:summer_school_app/view/core_widget/custom_app_bar/custom_App_bar.dart';
 import 'package:summer_school_app/view/core_widget/xstation_button_custom/x_station_button_custom.dart';
 
-import '../student_details_widget/student_details_widget.dart';
+import '../add_student_widget/add_student_widget.dart';
 
-class StudentDetailsScreen extends StatelessWidget {
-  const StudentDetailsScreen({super.key});
+
+class AddStudentScreen extends StatelessWidget {
+  const AddStudentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+
       body: const SingleChildScrollView(
-        child: StudentDetailsWidget(),
+        child: AddStudentWidget(),
       ),
       bottomNavigationBar:
       Padding(
         padding:  EdgeInsets.symmetric(horizontal: 15.w,vertical: 15.h),
         child: XStationButtonCustom(
-            textButton: TextManager.update,
+            textButton: TextManager.add,
         onPressed: (value){},
 
         ),

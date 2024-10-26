@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../../../core/assets_manager/assets_manager.dart';
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../core/route_manager/page_name.dart';
 import '../../../../core/style_font_manager/style_manager.dart';
@@ -24,23 +26,20 @@ class _SplashWidgetState extends State<SplashWidget> {
     navigateToLogin();
   }
   navigateToLogin() async{
-    await Future.delayed(const Duration(milliseconds: 5000),(){});
-    // Get.offAllNamed(PageName.onBoarding);
-    // CacheHelper.put(key: 'splash', value: 'splash');
+    await Future.delayed(const Duration(milliseconds: 4000),(){});
+    Get.offAllNamed(PageName.homeLayout);
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 360.w,
       height: 800.h,
-     decoration: const BoxDecoration(
-       gradient: LinearGradient(colors: GradiantLinearColor.primaryGradiant)
-     ),
+
       child:  Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(TextManager.appName,style: TextStyleManager.textStyle36w700.copyWith(color: ColorManager.colorWhite,fontWeight: FontWeight.w700),),
+          Image.asset(AssetsImage.logo2),
         ],
       ),
     );

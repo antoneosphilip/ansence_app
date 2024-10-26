@@ -6,6 +6,9 @@ class TextManager {
   static const String age = "Age";
   static const String update = "Update";
   static const String changePhoto = "Change photo";
+  static const String addStudent = "Add Student";
+  static const String uploadImage = "Upload Image";
+  static const String add = "Add";
 
 
 }

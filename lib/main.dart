@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:summer_school_app/core/route_manager/page_name.dart';
+import 'package:summer_school_app/core/theme/themr.dart';
 
 import 'core/route_manager/route_manager.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -20,10 +22,12 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
-       debugShowCheckedModeBanner: false,
-        initialRoute: PageName.search,
+        locale: const Locale('ar'),
+        useInheritedMediaQuery: true,
+        debugShowCheckedModeBanner: false,
+        initialRoute: PageName.splash,
         getPages: pages,
-
+        theme: ThemeApp.light,
       ),
     );
   }
