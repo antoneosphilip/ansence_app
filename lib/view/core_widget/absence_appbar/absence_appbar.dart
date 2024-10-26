@@ -18,7 +18,7 @@ class AbsenceAppbar extends StatelessWidget {
         borderRadius: BorderRadius.only(bottomRight: Radius.circular(24.r),bottomLeft: Radius.circular(24.r)),
         color: ColorManager.colorPrimary,
       ),
-      child: Center(child: Text(text,style: TextStyleManager.textStyle18Bold,)),
+      child: Center(child: Text(text,style: TextStyleManager.textStyle20Bold,)),
     );
   }
 }

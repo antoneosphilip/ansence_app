@@ -18,14 +18,7 @@ List<GetPage> pages = [
       name: PageName.search,
       page: () => const HomeScreen(),
   ),
-  GetPage(
-    name: PageName.studentDetails,
-    page: () => const StudentDetailsScreen(),
-  ),
-  GetPage(
-    name: PageName.addStudent,
-    page: () => const AddStudentScreen(),
-  ),
+
   GetPage(
     name: PageName.homeLayout,
     page: () =>  HomeLayoutScreen(),

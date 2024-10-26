@@ -12,15 +12,16 @@ import '../../../core/color_manager/color_manager.dart';
 import '../../../core/text_manager/text_manager.dart';
 import '../elevated_button/elevated_button_custom.dart';
 
-class XStationButtonCustom extends StatelessWidget {
+class AbsenceButtonCustom extends StatelessWidget {
   final String textButton;
   final   Function onPressed;
 
-  const XStationButtonCustom({super.key,  required this.textButton,required this.onPressed,  });
+  const AbsenceButtonCustom({super.key,  required this.textButton,required this.onPressed,  });
   @override
   Widget build(BuildContext context) {
     return ElevatedButtonCustom(
-      onPressed: onPressed!,
+      radius: 12.r,
+      onPressed: onPressed,
       // onPressed: (){
       //        final A = MaterialPageRoute(builder: (context) =>(verification_screen()));
       //       Navigator.push(context, A);
@@ -29,7 +30,7 @@ class XStationButtonCustom extends StatelessWidget {
       widget: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-           Text(textButton.tr!,style: const TextStyle(color: Colors.white),),
+           Text(textButton.tr,style: const TextStyle(color: Colors.white),),
            SizedBox(width: 11.w,),
         ],
       ),

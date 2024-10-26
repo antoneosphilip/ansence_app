@@ -19,11 +19,11 @@ class HomeWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
          const Center(
-          child: CustomAbsenceButton(text: 'الغياب', screen: AbsenceScreen(),),
+          child: CustomAbsenceButton(text: 'الغياب', screen: AbsenceScreen(),transition: Transition.rightToLeftWithFade,),
         ),
         SizedBox(height: 15.h,),
          const Center(
-          child: CustomAbsenceButton(text: 'الافتقاد', screen:  MissingScreen(),transition: Transition.leftToRight,),
+          child: CustomAbsenceButton(text: 'الافتقاد', screen:  MissingScreen(),transition: Transition.fade,),
         ),
       ],
     );
