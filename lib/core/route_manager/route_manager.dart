@@ -21,7 +21,7 @@ List<GetPage> pages = [
 
   GetPage(
     name: PageName.homeLayout,
-    page: () =>  HomeLayoutScreen(),
+    page: () =>  const HomeLayoutScreen(),
   )
 
 

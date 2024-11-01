@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:summer_school_app/core/style_font_manager/style_manager.dart';
+import 'package:summer_school_app/model/get_absence_model/get_absence_model.dart';
 
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
 
 class StudentAbsenceItem extends StatefulWidget {
-  const StudentAbsenceItem({super.key});
+  final StudentAbsenceModel studentAbsenceModel;
+  const StudentAbsenceItem({super.key, required this.studentAbsenceModel});
 
   @override
   _StudentAbsenceItemState createState() => _StudentAbsenceItemState();
@@ -34,7 +36,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
         ),
         SizedBox(width: 10.w),
         TextWidget(
-          text: "الاسم",
+          text: widget.studentAbsenceModel.name!,
           textStyle: TextStyleManager.textStyle20w700.copyWith(color: Colors.black,fontWeight: FontWeight.w600),
         ),
         const Spacer(),

@@ -1,7 +1,9 @@
 class ApiConstants {
-  static const String apiBaseUrl = "https://vcare.integration25.com/api/";
+  static const String apiBaseUrl = "http://madrasa.runasp.net/";
 
-  static const String login = "auth/login";
+  static String getStudentAbsence(int id) {
+    return "students/class/$id";
+  }
   static const String signup = "auth/register";
   
 }

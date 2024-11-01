@@ -18,7 +18,7 @@ class DioHelper {
     dio = Dio(
       BaseOptions(
         //Here the URL of API.
-        baseUrl: EndPoint.baseUrl,
+        baseUrl: EndPoint.apiBaseUrl,
         connectTimeout: const Duration(minutes: 2),
         receiveDataWhenStatusError: true,
         //Here we Put The Headers Needed in The API.

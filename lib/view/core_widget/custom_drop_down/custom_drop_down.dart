@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 
 import '../../../core/color_manager/color_manager.dart';
 import '../../../core/style_font_manager/style_manager.dart';
@@ -14,25 +15,25 @@ class CustomDropDown extends StatefulWidget {
 }
 
 class _CustomDropDownState extends State<CustomDropDown> {
-  final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
-    'Item4',
-    'Item5',
-    'Item6',
-    'Item7',
-    'Item8',
-  ];
   String? selectedValue;
+  List<int> listOfClasses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 1; i < 30; i++) {
+      listOfClasses.add(i);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return   Padding(
-      padding:  EdgeInsets.only(right: 16.w),
+    return Padding(
+      padding: EdgeInsets.only(right: 16.w),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
           isExpanded: true,
-          hint:  Row(
+          hint: Row(
             children: [
               const Icon(
                 Icons.list,
@@ -45,19 +46,19 @@ class _CustomDropDownState extends State<CustomDropDown> {
               Expanded(
                 child: Text(
                   'اختر فصل',
-                  style:TextStyleManager.textStyle20w700,
+                  style: TextStyleManager.textStyle20w700,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          items: items
-              .map((String item) => DropdownMenuItem<String>(
-            value: item,
+          items: listOfClasses
+              .map((int item) => DropdownMenuItem<String>(
+            value: item.toString(),
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                item,
+                item.toString(),
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -70,6 +71,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
               .toList(),
           value: selectedValue,
           onChanged: (String? value) {
+            AbsenceCubit.get(context).getAbsence(id: int.parse(value!));
             setState(() {
               selectedValue = value;
             });
@@ -77,7 +79,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
           buttonStyleData: ButtonStyleData(
             height: 50.h,
             width: 160.w,
-            padding:  EdgeInsets.only(left: 14.w, right: 14.w),
+            padding: EdgeInsets.only(left: 14.w, right: 14.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16.w),
               color: ColorManager.colorPrimary,
@@ -106,7 +108,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
               thumbVisibility: MaterialStateProperty.all<bool>(true),
             ),
           ),
-          menuItemStyleData:  MenuItemStyleData(
+          menuItemStyleData: MenuItemStyleData(
             height: 40.h,
             padding: EdgeInsets.only(left: 14.w, right: 14.w),
           ),

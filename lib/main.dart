@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:summer_school_app/core/route_manager/page_name.dart';
+import 'package:summer_school_app/core/route_manager/route_manager.dart';
 import 'package:summer_school_app/core/theme/themr.dart';
+import 'package:summer_school_app/utility/database/local/cache_helper.dart';
+import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 
-import 'core/route_manager/route_manager.dart';
+import 'core/service_locator/service_locator.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await setup();
+  await DioHelper.init();
+  await CacheHelper.init();
+
+
   runApp(const MyApp());
 }
 
