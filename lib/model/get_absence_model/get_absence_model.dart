@@ -1,12 +1,12 @@
-class VerifyEmailModel {
+class GetAbsenceModel {
   Null? data;
   String? message;
   String? type;
   int? code;
 
-  VerifyEmailModel({this.data, this.message, this.type, this.code});
+  GetAbsenceModel({this.data, this.message, this.type, this.code});
 
-  VerifyEmailModel.fromJson(Map<String, dynamic> json) {
+  GetAbsenceModel.fromJson(Map<String, dynamic> json) {
     data = json['data'];
     message = json['message'];
     type = json['type'];
