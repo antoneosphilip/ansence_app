@@ -25,7 +25,7 @@ class AbsenceScreen extends StatelessWidget {
                 text: 'الغياب',
               ),
               SizedBox(height: 15.h),
-              const CustomDropDown(),
+              const CustomDropDown(isAbsence: true,),
               SizedBox(height: 20.h),
               const AbsenceStudentListView(),
             ],

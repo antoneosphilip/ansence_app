@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,15 +6,19 @@ import 'package:summer_school_app/view/screens/student_profile/student_profile_s
 
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
+import '../../../../model/get_missing_student_model/get_missing_student_model.dart';
 
 class MissingStudentItem extends StatelessWidget {
-  const MissingStudentItem({super.key});
+  final GetMissingStudentModel studentMissingModel;
+
+  const MissingStudentItem({super.key, required this.studentMissingModel});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        Get.to(const StudentProfile(),
+      onTap: () {
+        Get.to(
+           StudentProfile(getMissingStudentModel: studentMissingModel,),
           transition: Transition.zoom,
           duration: const Duration(milliseconds: 350),
         );
@@ -30,15 +33,25 @@ class MissingStudentItem extends StatelessWidget {
             height: 50.h,
             decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(image: NetworkImage('https://st2.depositphotos.com/4111759/12123/v/950/depositphotos_121231710-stock-illustration-male-default-avatar-profile-gray.jpg'))
-            ),
+                image: DecorationImage(
+                    image: AssetImage('assets/images/default_image.jpg'))),
           ),
           SizedBox(width: 10.w),
           TextWidget(
-            text: "الاسم",
-            textStyle: TextStyleManager.textStyle20w700.copyWith(color: Colors.black,fontWeight: FontWeight.w600),
+            text: studentMissingModel.name,
+            textStyle: TextStyleManager.textStyle20w700
+                .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
           ),
-
+          const Spacer(),
+          studentMissingModel.absences.last.absenceReason.isNotEmpty
+              ? const Icon(
+                  Icons.check,
+                  color: ColorManager.colorPrimary,
+                )
+              : const SizedBox(),
+          SizedBox(
+            width: 16.w,
+          ),
           SizedBox(width: 10.w),
         ],
       ),

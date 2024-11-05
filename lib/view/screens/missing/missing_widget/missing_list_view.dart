@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:summer_school_app/view/screens/absence/absence_widget/student_item.dart';
+import 'package:summer_school_app/view/core_widget/custom_error/custom_error.dart';
+import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';
+import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
+import 'package:summer_school_app/view_model/block/missing_cubit/missing_states.dart';
 
 import 'missing_student_item.dart';
 
@@ -9,17 +13,36 @@ class MissingStudentListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context,index)
-        {
-          return const MissingStudentItem();
-        },
-        separatorBuilder: (context,index)
-        {
-          return SizedBox(height: 35.h,);
-        },
-        itemCount: 5);
+    return BlocBuilder<MissingCubit, MissingStates>(
+      buildWhen: (previous, current) =>
+      current is GetMissingStudentSuccessState||
+      current is GetMissingStudentLoadingState ||
+      current is GetMissingStudentErrorState,
+      builder: (BuildContext context, state) {
+        return state is GetMissingStudentLoadingState
+            ? const CustomLoading()
+            : state is GetMissingStudentErrorState
+                ? const CustomError()
+                : state is GetMissingStudentSuccessState
+                    ? Column(
+                      children: [
+                        ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return  MissingStudentItem( studentMissingModel: MissingCubit.get(context).studentMissingModel[index],);
+                            },
+                            separatorBuilder: (context, index) {
+                              return SizedBox(
+                                height: 35.h,
+                              );
+                            },
+                            itemCount: MissingCubit.get(context).studentMissingModel.length),
+                        SizedBox(height: 10.h,)
+                      ],
+                    )
+                    : const SizedBox();
+      },
+    );
   }
 }

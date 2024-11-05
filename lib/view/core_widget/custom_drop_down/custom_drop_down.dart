@@ -5,12 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
+import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
 
 import '../../../core/color_manager/color_manager.dart';
 import '../../../core/style_font_manager/style_manager.dart';
 
 class CustomDropDown extends StatefulWidget {
-  const CustomDropDown({super.key});
+  final bool isAbsence;
+  const CustomDropDown({super.key, required this.isAbsence});
 
   @override
   State<CustomDropDown> createState() => _CustomDropDownState();
@@ -73,7 +75,8 @@ class _CustomDropDownState extends State<CustomDropDown> {
               .toList(),
           value: selectedValue,
           onChanged: (String? value) {
-            AbsenceCubit.get(context).getAbsence(id: int.parse(value!));
+            widget.isAbsence? AbsenceCubit.get(context).getAbsence(id: int.parse(value!)):
+            MissingCubit.get(context).getAbsenceMissing(id: int.parse(value!));
             setState(() {
               selectedValue = value;
             });

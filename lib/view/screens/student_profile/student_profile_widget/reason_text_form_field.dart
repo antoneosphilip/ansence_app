@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
 
 import '../../../../core/color_manager/color_manager.dart';
 
@@ -13,6 +14,7 @@ class ReasonTextFormField extends StatelessWidget {
       padding:  EdgeInsets.only(left: 16.w),
       child: TextFormField(
         cursorColor: ColorManager.colorPrimary,
+        controller: MissingCubit.get(context).reasonTextController,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.r),
@@ -38,6 +40,13 @@ class ReasonTextFormField extends StatelessWidget {
           hintText: 'سبب الغياب',
           hintStyle: TextStyle(color: ColorManager.colorBlack.withOpacity(.6),),
         ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'برجاء إدخال سبب الغياب';
+          }
+          return null;
+        },
+
         maxLines: null,
         minLines: 5,
         keyboardType: TextInputType.multiline,

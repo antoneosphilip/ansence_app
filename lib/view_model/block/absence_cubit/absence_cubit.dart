@@ -21,9 +21,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         emit(GetAbsenceErrorState(l.apiErrorModel.message.toString()));
       },
       (r) {
-        for (int i = 0; i < r.length; i++) {
-          print(r[i].student.absences);
-        }
+        // for (int i = 0; i < r.length; i++) {
+        //   print(r[i].student.absences);
+        // }
         studentAbsenceModel.clear();
         studentAbsenceModel.addAll(r);
         emit(GetAbsenceSuccessState());

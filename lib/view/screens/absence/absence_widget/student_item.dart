@@ -48,8 +48,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
             decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                    image: NetworkImage(
-                        'https://st2.depositphotos.com/4111759/12123/v/950/depositphotos_121231710-stock-illustration-male-default-avatar-profile-gray.jpg'))),
+                    image: AssetImage('assets/images/default_image.jpg'))),
           ),
           SizedBox(width: 10.w),
           TextWidget(
@@ -71,7 +70,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
                     studentId:
                     widget.studentAbsenceModel.student.absences.last.studentId,
                     attendant: !widget.studentAbsenceModel.attendant,
-                    absenceDate: widget.studentAbsenceModel.student.absences.last.absenceDate,
+                    absenceDate: widget.studentAbsenceModel.student.absences.last.absenceDate ,
                     absenceReason: '',
                   ));
               setState(() {

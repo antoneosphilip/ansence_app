@@ -9,6 +9,9 @@ abstract class EndPoint{
   static String updateStudentAbsence(int id) {
     return "absences/$id";
   }
+  static String getStudentMissing(int id) {
+    return "absences/class/$id";
+  }
   static const String signup = "auth/register";
 
 
