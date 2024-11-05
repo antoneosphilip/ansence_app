@@ -1,59 +1,130 @@
 class StudentAbsenceModel {
-  int? id;
-  String? name;
-  int? classStudent;
-  int? level;
-  int? gender;
-  String? birthDate;
-  int? age;
-  String ?mamPhone;
-  String? dadPhone;
-  String? studPhone;
-  int? shift;
-  int? numberOfAbsences;
-  String ?notes;
-  // List<Null> absences;
+  final Student student;
+   bool attendant;
 
-  StudentAbsenceModel({this.id, this.name, this.classStudent, this.level, this.gender, this.birthDate, this.age, this.mamPhone, this.dadPhone, this.studPhone, this.shift, this.numberOfAbsences, this.notes});
+  StudentAbsenceModel({required this.student, required this.attendant});
 
-  StudentAbsenceModel.fromJson(Map<String, dynamic> json) {
-  id = json['id'];
-  name = json['name'];
-  classStudent = json['class'];
-  level = json['level'];
-  gender = json['gender'];
-  birthDate = json['birthDate'];
-  age = json['age'];
-  mamPhone = json['mamPhone'];
-  dadPhone = json['dadPhone'];
-  studPhone = json['studPhone'];
-  shift = json['shift'];
-  numberOfAbsences = json['numberOfAbsences'];
-  notes = json['notes'];
-  // if (json['absences'] != null) {
-  //   absences = new List<Null>();
-  // json['absences'].forEach((v) { absences.add(new Null.fromJson(v)); });
-  // }
+  factory StudentAbsenceModel.fromJson(Map<String, dynamic> json) {
+    return StudentAbsenceModel(
+      student: Student.fromJson(json['student']),
+      attendant: json['attendant'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['id'] = this.id;
-  data['name'] = this.name;
-  data['class'] = this.classStudent;
-  data['level'] = this.level;
-  data['gender'] = this.gender;
-  data['birthDate'] = this.birthDate;
-  data['age'] = this.age;
-  data['mamPhone'] = this.mamPhone;
-  data['dadPhone'] = this.dadPhone;
-  data['studPhone'] = this.studPhone;
-  data['shift'] = this.shift;
-  data['numberOfAbsences'] = this.numberOfAbsences;
-  data['notes'] = this.notes;
-  // if (this.absences != null) {
-  // data['absences'] = this.absences.map((v) => v.toJson()).toList();
-  // }
-  return data;
+    return {
+      'student': student.toJson(),
+      'attendant': attendant,
+    };
+  }
+}
+
+class Student {
+  final int id;
+  final String name;
+  final int studentClass;
+  final int level;
+  final int gender;
+  final String birthDate;
+  final int age;
+  final String? mamPhone;
+  final String? dadPhone;
+  final String? studPhone;
+  final int shift;
+  final int numberOfAbsences;
+  final String notes;
+  final List<Absence> absences;
+
+  Student({
+    required this.id,
+    required this.name,
+    required this.studentClass,
+    required this.level,
+    required this.gender,
+    required this.birthDate,
+    required this.age,
+    this.mamPhone,
+    this.dadPhone,
+    this.studPhone,
+    required this.shift,
+    required this.numberOfAbsences,
+    required this.notes,
+    required this.absences,
+  });
+
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return Student(
+      id: json['id'],
+      name: json['name'],
+      studentClass: json['class'],
+      level: json['level'],
+      gender: json['gender'],
+      birthDate: json['birthDate'],
+      age: json['age'],
+      mamPhone: json['mamPhone'],
+      dadPhone: json['dadPhone'],
+      studPhone: json['studPhone'],
+      shift: json['shift'],
+      numberOfAbsences: json['numberOfAbsences'],
+      notes: json['notes'],
+      absences: (json['absences'] as List)
+          .map((item) => Absence.fromJson(item))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'class': studentClass,
+      'level': level,
+      'gender': gender,
+      'birthDate': birthDate,
+      'age': age,
+      'mamPhone': mamPhone,
+      'dadPhone': dadPhone,
+      'studPhone': studPhone,
+      'shift': shift,
+      'numberOfAbsences': numberOfAbsences,
+      'notes': notes,
+      'absences': absences.map((absence) => absence.toJson()).toList(),
+    };
+  }
+}
+
+class Absence {
+  final int id;
+  final int studentId;
+  final String absenceDate;
+  final String absenceReason;
+   bool attendant;
+
+  Absence({
+    required this.id,
+    required this.studentId,
+    required this.absenceDate,
+    required this.absenceReason,
+    required this.attendant,
+  });
+
+  factory Absence.fromJson(Map<String, dynamic> json) {
+    return Absence(
+      id: json['id'],
+      studentId: json['studentId'],
+      absenceDate: json['absenceDate'],
+      absenceReason: json['absenceReason'],
+      attendant: json['attendant'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'studentId': studentId,
+      'absenceDate': absenceDate,
+      'absenceReason': absenceReason,
+      'attendant': attendant,
+    };
   }
 }

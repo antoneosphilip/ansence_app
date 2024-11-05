@@ -10,3 +10,11 @@ class GetAbsenceErrorState extends AbsenceStates{
 }
 class GetAbsenceSuccessState extends AbsenceStates{}
 
+class UpdateStudentAbsenceLoadingState extends AbsenceStates{}
+class UpdateStudentAbsenceErrorState extends AbsenceStates{
+  final String error;
+  final int studentId;
+  UpdateStudentAbsenceErrorState(this.error, this.studentId, );
+}
+class UpdateStudentAbsenceSuccessState extends AbsenceStates{}
+
