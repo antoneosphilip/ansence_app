@@ -16,8 +16,11 @@ class CallButtons extends StatelessWidget {
         SizedBox(
           width: getMissingStudentModel.dadPhone != null &&
                   getMissingStudentModel.mamPhone != null
-              ? 16.w
-              : 5.w,
+              ? 16.w:
+          getMissingStudentModel.dadPhone != null&&getMissingStudentModel.mamPhone==null?
+              30.w:
+          getMissingStudentModel.dadPhone == null&&getMissingStudentModel.mamPhone!=null?
+               10.w:0.w,
         ),
         getMissingStudentModel.dadPhone != null
             ? Expanded(
@@ -38,9 +41,12 @@ class CallButtons extends StatelessWidget {
             : const SizedBox(),
         SizedBox(
           width: getMissingStudentModel.dadPhone != null &&
-                  getMissingStudentModel.mamPhone != null
-              ? 16.w
-              : 20.w,
+              getMissingStudentModel.mamPhone != null
+              ? 16.w:
+          getMissingStudentModel.dadPhone != null&&getMissingStudentModel.mamPhone==null?
+          10.w:
+          getMissingStudentModel.dadPhone == null&&getMissingStudentModel.mamPhone!=null?
+          25.w:0.w,
         ),
       ],
     );

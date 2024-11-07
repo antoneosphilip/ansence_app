@@ -1,45 +1,60 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../../../core/assets_manager/assets_manager.dart';
-import '../../../../core/color_manager/color_manager.dart';
 import '../../../../core/route_manager/page_name.dart';
-import '../../../../core/style_font_manager/style_manager.dart';
-import '../../../../core/text_manager/text_manager.dart';
 
 class SplashWidget extends StatefulWidget {
   const SplashWidget({super.key});
 
   @override
   State<SplashWidget> createState() => _SplashWidgetState();
-
 }
 
 class _SplashWidgetState extends State<SplashWidget> {
+  bool _isLogoCentered = false;
 
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _startAnimation();
     navigateToLogin();
   }
-  navigateToLogin() async{
-    await Future.delayed(const Duration(milliseconds: 4000),(){});
+
+  void _startAnimation() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      _isLogoCentered = true;
+    });
+  }
+
+  Future<void> navigateToLogin() async {
+    await Future.delayed(const Duration(milliseconds: 2000), () {});
     Get.offAllNamed(PageName.homeLayout);
   }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 360.w,
-      height: 800.h,
-
-      child:  Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
         children: [
-          Image.asset(AssetsImage.logo2),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeOut,
+            top: _isLogoCentered ? 250.h : 30.h,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: Image.asset(
+                  AssetsImage.logo,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -7,8 +7,11 @@ class CustomError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Lottie.asset('assets/animation/error2.json',width: 220.w,height: 220.h,),
+    return Padding(
+      padding:  EdgeInsets.only(top: 100.h),
+      child: Center(
+        child: Lottie.asset('assets/animation/error2.json',width: 220.w,height: 220.h,),
+      ),
     );
   }
 }

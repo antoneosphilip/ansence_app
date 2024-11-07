@@ -29,7 +29,6 @@ class HomeLayoutScreen extends StatelessWidget {
               animationDuration: const Duration(milliseconds: 300),
               items: const <Widget>[
                 Icon(Icons.home_filled, size: 25, color: Colors.white),
-                Icon(Icons.settings, size: 25, color: Colors.white),
               ],
               onTap: (index) {
                 cubit.bottomTap(index);

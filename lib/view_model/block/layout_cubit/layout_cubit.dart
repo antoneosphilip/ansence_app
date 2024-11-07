@@ -12,7 +12,6 @@ class LayoutCubit extends Cubit<LayoutStates>
   int currIndex=0;
   final List<Widget> pageList = [
     const HomeScreen(),
-    const HomeScreen(), // Add another screen here if needed
   ];
   void bottomTap(int index)
   {

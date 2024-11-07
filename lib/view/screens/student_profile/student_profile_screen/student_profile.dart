@@ -19,151 +19,156 @@ import '../student_profile_widget/reason_text_form_field.dart';
 
 class StudentProfile extends StatelessWidget {
   final GetMissingStudentModel getMissingStudentModel;
+  final MissingCubit missingCubit;
 
-  const StudentProfile({super.key, required this.getMissingStudentModel});
+  const StudentProfile({super.key, required this.getMissingStudentModel, required this.missingCubit});
 
   @override
   Widget build(BuildContext context) {
+    missingCubit.reasonTextController.text=getMissingStudentModel.absences?.last.absenceReason??"";
     return BlocProvider.value(
-        value: MissingCubit(sl.get<MissingRepo>()),
+        value: missingCubit,
         child: BlocConsumer<MissingCubit, MissingStates>(
-          listenWhen: (previous, current) =>
-              current is UpdateStudentMissingSuccessState ||
-              current is UpdateStudentMissingErrorState ||
-              current is UpdateStudentMissingLoadingState,
-          listener: (BuildContext context, MissingStates state) {
+          listener: (BuildContext context, MissingStates state) async {
             if (state is UpdateStudentMissingLoadingState) {
               EasyLoading.show(
                 indicator: _customLoadingIndicator()
               );
+              Future.delayed(const Duration(seconds: 2), () {
+                EasyLoading.dismiss();
+              });
             }
             else if(state is UpdateStudentMissingSuccessState){
               EasyLoading.dismiss();
               showFlutterToast(message: "تم الحفظ بنجاح", state: ToastState.SUCCESS);
             }
-            else{
+            else if(state is UpdateStudentMissingErrorState){
               EasyLoading.dismiss();
               showFlutterToast(message: "حدث خطأ في الحفظ حاول لاحقا", state: ToastState.ERROR);
             }
           },
           builder: (BuildContext context, MissingStates state) {
-            return Form(
-              key: MissingCubit.get(context).formKey,
-              child: Scaffold(
-                body: SingleChildScrollView(
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 35.h),
-                                child:
-                                    const AbsenceAppbar(text: "بيانات الطالب"),
-                              ),
-                              Container(
-                                width: 75.w,
-                                height: 75.h,
-                                decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/images/default_image.jpg'))),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 16.w),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            return PopScope(
+              onPopInvoked: (didPop) {
+                EasyLoading.dismiss();
+              },
+              child: Form(
+                key: MissingCubit.get(context).formKey,
+                child: Scaffold(
+                  body: SingleChildScrollView(
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomCenter,
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'الأسم :',
-                                      style: TextStyleManager.textStyle22w800,
-                                    ),
-                                    Text(
-                                      ' ${getMissingStudentModel.name}',
-                                      style: TextStyleManager.textStyle20w500
-                                          .copyWith(
-                                              color: ColorManager.colorPrimary),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 35.h),
+                                  child:
+                                      const AbsenceAppbar(text: "بيانات الطالب"),
                                 ),
-                                SizedBox(
-                                  height: 15.h,
+                                Container(
+                                  width: 75.w,
+                                  height: 75.h,
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          image: AssetImage('assets/images/default_image.jpg'))),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'الفصل :',
-                                      style: TextStyleManager.textStyle20w500
-                                          .copyWith(
-                                              fontWeight: FontWeight.w800),
-                                    ),
-                                    Text(
-                                      ' ${getMissingStudentModel.studentClass}',
-                                      style: TextStyleManager.textStyle20w500
-                                          .copyWith(
-                                              color: ColorManager.colorPrimary),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20.h,
-                                ),
-                                const ReasonTextFormField(),
                               ],
                             ),
-                          ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                          CallButtons(
-                            getMissingStudentModel: getMissingStudentModel,
-                          ),
-                          SizedBox(
-                            height: 180.h,
-                          ),
-                        ],
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2.w),
-                          child: AbsenceButtonCustom(
-                              textButton: 'حفظ',
-                              onPressed: () {
-                                if (MissingCubit.get(context)
-                                        .formKey
-                                        .currentState!
-                                        .validate() ??
-                                    false) {
-                                  MissingCubit.get(context)
-                                      .updateStudentMissing(
-                                          updateAbsenceStudentBody:
-                                              UpdateAbsenceStudentBody(
-                                    studentId: getMissingStudentModel.id,
-                                    id: getMissingStudentModel.absences.last.id,
-                                    absenceReason: MissingCubit.get(context)
-                                        .reasonTextController
-                                        .text,
-                                    absenceDate: getMissingStudentModel
-                                        .absences.last.absenceDate,
-                                    attendant: getMissingStudentModel
-                                        .absences.last.attendant,
-                                  ));
-                                }
-                              }),
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 16.w),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'الأسم :',
+                                        style: TextStyleManager.textStyle22w800,
+                                      ),
+                                      Text(
+                                        ' ${getMissingStudentModel.studentName}',
+                                        style: TextStyleManager.textStyle20w500
+                                            .copyWith(
+                                                color: ColorManager.colorPrimary),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 15.h,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'الفصل :',
+                                        style: TextStyleManager.textStyle20w500
+                                            .copyWith(
+                                                fontWeight: FontWeight.w800),
+                                      ),
+                                      Text(
+                                        ' ${getMissingStudentModel.studentClass}',
+                                        style: TextStyleManager.textStyle20w500
+                                            .copyWith(
+                                                color: ColorManager.colorPrimary),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20.h,
+                                  ),
+                                  const ReasonTextFormField(),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30.h,
+                            ),
+                            CallButtons(
+                              getMissingStudentModel: getMissingStudentModel,
+                            ),
+                            SizedBox(
+                              height: 180.h,
+                            ),
+                          ],
                         ),
-                      )
-                    ],
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                            child: AbsenceButtonCustom(
+                                textButton: 'حفظ',
+                                onPressed: () {
+                                  if (MissingCubit.get(context)
+                                          .formKey
+                                          .currentState!
+                                          .validate()) {
+                                    MissingCubit.get(context)
+                                        .updateStudentMissing(
+                                            updateAbsenceStudentBody:
+                                                UpdateAbsenceStudentBody(
+                                      studentId: getMissingStudentModel.id,
+                                      id: getMissingStudentModel.absences?.last.id,
+                                      absenceReason: MissingCubit.get(context)
+                                          .reasonTextController
+                                          .text,
+                                      absenceDate: getMissingStudentModel
+                                          .absences?.last.absenceDate,
+                                      attendant: getMissingStudentModel
+                                          .absences?.last.attendant,
+                                    ));
+                                  }
+                                }),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

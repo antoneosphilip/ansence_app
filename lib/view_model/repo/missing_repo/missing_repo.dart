@@ -17,7 +17,7 @@ class MissingRepo {
       final response =
       await DioHelper.getData(url: EndPoint.getStudentMissing(id));
       List<dynamic> jsonData = response.data;
-      return Right(jsonData.map((item) => GetMissingStudentModel.fromJson(item)).toList());
+      return Right(jsonData.map((item) => GetMissingStudentModel.fromJson(item as Map<String, dynamic>)).toList());
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());

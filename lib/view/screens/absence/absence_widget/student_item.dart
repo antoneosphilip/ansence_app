@@ -52,8 +52,8 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
           ),
           SizedBox(width: 10.w),
           TextWidget(
-            text: widget.studentAbsenceModel.student.name
-                .split(' ')
+            text: widget.studentAbsenceModel.student.studentName
+                !.split(' ')
                 .take(3)
                 .join(' '),
             textStyle: TextStyleManager.textStyle20w700
@@ -66,11 +66,11 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
             onChanged: (bool? value) {
               AbsenceCubit.get(context).updateStudentAbsence(
                   updateAbsenceStudentBody: UpdateAbsenceStudentBody(
-                    id: widget.studentAbsenceModel.student.absences.last.id,
+                    id: widget.studentAbsenceModel.student.absences?.last.id,
                     studentId:
-                    widget.studentAbsenceModel.student.absences.last.studentId,
+                    widget.studentAbsenceModel.student.absences?.last.studentId,
                     attendant: !widget.studentAbsenceModel.attendant,
-                    absenceDate: widget.studentAbsenceModel.student.absences.last.absenceDate ,
+                    absenceDate: widget.studentAbsenceModel.student.absences?.last.absenceDate ,
                     absenceReason: '',
                   ));
               setState(() {

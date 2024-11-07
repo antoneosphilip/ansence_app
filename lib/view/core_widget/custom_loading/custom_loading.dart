@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 
 class CustomLoading extends StatelessWidget {
@@ -6,8 +7,11 @@ class CustomLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Lottie.asset('assets/animation/loading.json',width: 100,height: 100),
+    return Padding(
+      padding: EdgeInsets.only(top: 150.0.h),
+      child: Center(
+        child: Lottie.asset('assets/animation/loading.json',width: 100.w,height: 100.h),
+      ),
     );
   }
 }

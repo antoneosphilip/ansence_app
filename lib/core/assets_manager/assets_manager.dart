@@ -6,12 +6,13 @@ class AssetsImage {
   // Images
   static const String onBoardingImage = '${_imagesPath}onboarding2.png';
   static const String logo2 = '${_imagesPath}logo2.png';
+  static const String logo = '${_imagesPath}logo.jpeg';
 
 
 
   // icons
   static const String arrowRight = '${_iconsPath}arrow-right.svg';
-  static const String logo = '${_iconsPath}logo.svg';
+  // static const String logo = '${_iconsPath}logo.svg';
 
 
 
