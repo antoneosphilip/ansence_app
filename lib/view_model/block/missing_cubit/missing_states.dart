@@ -18,3 +18,7 @@ class UpdateStudentMissingErrorState extends MissingStates{
 }
 class UpdateStudentMissingSuccessState extends MissingStates{}
 
+
+class CompleteAllStudentMissingSuccessState extends MissingStates{}
+
+

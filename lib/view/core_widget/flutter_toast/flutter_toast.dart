@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:summer_school_app/core/color_manager/color_manager.dart';
 
 void  showFlutterToast({required message,required ToastState state})=>Fluttertoast.showToast(
     msg: message,
@@ -16,7 +17,7 @@ Color? chooseToastColor(ToastState state) {
   Color color;
   switch (state) {
     case ToastState.SUCCESS:
-      color = Colors.green;
+      color = ColorManager.colorPrimary;
       break;
     case ToastState.ERROR:
       color = Colors.red;

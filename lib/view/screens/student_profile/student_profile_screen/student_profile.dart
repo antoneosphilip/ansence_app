@@ -21,30 +21,34 @@ class StudentProfile extends StatelessWidget {
   final GetMissingStudentModel getMissingStudentModel;
   final MissingCubit missingCubit;
 
-  const StudentProfile({super.key, required this.getMissingStudentModel, required this.missingCubit});
+  const StudentProfile(
+      {super.key,
+      required this.getMissingStudentModel,
+      required this.missingCubit});
 
   @override
   Widget build(BuildContext context) {
-    missingCubit.reasonTextController.text=getMissingStudentModel.absences?.last.absenceReason??"";
+    absenceReasonHandle(
+        getMissingStudentModel: getMissingStudentModel,
+        missingCubit: missingCubit);
     return BlocProvider.value(
         value: missingCubit,
         child: BlocConsumer<MissingCubit, MissingStates>(
           listener: (BuildContext context, MissingStates state) async {
             if (state is UpdateStudentMissingLoadingState) {
-              EasyLoading.show(
-                indicator: _customLoadingIndicator()
-              );
+              EasyLoading.show(indicator: _customLoadingIndicator());
               Future.delayed(const Duration(seconds: 2), () {
                 EasyLoading.dismiss();
               });
-            }
-            else if(state is UpdateStudentMissingSuccessState){
+            } else if (state is UpdateStudentMissingSuccessState) {
               EasyLoading.dismiss();
-              showFlutterToast(message: "تم الحفظ بنجاح", state: ToastState.SUCCESS);
-            }
-            else if(state is UpdateStudentMissingErrorState){
+              showFlutterToast(
+                  message: "تم الحفظ بنجاح", state: ToastState.SUCCESS);
+            } else if (state is UpdateStudentMissingErrorState) {
               EasyLoading.dismiss();
-              showFlutterToast(message: "حدث خطأ في الحفظ حاول لاحقا", state: ToastState.ERROR);
+              showFlutterToast(
+                  message: "حدث خطأ في الحفظ حاول لاحقا",
+                  state: ToastState.ERROR);
             }
           },
           builder: (BuildContext context, MissingStates state) {
@@ -67,8 +71,8 @@ class StudentProfile extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 35.h),
-                                  child:
-                                      const AbsenceAppbar(text: "بيانات الطالب"),
+                                  child: const AbsenceAppbar(
+                                      text: "بيانات الطالب"),
                                 ),
                                 Container(
                                   width: 75.w,
@@ -76,7 +80,8 @@ class StudentProfile extends StatelessWidget {
                                   decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       image: DecorationImage(
-                                          image: AssetImage('assets/images/default_image.jpg'))),
+                                          image: AssetImage(
+                                              'assets/images/default_image.jpg'))),
                                 ),
                               ],
                             ),
@@ -98,7 +103,8 @@ class StudentProfile extends StatelessWidget {
                                         ' ${getMissingStudentModel.studentName}',
                                         style: TextStyleManager.textStyle20w500
                                             .copyWith(
-                                                color: ColorManager.colorPrimary),
+                                                color:
+                                                    ColorManager.colorPrimary),
                                       ),
                                     ],
                                   ),
@@ -117,7 +123,8 @@ class StudentProfile extends StatelessWidget {
                                         ' ${getMissingStudentModel.studentClass}',
                                         style: TextStyleManager.textStyle20w500
                                             .copyWith(
-                                                color: ColorManager.colorPrimary),
+                                                color:
+                                                    ColorManager.colorPrimary),
                                       ),
                                     ],
                                   ),
@@ -144,17 +151,18 @@ class StudentProfile extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 2.w),
                             child: AbsenceButtonCustom(
                                 textButton: 'حفظ',
-                                onPressed: () {
+                                onPressed: () async {
                                   if (MissingCubit.get(context)
-                                          .formKey
-                                          .currentState!
-                                          .validate()) {
-                                    MissingCubit.get(context)
+                                      .formKey
+                                      .currentState!
+                                      .validate()) {
+                                   await MissingCubit.get(context)
                                         .updateStudentMissing(
                                             updateAbsenceStudentBody:
                                                 UpdateAbsenceStudentBody(
                                       studentId: getMissingStudentModel.id,
-                                      id: getMissingStudentModel.absences?.last.id,
+                                      id: getMissingStudentModel
+                                          .absences?.last.id,
                                       absenceReason: MissingCubit.get(context)
                                           .reasonTextController
                                           .text,
@@ -163,6 +171,11 @@ class StudentProfile extends StatelessWidget {
                                       attendant: getMissingStudentModel
                                           .absences?.last.attendant,
                                     ));
+                                    MissingCubit.get(context)
+                                        .checkIfDoneAllAbsence(
+                                        getMissingStudentModel:
+                                        getMissingStudentModel);
+
                                   }
                                 }),
                           ),
@@ -177,6 +190,7 @@ class StudentProfile extends StatelessWidget {
         ));
   }
 }
+
 Widget _customLoadingIndicator() {
   return AnimatedContainer(
     duration: const Duration(milliseconds: 500),
@@ -192,4 +206,18 @@ Widget _customLoadingIndicator() {
       valueColor: AlwaysStoppedAnimation<Color>(ColorManager.colorPrimary),
     ),
   );
+}
+
+void absenceReasonHandle(
+    {required GetMissingStudentModel getMissingStudentModel,
+    required MissingCubit missingCubit}) {
+  if (getMissingStudentModel.absences!.last.absenceReason!.isNotEmpty) {
+    missingCubit.reasonTextController.text =
+        getMissingStudentModel.absences?.last.absenceReason ?? "";
+  } else {
+    missingCubit.reasonTextController.text = getMissingStudentModel
+            .absences![getMissingStudentModel.absences!.length - 2]
+            .absenceReason ??
+        "";
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/get_missing_student_model/get_missing_student_model.dart';
 import '../../../model/update_absence_student/update_absence_student_body.dart';
@@ -48,6 +49,16 @@ class MissingCubit extends Cubit<MissingStates> {
     }
   }
 
+  Future<void> openWhatsApp(String phoneNumber) async {
+    final whatsappUrl = "https://wa.me/$phoneNumber";
+    if (await canLaunch(whatsappUrl)) {
+      await launch(whatsappUrl);
+    } else {
+      showFlutterToast(
+          message: "Could not open WhatsApp", state: ToastState.ERROR);
+    }
+  }
+
   Future<void> updateStudentMissing(
       {required UpdateAbsenceStudentBody updateAbsenceStudentBody}) async {
     emit(UpdateStudentMissingLoadingState());
@@ -62,12 +73,32 @@ class MissingCubit extends Cubit<MissingStates> {
       (r) {
         print("lastttttttttttttttttt${studentMissingModelList.last.id}");
         for (var element in studentMissingModelList) {
-          if(element.id==updateAbsenceStudentBody.studentId){
-            element.absences!.last.absenceReason=updateAbsenceStudentBody.absenceReason;
+          if (element.id == updateAbsenceStudentBody.studentId) {
+            element.absences!.last.absenceReason =
+                updateAbsenceStudentBody.absenceReason;
           }
         }
         emit(UpdateStudentMissingSuccessState());
       },
     );
+  }
+
+  bool isDoneAbsence = false;
+  bool isShowFirstOne=false;
+  bool checkIfDoneAllAbsence(
+      {required GetMissingStudentModel getMissingStudentModel}) {
+    for (var element in studentMissingModelList) {
+      if(element.absences!.last.absenceReason!.isNotEmpty){
+        isDoneAbsence=true;
+      }
+      else{
+        isDoneAbsence=false;
+      }
+    }print("isdONNEE${isDoneAbsence}");
+    if(isDoneAbsence&&!isShowFirstOne) {
+      emit(CompleteAllStudentMissingSuccessState());
+      isShowFirstOne=true;
+    }
+      return isDoneAbsence;
   }
 }

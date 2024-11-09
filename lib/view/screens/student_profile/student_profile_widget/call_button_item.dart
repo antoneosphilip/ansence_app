@@ -8,14 +8,15 @@ import '../../../../core/color_manager/color_manager.dart';
 class CallButton extends StatelessWidget {
   final String text;
   final String phoneNumber;
-  const CallButton({super.key, required this.text, required this.phoneNumber});
+  final Function()? onTab;
+  const CallButton({super.key, required this.text, required this.phoneNumber,this.onTab});
 
   @override
   Widget build(BuildContext context) {
 
     return  ElevatedButton.icon(
-      onPressed: () {
-       MissingCubit.get(context).makeDirectCall('0$phoneNumber');
+      onPressed: onTab??(){
+        MissingCubit.get(context).makeDirectCall('0$phoneNumber');
       },
       icon: const Icon(Icons.call, color: Colors.white),
       label:  Text(text, style: const TextStyle(color: Colors.white)),

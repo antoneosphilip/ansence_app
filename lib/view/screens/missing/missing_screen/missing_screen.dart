@@ -8,6 +8,7 @@ import 'package:summer_school_app/view_model/repo/missing_repo/missing_repo.dart
 import '../../../../core/service_locator/service_locator.dart';
 import '../../../core_widget/absence_appbar/absence_appbar.dart';
 import '../../../core_widget/custom_drop_down/custom_drop_down.dart';
+import '../../../core_widget/custom_top_sncak_bar/custom_top_snack_bar.dart';
 import '../missing_widget/missing_list_view.dart';
 
 class MissingScreen extends StatelessWidget {
@@ -25,7 +26,11 @@ class MissingScreen extends StatelessWidget {
                 current is GetMissingStudentErrorState ||
                 current is GetMissingStudentLoadingState
               ||current is UpdateStudentMissingSuccessState,
-            listener: (context, state) {},
+            listener: (context, state) {
+              if(state is CompleteAllStudentMissingSuccessState ){
+                showSnackBarWidget(context,"شكرا لافتقادك 😍");
+              }
+            },
             builder: (context, state) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

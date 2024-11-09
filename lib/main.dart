@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       child: GetMaterialApp(
+
         locale: const Locale('ar'),
         useInheritedMediaQuery: true,
         debugShowCheckedModeBanner: false,
