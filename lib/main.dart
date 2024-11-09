@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:summer_school_app/core/route_manager/page_name.dart';
 import 'package:summer_school_app/core/route_manager/route_manager.dart';
 import 'package:summer_school_app/core/theme/themr.dart';
@@ -17,7 +20,10 @@ Future<void> main() async {
   await setup();
   await DioHelper.init();
   await CacheHelper.init();
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(appDocumentDir.path); // تهيئة Hive
 
+  await Hive.openBox('studentsBox'); // فتح صندوق التخزين للطلاب
 
   runApp(const MyApp());
 }

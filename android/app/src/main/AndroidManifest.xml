@@ -24,7 +24,7 @@
     </queries>
 
     <application
-        android:label="absence app"
+        android:label="مدرسة السمائيين"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

@@ -28,6 +28,10 @@ class _CustomDropDownState extends State<CustomDropDown> {
     for (int i = 1; i < 30; i++) {
       listOfClasses.add(i);
     }
+    listOfClasses.add(101);
+    listOfClasses.add(102);
+    listOfClasses.add(202);
+    listOfClasses.add(301);
   }
 
   @override
