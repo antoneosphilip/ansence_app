@@ -57,6 +57,7 @@ dependencies:
   path_provider: ^2.0.11
   font_awesome_flutter: ^10.8.0
   top_snackbar_flutter: ^3.1.0
+  flutter_native_splash: ^2.4.1
 
 
 
@@ -83,8 +84,8 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.jpeg"
-  adaptive_icon_foreground: "assets/images/logo.jpeg"
+  image_path: "assets/images/logo3.jpeg"
+  adaptive_icon_foreground: "assets/images/logo3.jpeg"
   adaptive_icon_background: "#FFFFFF"
   min_sdk_android: 21 # android min sdk min:16, default 21
 flutter:

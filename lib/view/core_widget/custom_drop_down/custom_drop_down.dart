@@ -30,7 +30,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
     }
     listOfClasses.add(101);
     listOfClasses.add(102);
-    listOfClasses.add(202);
+    listOfClasses.add(201);
     listOfClasses.add(301);
   }
 
