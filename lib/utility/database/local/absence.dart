@@ -17,7 +17,7 @@ class Absence {
   final String absenceReason;
 
   @HiveField(4)
-  final bool attendant;
+   bool attendant;
 
   Absence({
     required this.id,

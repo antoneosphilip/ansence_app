@@ -8,7 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:summer_school_app/core/route_manager/page_name.dart';
 import 'package:summer_school_app/core/route_manager/route_manager.dart';
 import 'package:summer_school_app/core/theme/themr.dart';
+import 'package:summer_school_app/utility/database/local/absence.dart';
 import 'package:summer_school_app/utility/database/local/cache_helper.dart';
+import 'package:summer_school_app/utility/database/local/student.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 import 'package:summer_school_app/view/core_widget/custom_animation/custom_animation.dart';
 
@@ -20,10 +22,12 @@ Future<void> main() async {
   await setup();
   await DioHelper.init();
   await CacheHelper.init();
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocumentDir.path); // تهيئة Hive
+  // final appDocumentDir = await getApplicationDocumentsDirectory();
+  // await Hive.initFlutter(appDocumentDir.path); // تهيئة Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(AbsenceAdapter());  // Register the Absence adapter
+  Hive.registerAdapter(StudentDataAdapter()); // Register StudentData adapter
 
-  await Hive.openBox('studentsBox'); // فتح صندوق التخزين للطلاب
 
   runApp(const MyApp());
 }

@@ -4,7 +4,7 @@ import 'absence.dart';
 part 'student.g.dart';
 
 @HiveType(typeId: 2)
-class Student {
+class StudentData {
   @HiveField(0)
   final int id;
 
@@ -45,9 +45,9 @@ class Student {
   final String notes;
 
   @HiveField(13)
-  final List<Absence> absences;
+  final Absence absences;
 
-  Student({
+  StudentData({
     required this.id,
     required this.name,
     required this.studentClass,

@@ -5,6 +5,7 @@ import 'package:summer_school_app/core/networking/api_error_handler.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 
 import '../../../model/get_absence_model/get_absence_model.dart';
+import '../../../model/get_all_absence_model/get_all_absence_model.dart';
 import '../../../model/update_absence_student/update_absence_student_body.dart';
 import '../../../utility/database/network/end_points.dart';
 
@@ -50,6 +51,23 @@ class AbsenceRepo {
     } catch (e) {
       print("sucess${e}");
 
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+
+  Future<Either<ErrorHandler, List<GetAllAbsenceModel>>> getAllAbsence(
+      ) async {
+    try {
+      final response =
+      await DioHelper.getData(url: EndPoint.getAllAbsence);
+      List<dynamic> jsonData = response.data;
+      return Right(jsonData.map((item) => GetAllAbsenceModel.fromJson(item)).toList());
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
       return Left(ErrorHandler.handle(e));
     }
   }

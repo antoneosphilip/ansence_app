@@ -14,6 +14,7 @@ abstract class EndPoint{
   }
   static const String signup = "auth/register";
 
+  static const String getAllAbsence = "absences/";
 
 
 }

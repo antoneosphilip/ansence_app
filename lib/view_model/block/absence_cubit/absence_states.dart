@@ -18,3 +18,13 @@ class UpdateStudentAbsenceErrorState extends AbsenceStates{
 }
 class UpdateStudentAbsenceSuccessState extends AbsenceStates{}
 
+
+class GetAllAbsenceLoadingState extends AbsenceStates{}
+class GetAllAbsenceErrorState extends AbsenceStates{
+  final String error;
+  GetAllAbsenceErrorState(this.error);
+}
+class GetAllAbsenceSuccessState extends AbsenceStates{}
+class OfflineAbsenceStudentsState extends AbsenceStates{}
+class CheckConnectionState extends AbsenceStates{}
+

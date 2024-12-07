@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';
-import 'package:summer_school_app/view/screens/absence/absence_widget/student_item.dart';
+import 'package:summer_school_app/view/screens/absence/absence_widget/student_item_offline.dart';
+import 'package:summer_school_app/view/screens/absence/absence_widget/stuent_item.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 
 import '../../../../view_model/block/absence_cubit/absence_cubit.dart';

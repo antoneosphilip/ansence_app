@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:summer_school_app/view/core_widget/check_internet.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
@@ -78,9 +80,13 @@ class _CustomDropDownState extends State<CustomDropDown> {
           ))
               .toList(),
           value: selectedValue,
-          onChanged: (String? value) {
+          onChanged: (String? value) async {
+            AbsenceCubit.get(context).isConnected?
             widget.isAbsence? AbsenceCubit.get(context).getAbsence(id: int.parse(value!)):
-            MissingCubit.get(context).getAbsenceMissing(id: int.parse(value!));
+            MissingCubit.get(context).getAbsenceMissing(id: int.parse(value!)):
+
+            AbsenceCubit.get(context).addOfflineListToAbsence(value: int.parse(value!));
+
             setState(() {
               selectedValue = value;
             });
