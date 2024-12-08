@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,8 @@ import 'package:summer_school_app/utility/database/local/cache_helper.dart';
 import 'package:summer_school_app/utility/database/local/student.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 import 'package:summer_school_app/view/core_widget/custom_animation/custom_animation.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
+import 'package:summer_school_app/view_model/repo/absence_repo/absence.dart';
 
 import 'core/service_locator/service_locator.dart';
 
@@ -55,19 +58,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 800),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: GetMaterialApp(
-
-        locale: const Locale('ar'),
-        useInheritedMediaQuery: true,
-        debugShowCheckedModeBanner: false,
-        initialRoute: PageName.splash,
-        getPages: pages,
-        theme: ThemeApp.light,
-        builder: EasyLoading.init(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (BuildContext context) => AbsenceCubit(sl.get<AbsenceRepo>())..checkConnection(),)
+      ],
+      child: ScreenUtilInit(
+        designSize: const Size(360, 800),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: GetMaterialApp(
+          locale: const Locale('ar'),
+          useInheritedMediaQuery: true,
+          debugShowCheckedModeBanner: false,
+          initialRoute: PageName.splash,
+          getPages: pages,
+          theme: ThemeApp.light,
+          builder: EasyLoading.init(),
+        ),
       ),
     );
   }

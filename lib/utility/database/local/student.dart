@@ -45,7 +45,7 @@ class StudentData {
   final String notes;
 
   @HiveField(13)
-  final Absence absences;
+  final List<Absence>? absences;
 
   StudentData({
     required this.id,

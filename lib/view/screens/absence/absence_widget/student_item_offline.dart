@@ -75,7 +75,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
             SizedBox(width: 10.w),
             TextWidget(
               text: widget.studentDataOfflineModel.name
-                  !.split(' ')
+                  .split(' ')
                   .take(3)
                   .join(' '),
               textStyle: TextStyleManager.textStyle20w700
@@ -84,9 +84,13 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
             const Spacer(),
             Checkbox(
               activeColor: ColorManager.colorPrimary,
-              value: widget.studentDataOfflineModel.absences.attendant,
+              value: widget.studentDataOfflineModel.absences!.last.attendant,
               onChanged: (bool? value) {
-                print(widget.studentDataOfflineModel.absences.attendant );
+                value==false?
+                AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
+                AbsenceCubit.get(context).deleteStudentFromList(studentId: widget.studentDataOfflineModel.id);
+
+
                 // AbsenceCubit.get(context).updateStudentAbsence(
                 //     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
                 //       id: widget.studentDataOfflineModel.student.absences?.last.id,
@@ -96,9 +100,12 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
                 //       absenceDate: widget.studentDataOfflineModel.student.absences?.last.absenceDate ,
                 //       absenceReason: '',
                 //     ));
+
+
                 setState(() {
-                  widget.studentDataOfflineModel.absences.attendant = value ?? false;
+                  widget.studentDataOfflineModel.absences!.last.attendant = value ?? false;
                 });
+
               },
             ),
             SizedBox(width: 10.w),

@@ -19,51 +19,48 @@ class AbsenceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return BlocProvider(
-      create: (BuildContext context) => AbsenceCubit(sl.get<AbsenceRepo>()),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: BlocBuilder<AbsenceCubit,AbsenceStates>(
-            // buildWhen: (previous, current) => current is CheckConnectionState,
-            builder: (BuildContext context, state) {
-              AbsenceCubit.get(context).checkConnection();
-              return  Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const AbsenceAppbar(
-                    text: 'الغياب',
-                  ),
-                  SizedBox(height: 15.h),
-                  const CustomDropDown(
-                    isAbsence: true,
-                  ),
-                  SizedBox(height: 20.h),
-                  AbsenceCubit.get(context).isConnected
-                      ? const AbsenceStudentListView()
-                      : Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return StudentAbsenceItemOffline(
-                            studentDataOfflineModel: AbsenceCubit.get(context)
-                                .offlineStudentAbsence[index],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 35.h,
-                          );
-                        },
-                        itemCount: AbsenceCubit.get(context)
-                            .offlineStudentAbsence
-                            .length),
-                  ),
-                ],
-              );
-            },
-          ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: BlocBuilder<AbsenceCubit,AbsenceStates>(
+          // buildWhen: (previous, current) => current is CheckConnectionState,
+          builder: (BuildContext context, state) {
+            return  Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const AbsenceAppbar(
+                  text: 'الغياب',
+                ),
+                SizedBox(height: 15.h),
+                const CustomDropDown(
+                  isAbsence: true,
+                ),
+                SizedBox(height: 20.h),
+                AbsenceCubit.get(context).isConnected
+                    ? const AbsenceStudentListView()
+                    : Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return StudentAbsenceItemOffline(
+                          studentDataOfflineModel: AbsenceCubit.get(context)
+                              .offlineStudentAbsence[index],
+
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: 35.h,
+                        );
+                      },
+                      itemCount: AbsenceCubit.get(context)
+                          .offlineStudentAbsence
+                          .length),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

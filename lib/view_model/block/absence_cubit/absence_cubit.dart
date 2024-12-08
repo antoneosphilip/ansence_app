@@ -82,19 +82,25 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
             for (var item in r) {
               final student = item.student;
-              final lastAbsenceStudent=item.student.absences!.last;
+              // final lastAbsenceStudent=item.student.absences!.last;
+              final lastAbsence = student.absences?.isNotEmpty == true
+                  ? Absence(
+                id: student.absences!.last.id!,
+                studentId: student.absences!.last.studentId!,
+                absenceDate: student.absences!.last.absenceDate!,
+                absenceReason: student.absences!.last.absenceReason!,
+                attendant: student.absences!.last.attendant!,
+              )
+                  : null;
 
 
-              // إنشاء نموذج الطالب
               final studentModel = StudentData(
                 id: student.id!,
                 name: student.studentName!,
                 studentClass: student.studentClass!,
                 level: student.level!,
                 birthDate: student.birthDate,
-                absences: Absence(id: lastAbsenceStudent.id!, studentId: lastAbsenceStudent.studentId!,
-                    absenceDate: lastAbsenceStudent.absenceDate!, absenceReason: lastAbsenceStudent.absenceReason!,
-                    attendant: lastAbsenceStudent.attendant!),
+                absences: lastAbsence != null ? [lastAbsence] : [],
                 gender: student.gender!,
                 notes: student.notes ?? "",
                 numberOfAbsences: student.numberOfAbsences!,
@@ -132,7 +138,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
     for (var student in storedStudents!) {
       if(student.studentClass==value){
-
+        print("name${student.name} and attend ${student.absences!.last.attendant!}");
         offlineStudentAbsence.add(student);
       }
     }
@@ -148,6 +154,84 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       }
     });
   }
+  List<dynamic> studentDataList=[];
+  Future<void> addAbsenceStudentList({required StudentData studentData}) async {
+    // Open the box
+    final box = await Hive.openBox<List<dynamic>>('studentsAbsenceBox');
+
+    // Retrieve the current list or initialize an empty list if null
+    List<dynamic> studentDataList = box.get('studentsAbsence') ?? [];
+
+    // Add the new student data
+    studentDataList.add(studentData);
+
+    // Save the updated list back to the box
+    await box.put('studentsAbsence', studentDataList);
+
+    // Debug: Check stored data
+    final box2 = await Hive.openBox<List<dynamic>>('studentsBox');
+    List<dynamic>? storedAllStudents = box2.get('students', defaultValue: []);
+
+    for (var student in studentDataList) {
+      print("nameee${student.name}");
+    }
+    for (int i = 0; i < storedAllStudents!.length; i++) {
+      if (storedAllStudents[i].id == studentData.id) {
+        // تعديل القيمة داخل الكائن
+        if (storedAllStudents[i].absences.isNotEmpty) {
+          storedAllStudents[i].absences.last.attendant = false;
+          print("تم التعديل بنجاح");
+          print("Student Name: ${storedAllStudents[i].name}");
+          print("Updated Attendant: ${storedAllStudents[i].absences.last
+              .attendant}");
+        }
+
+        await box2.put('students', storedAllStudents);
+
+        break;
+      }
+    }
+    List<dynamic>? storedAllStudents2 = box2.get('students', defaultValue: []);
+
+    storedAllStudents2?.forEach((element) {
+      print("nameee${element.name} att${element.absences.last.attendant}");
+    },);
+    print("storee data");
+  }
+  Future<void> deleteStudentFromList({required int studentId}) async {
+    // Open the box
+    final box = await Hive.openBox<List<dynamic>>('studentsAbsenceBox');
+
+    // Retrieve the existing list or initialize an empty list
+    List<dynamic> studentDataList = box.get('studentsAbsence') ?? [];
+
+    // Remove the student with the matching ID
+    studentDataList.removeWhere((student) => student.id == studentId);
+
+    // Save the updated list back to the box
+    await box.put('studentsAbsence', studentDataList);
+
+    // Debug: Check stored data after deletion
+    List<dynamic>? storedStudents = box.get('studentsAbsence');
+    if (storedStudents != null) {
+      for (var student in storedStudents) {
+        print("Remaining Student Name: ${student.name}");
+      }
+    } else {
+      print("No students found.");
+    }
+  }
+  List<dynamic> getDataAbsenceOfflineList=[];
+  Future<void> getDataAbsenceOffline()
+  async {
+    final box = await Hive.openBox<List<dynamic>>('studentsAbsenceBox');
+
+    // Retrieve the existing list or initialize an empty list
+    getDataAbsenceOfflineList = box.get('studentsAbsence') ?? [];
+
+  }
+
+
 
 
 }

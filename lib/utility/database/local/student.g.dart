@@ -30,7 +30,7 @@ class StudentDataAdapter extends TypeAdapter<StudentData> {
       shift: fields[10] as int,
       numberOfAbsences: fields[11] as int,
       notes: fields[12] as String,
-      absences: fields[13] as Absence,
+      absences: (fields[13] as List).cast<Absence>(),
     );
   }
 
