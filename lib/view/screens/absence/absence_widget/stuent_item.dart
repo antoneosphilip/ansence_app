@@ -8,6 +8,7 @@ import 'package:summer_school_app/model/update_absence_student/update_absence_st
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
@@ -42,16 +43,8 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
       },
       child: InkWell(
         onTap: () async {
-// افتح الصندوق باستخدام النوع الصحيح
-          final box = await Hive.openBox<List<StudentData>>('studentsBox');
-          print(box.get('students'));
-
-          List<StudentData> storedStudents = (box.get('students', defaultValue: []) as List).cast<StudentData>();
-
-          for (var student in storedStudents) {
-            print("Name: ${student.name}");
-          }
-
+          // final box = await Hive.openBox<List<dynamic>>('studentsBox');
+          // await box.clear();
 
 
         },

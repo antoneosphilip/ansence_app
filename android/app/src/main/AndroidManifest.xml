@@ -6,6 +6,12 @@
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+
+
     <queries>
         <!-- If your app checks for SMS support -->
         <intent>
@@ -25,8 +31,10 @@
 
     <application
         android:label="مدرسة السمائيين"
+        android:usesCleartextTraffic="true"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -53,6 +61,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <receiver
+            android:name="be.tramckrijte.workmanager.WorkManagerBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+
+
     </application>
 
 </manifest>

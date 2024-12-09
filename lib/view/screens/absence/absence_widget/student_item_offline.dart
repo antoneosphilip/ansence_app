@@ -8,6 +8,7 @@ import 'package:summer_school_app/model/update_absence_student/update_absence_st
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
@@ -41,15 +42,14 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
         }
       },
       child: InkWell(
-        onTap: () async {
-
-          final box = await Hive.openBox<List<dynamic>>('studentsBox');
-
-          List<dynamic>? storedStudents = box.get('students', defaultValue: []);
-
-          for (var student in storedStudents!) {
-            print("Nameeee${student.name}");
-          }
+        onTap: ()  {
+          Workmanager().registerOneOffTask(
+            "uploadTask",
+            "uploadAbsenceData",
+            constraints: Constraints(
+              networkType: NetworkType.connected, // يعمل فقط عند توفر الإنترنت
+            ),
+          );
 
 
         },
@@ -88,7 +88,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
               onChanged: (bool? value) {
                 value==false?
                 AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
-                AbsenceCubit.get(context).deleteStudentFromList(studentId: widget.studentDataOfflineModel.id);
+                AbsenceCubit.get(context).deleteStudentFromList(studentData: widget.studentDataOfflineModel);
 
 
                 // AbsenceCubit.get(context).updateStudentAbsence(
