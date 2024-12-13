@@ -32,12 +32,10 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AbsenceAdapter()); // Register the Absence adapter
   Hive.registerAdapter(StudentDataAdapter()); // Register StudentData adapter
-
-
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerOneOffTask("task-identifier", "simpleTask",
+  Workmanager().initialize(callbackDispatcher,isInDebugMode: true);
+  Workmanager().registerPeriodicTask("task-identifier", "simpleTask",
     constraints: Constraints(networkType: NetworkType.connected),
-
+    frequency: Duration(minutes:15)
   );
   print("Workmanager initialized successfully");
   runApp(const MyApp());
@@ -125,7 +123,6 @@ void callbackDispatcher() {
       // تنظيف البيانات
       studentDataList.clear();
       await box.put('studentsAbsence', studentDataList);
-
       print("Task executed successfully.");
     } catch (e) {
       print("Error in background task: $e");

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "771399540510",
+    "project_id": "absence-app-633e1",
+    "storage_bucket": "absence-app-633e1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771399540510:android:4106b19d3095634f59730f",
+        "android_client_info": {
+          "package_name": "com.example.summer_school_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA9OP_0iY2Dl9W4tB-l57jr0uNxCqyh1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

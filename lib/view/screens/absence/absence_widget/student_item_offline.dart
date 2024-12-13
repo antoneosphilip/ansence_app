@@ -42,16 +42,15 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
         }
       },
       child: InkWell(
-        onTap: ()  {
-          Workmanager().registerOneOffTask(
-            "uploadTask",
-            "uploadAbsenceData",
-            constraints: Constraints(
-              networkType: NetworkType.connected, // يعمل فقط عند توفر الإنترنت
-            ),
-          );
-
-
+        onTap: ()  async {
+          final box = await Hive.openBox<List<dynamic>>('studentsAbsenceBox');
+          List<dynamic> studentDataList = box.get('studentsAbsence') ?? [];
+          if(studentDataList.isEmpty){
+            print("empu=itt");
+          }
+          for (var element in studentDataList) {
+            print("namee${element.name}");
+          }
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
