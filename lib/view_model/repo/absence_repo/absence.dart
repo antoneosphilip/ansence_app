@@ -70,4 +70,24 @@ class AbsenceRepo {
       return Left(ErrorHandler.handle(e));
     }
   }
+
+  Future<Either<ErrorHandler, List<Student>>> sendNotification(
+      ) async {
+    try {
+      final response =
+      await DioHelper.postData(url: EndPoint.getAllAbsence, data: {
+
+      });
+      List<dynamic> jsonData = response.data;
+      return Right(jsonData.map((item) => Student.fromJson(item)).toList());
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+
 }
