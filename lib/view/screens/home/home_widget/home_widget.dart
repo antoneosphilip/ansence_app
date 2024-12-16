@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
 
 
+import '../../../core_widget/absence_appbar/absence_appbar.dart';
 import '../../../core_widget/custom_absece_buttom/custom_absence_buttom.dart';
 import '../../absence/absence_screen/absence_screen.dart';
 
@@ -14,16 +15,27 @@ class HomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-         const Center(
-          child: CustomAbsenceButton(text: 'الغياب', screen: AbsenceScreen(),transition: Transition.rightToLeftWithFade,),
+        const AbsenceAppbar(
+          text: "الصفحة الرئيسية",
         ),
-        SizedBox(height: 15.h,),
-         const Center(
-          child: CustomAbsenceButton(text: 'الافتقاد', screen:  MissingScreen(),transition: Transition.fade,),
+        const Spacer(),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
+             const Center(
+              child: CustomAbsenceButton(text: 'الغياب', screen: AbsenceScreen(),transition: Transition.rightToLeftWithFade,),
+            ),
+            SizedBox(height: 15.h,),
+             const Center(
+              child: CustomAbsenceButton(text: 'الافتقاد', screen:  MissingScreen(),transition: Transition.fade,),
+            ),
+          ],
         ),
+        const Spacer(),
+
       ],
     );
   }

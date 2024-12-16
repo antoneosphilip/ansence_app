@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:summer_school_app/model/get_absence_model/get_absence_model.dart';
 import 'package:summer_school_app/model/get_all_absence_model/get_all_absence_model.dart';
 import 'package:summer_school_app/utility/database/local/absence.dart';
+import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../../../model/update_absence_student/update_absence_student_body.dart';
@@ -103,6 +104,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     response.fold(
       (l) {
         print("errrorrrrrrrrr${l.apiErrorModel.message}");
+          showFlutterToast(message: "حدث خطأ في تحميل الداتا حاول لاحقا", state: ToastState.ERROR);
         emit(GetAllAbsenceErrorState(l.apiErrorModel.message.toString()));
       },
       (r) async {
@@ -156,7 +158,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         await box.put('students', studentList);
 
         print("Data stored successfully!");
-
+          showFlutterToast(message: "تم تحميل الداتا بنجاح", state: ToastState.SUCCESS);
         emit(GetAllAbsenceSuccessState());
       },
     );

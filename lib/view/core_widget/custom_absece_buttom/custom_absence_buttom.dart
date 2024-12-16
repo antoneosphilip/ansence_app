@@ -8,9 +8,10 @@ import 'package:summer_school_app/core/style_font_manager/style_manager.dart';
 
 class CustomAbsenceButton extends StatelessWidget {
   final String text;
-  final Widget screen;
+  final Widget? screen;
   final Transition transition;
-  const CustomAbsenceButton({super.key, required this.text, required this.screen,  this.transition=Transition.rightToLeft});
+  final Function()? onPressed;
+  const CustomAbsenceButton({super.key, required this.text,  this.screen,  this.transition=Transition.rightToLeft,  this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class CustomAbsenceButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r), // Rounded corners
           ),
         ),
+        onPressed:screen==null?
         onPressed: () {
           Get.to(
             screen,
