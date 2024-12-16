@@ -161,31 +161,10 @@ void callbackDispatcher() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print(
           'Received message: ${message.notification?.title}, ${message.notification?.body}');
-      const AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'default_channel_id', // معرف القناة
-              'Default Channel', // اسم القناة
-              importance: Importance.max,
-              priority: Priority.high,
-              icon: '@mipmap/launcher_icon',
-              // أيقونة مخصصة
-              color: ColorManager.colorPrimary,
-              // لون الإشعار (أخضر)
-              sound: RawResourceAndroidNotificationSound('notification'),
-              // صوت مخصص
-              actions: [
-            AndroidNotificationAction(
-              'action_1',
-              'Open',
-            ),
-            AndroidNotificationAction(
-              'action_2',
-              'Dismiss',
-            )
-          ]);
+
 
       const NotificationDetails notificationDetails =
-          NotificationDetails(android: androidNotificationDetails);
+          NotificationDetails();
 
       await _flutterLocalNotificationsPlugin.show(
         0, // معرف الإشعار (يمكن تغييره حسب الحاجة)
@@ -199,9 +178,7 @@ void callbackDispatcher() {
 
       };
       List<String> scopes = [
-        "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/firebase.database",
-        "https://www.googleapis.com/auth/firebase.messaging"
+
       ];
       http.Client client = await auth.clientViaServiceAccount(
         auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
