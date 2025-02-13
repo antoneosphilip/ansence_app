@@ -30,14 +30,15 @@ class StudentDataAdapter extends TypeAdapter<StudentData> {
       shift: fields[10] as int,
       numberOfAbsences: fields[11] as int,
       notes: fields[12] as String,
-      absences: (fields[13] as List).cast<Absence>(),
+      absences: (fields[13] as List?)?.cast<Absence>(),
+      profileImage: fields[14] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, StudentData obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -65,7 +66,9 @@ class StudentDataAdapter extends TypeAdapter<StudentData> {
       ..writeByte(12)
       ..write(obj.notes)
       ..writeByte(13)
-      ..write(obj.absences);
+      ..write(obj.absences)
+      ..writeByte(14)
+      ..write(obj.profileImage);
   }
 
   @override

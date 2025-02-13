@@ -12,6 +12,7 @@ class GetMissingStudentModel {
   int? shift;
   int? numberOfAbsences;
   String? notes;
+  String? profileImage;
   List<Absences>? absences;
 
   GetMissingStudentModel({
@@ -29,6 +30,7 @@ class GetMissingStudentModel {
     this.numberOfAbsences,
     this.notes,
     this.absences,
+    this.profileImage,
   });
 
   GetMissingStudentModel.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class GetMissingStudentModel {
     shift = json['shift'];
     numberOfAbsences = json['numberOfAbsences'];
     notes = json['notes'];
+    profileImage=json['profileImage'];
 
     // Initialize the absences list only if there's data in json['absences']
     if (json['absences'] != null) {
@@ -70,6 +73,7 @@ class GetMissingStudentModel {
     data['shift'] = shift;
     data['numberOfAbsences'] = numberOfAbsences;
     data['notes'] = notes;
+    data['profileImage']=profileImage;
 
     if (absences != null) {
       data['absences'] = absences!.map((v) => v.toJson()).toList();

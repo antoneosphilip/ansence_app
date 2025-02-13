@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
 
-void  showFlutterToast({required message,required ToastState state})=>Fluttertoast.showToast(
+void  showFlutterToast({required message,required ToastState state,int? time})=>Fluttertoast.showToast(
     msg: message,
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 1,
+    timeInSecForIosWeb: time??1,
     backgroundColor: chooseToastColor(state),
     textColor: Colors.white,
     fontSize: 16.0,

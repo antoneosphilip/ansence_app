@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:hive/hive.dart';
 import 'absence.dart';
 
@@ -47,6 +48,9 @@ class StudentData {
   @HiveField(13)
   final List<Absence>? absences;
 
+  @HiveField(14)
+  final String? profileImage;
+
   StudentData({
     required this.id,
     required this.name,
@@ -62,5 +66,6 @@ class StudentData {
     required this.numberOfAbsences,
     required this.notes,
     required this.absences,
+    this.profileImage,
   });
 }

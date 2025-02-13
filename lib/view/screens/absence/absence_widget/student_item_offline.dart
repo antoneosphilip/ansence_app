@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,76 +43,65 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
 
         }
       },
-      child: InkWell(
-        onTap: ()  async {
-          final box = await Hive.openBox<List<dynamic>>('studentsAbsenceBox');
-          List<dynamic> studentDataList = box.get('studentsAbsence') ?? [];
-          if(studentDataList.isEmpty){
-            print("empu=itt");
-          }
-          for (var element in studentDataList) {
-            print("namee${element.name}");
-          }
-        },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(width: 16.w),
-            InkWell(
-              onTap: () {
-                print("get data");
-                AbsenceCubit.get(context).getAllAbsence();
-              },
-              child: Container(
-                width: 50.w,
-                height: 50.h,
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/default_image.jpg'))),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(width: 16.w),
+          Container(
+            width: 50.w,
+            height: 50.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: widget.studentDataOfflineModel.profileImage != null && widget.studentDataOfflineModel.profileImage!.isNotEmpty
+                    ? FileImage(File(widget.studentDataOfflineModel.profileImage!)) as ImageProvider
+                    : const AssetImage('assets/images/default_image.jpg'),
               ),
             ),
-            SizedBox(width: 10.w),
-            TextWidget(
-              text: widget.studentDataOfflineModel.name
-                  .split(' ')
-                  .take(3)
-                  .join(' '),
-              textStyle: TextStyleManager.textStyle20w700
-                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
-            ),
-            const Spacer(),
-            Checkbox(
-              activeColor: ColorManager.colorPrimary,
-              value: widget.studentDataOfflineModel.absences!.last.attendant,
-              onChanged: (bool? value) {
-                value==false?
-                AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
-                AbsenceCubit.get(context).deleteStudentFromList(studentData: widget.studentDataOfflineModel);
+          ),
+          SizedBox(width: 10.w),
+          TextWidget(
+            text: widget.studentDataOfflineModel.name
+                .split(' ')
+                .take(3)
+                .join(' '),
+            textStyle: TextStyleManager.textStyle20w700
+                .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
+          ),
+          const Spacer(),
+          Checkbox(
+            activeColor: ColorManager.colorPrimary,
+            value: widget.studentDataOfflineModel.absences!.last.attendant,
+            onChanged: (bool? value) {
+              value==false?
+              AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
+              AbsenceCubit.get(context).deleteStudentFromList(studentData: widget.studentDataOfflineModel);
 
 
-                // AbsenceCubit.get(context).updateStudentAbsence(
-                //     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
-                //       id: widget.studentDataOfflineModel.student.absences?.last.id,
-                //       studentId:
-                //       widget.studentDataOfflineModel.student.absences?.last.studentId,
-                //       attendant: !widget.studentDataOfflineModel.attendant,
-                //       absenceDate: widget.studentDataOfflineModel.student.absences?.last.absenceDate ,
-                //       absenceReason: '',
-                //     ));
+              // AbsenceCubit.get(context).updateStudentAbsence(
+              //     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
+              //       id: widget.studentDataOfflineModel.student.absences?.last.id,
+              //       studentId:
+              //       widget.studentDataOfflineModel.student.absences?.last.studentId,
+              //       attendant: !widget.studentDataOfflineModel.attendant,
+              //       absenceDate: widget.studentDataOfflineModel.student.absences?.last.absenceDate ,
+              //       absenceReason: '',
+              //     ));
 
 
-                setState(() {
-                  widget.studentDataOfflineModel.absences!.last.attendant = value ?? false;
-                });
+              setState(() {
+                widget.studentDataOfflineModel.absences!.last.attendant = value ?? false;
+              });
 
-              },
-            ),
-            SizedBox(width: 10.w),
-          ],
-        ),
+            },
+          ),
+          SizedBox(width: 10.w),
+        ],
       ),
     );
   }
 }
+
+

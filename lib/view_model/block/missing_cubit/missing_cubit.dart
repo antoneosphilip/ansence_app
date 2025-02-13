@@ -88,14 +88,12 @@ class MissingCubit extends Cubit<MissingStates> {
   bool checkIfDoneAllAbsence(
       {required GetMissingStudentModel getMissingStudentModel}) {
     for (var element in studentMissingModelList) {
-      for(var element2 in element.absences!){
-        if(element2.studentId==element.absences!.last.studentId)
-        {
-          isDoneAbsence=true;
-        }
-        else{
-          isDoneAbsence=false;
-        }
+      if(element.absences!.last.absenceReason!.isNotEmpty){
+        isDoneAbsence=true;
+      }
+      else{
+        isDoneAbsence=false;
+        break;
       }
     }print("isdONNEE$isDoneAbsence");
     if(isDoneAbsence&&!isShowFirstOne) {

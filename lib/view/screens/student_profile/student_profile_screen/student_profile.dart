@@ -11,9 +11,7 @@ import 'package:summer_school_app/view/core_widget/xstation_button_custom/x_stat
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_states.dart';
 
-import '../../../../core/service_locator/service_locator.dart';
 import '../../../../model/get_missing_student_model/get_missing_student_model.dart';
-import '../../../../view_model/repo/missing_repo/missing_repo.dart';
 import '../student_profile_widget/call_buttons.dart';
 import '../student_profile_widget/reason_text_form_field.dart';
 
@@ -156,7 +154,7 @@ class StudentProfile extends StatelessWidget {
                                       .formKey
                                       .currentState!
                                       .validate()) {
-                                   await MissingCubit.get(context)
+                                    await MissingCubit.get(context)
                                         .updateStudentMissing(
                                             updateAbsenceStudentBody:
                                                 UpdateAbsenceStudentBody(
@@ -173,9 +171,8 @@ class StudentProfile extends StatelessWidget {
                                     ));
                                     MissingCubit.get(context)
                                         .checkIfDoneAllAbsence(
-                                        getMissingStudentModel:
-                                        getMissingStudentModel);
-
+                                            getMissingStudentModel:
+                                                getMissingStudentModel);
                                   }
                                 }),
                           ),

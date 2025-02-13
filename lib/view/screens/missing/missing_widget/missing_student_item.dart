@@ -8,6 +8,8 @@ import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.d
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../model/get_missing_student_model/get_missing_student_model.dart';
+import '../../../core_widget/custom_Cached_network/cusotm_chaced_netwok.dart';
+import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 
 class MissingStudentItem extends StatelessWidget {
   final GetMissingStudentModel studentMissingModel;
@@ -30,13 +32,13 @@ class MissingStudentItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(width: 16.w),
-          Container(
-            width: 50.w,
-            height: 50.h,
-            decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                    image: AssetImage('assets/images/default_image.jpg'))),
+          GestureDetector(
+            onTap: () => showImageDialog(context, studentMissingModel.profileImage,),
+            child: SizedBox(
+              width: 50.w,
+              height: 50.h,
+              child: CustomCachedImage(imageUrl:  studentMissingModel.profileImage),
+            ),
           ),
           SizedBox(width: 10.w),
           TextWidget(

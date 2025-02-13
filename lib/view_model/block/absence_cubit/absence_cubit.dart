@@ -147,6 +147,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
             dadPhone: student.dadPhone,
             mamPhone: student.mamPhone,
             studPhone: student.studPhone,
+            profileImage: student.profileImage,
           );
 
           if (!studentList
@@ -190,7 +191,10 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         // Workmanager().registerOneOffTask("task-identifier", "simpleTask",
         //   constraints: Constraints(networkType: NetworkType.connected),
         // );
+        showFlutterToast(message: "انت الان في وضع الاونلاين", state: ToastState.SUCCESS,time: 2);
+
       } else {
+        showFlutterToast(message: "انت الان في وضع الاوفلاين", state: ToastState.ERROR,time: 2);
         isConnected = false;
       }
     });

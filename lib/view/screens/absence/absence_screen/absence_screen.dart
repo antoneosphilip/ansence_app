@@ -46,7 +46,6 @@ class AbsenceScreen extends StatelessWidget {
                         return StudentAbsenceItemOffline(
                           studentDataOfflineModel: AbsenceCubit.get(context)
                               .offlineStudentAbsence[index],
-
                         );
                       },
                       separatorBuilder: (context, index) {
