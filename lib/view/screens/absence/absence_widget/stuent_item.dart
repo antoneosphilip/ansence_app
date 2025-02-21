@@ -43,51 +43,62 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
           }
         }
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(width: 16.w),
-          GestureDetector(
-            onTap: () => showImageDialog(context, widget.studentAbsenceModel.student.profileImage,),
-            child: SizedBox(
-              width: 50.w,
-              height: 50.h,
-             child: CustomCachedImage(imageUrl: widget.studentAbsenceModel.student.profileImage,),
+      child: InkWell(
+        onTap: () {
+          final now = DateTime.now();
+          print("hourr ${ DateTime.wednesday}");
+          print("hourr ${now.day}");
+
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 16.w),
+            GestureDetector(
+              onTap: (){
+                print( widget.studentAbsenceModel.student.profileImage,);
+                showImageDialog(context, widget.studentAbsenceModel.student.profileImage,);
+              },
+              child: SizedBox(
+                width: 50.w,
+                height: 50.h,
+               child: CustomCachedImage(imageUrl: widget.studentAbsenceModel.student.profileImage,),
+              ),
             ),
-          ),
-          SizedBox(width: 10.w),
-          TextWidget(
-            text: widget.studentAbsenceModel.student.studentName!
-                .split(' ')
-                .take(3)
-                .join(' '),
-            textStyle: TextStyleManager.textStyle20w700
-                .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
-          ),
-          const Spacer(),
-          Checkbox(
-            activeColor: ColorManager.colorPrimary,
-            value: widget.studentAbsenceModel.attendant,
-            onChanged: (bool? value) {
-              AbsenceCubit.get(context).updateStudentAbsence(
-                  updateAbsenceStudentBody: UpdateAbsenceStudentBody(
-                    id: widget.studentAbsenceModel.student.absences?.last.id,
-                    studentId: widget
-                        .studentAbsenceModel.student.absences?.last.studentId,
-                    attendant: !widget.studentAbsenceModel.attendant,
-                    absenceDate: widget
-                        .studentAbsenceModel.student.absences?.last
-                        .absenceDate,
-                    absenceReason: '',
-                  ));
-              setState(() {
-                widget.studentAbsenceModel.attendant = value ?? false;
-              });
-            },
-          ),
-          SizedBox(width: 10.w),
-        ],
+            SizedBox(width: 10.w),
+            TextWidget(
+              text: widget.studentAbsenceModel.student.studentName!
+                  .split(' ')
+                  .take(3)
+                  .join(' '),
+              textStyle: TextStyleManager.textStyle20w700
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Checkbox(
+              activeColor: ColorManager.colorPrimary,
+              value: widget.studentAbsenceModel.attendant,
+              onChanged: (bool? value) {
+                AbsenceCubit.get(context).updateStudentAbsence(
+                    updateAbsenceStudentBody: UpdateAbsenceStudentBody(
+                      id: widget.studentAbsenceModel.student.absences?.last.id,
+                      studentId: widget
+                          .studentAbsenceModel.student.absences?.last.studentId,
+                      attendant: !widget.studentAbsenceModel.attendant,
+                      absenceDate: widget
+                          .studentAbsenceModel.student.absences?.last
+                          .absenceDate,
+                      absenceReason: '',
+                    ));
+                setState(() {
+                  widget.studentAbsenceModel.attendant = value ?? false;
+                });
+              },
+            ),
+            SizedBox(width: 10.w),
+          ],
+        ),
       ),
     );
   }

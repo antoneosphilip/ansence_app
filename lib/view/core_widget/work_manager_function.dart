@@ -217,7 +217,8 @@ void callbackDispatcher() {
     if (task == "task2") {
       print("successsssss");
       final now = DateTime.now();
-      if ((now.weekday == DateTime.friday && now.hour < 15)) {
+
+      if (now.weekday == DateTime.friday && now.hour < 15) {
         try {
           final response = await DioHelper.getData(url: EndPoint.getAllAbsence);
           final box = await Hive.openBox<List<dynamic>>('studentsBox');
@@ -257,6 +258,7 @@ void callbackDispatcher() {
               dadPhone: student.dadPhone,
               mamPhone: student.mamPhone,
               studPhone: student.studPhone,
+              profileImage: student.profileImage,
             );
 
             if (!studentList

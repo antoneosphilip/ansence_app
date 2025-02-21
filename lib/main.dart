@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -46,14 +47,14 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AbsenceAdapter()); // Register the Absence adapter
   Hive.registerAdapter(StudentDataAdapter()); // Regist er StudentData adapter
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: !kReleaseMode);
   Workmanager().registerPeriodicTask("task-identifier", "task1",
       constraints: Constraints(networkType: NetworkType.connected),
       frequency: const Duration(minutes:17));
   Workmanager().registerPeriodicTask(
     "download_data", "task2",
     constraints: Constraints(networkType: NetworkType.connected),
-    frequency: const Duration(minutes:15),
+    frequency: const Duration(hours:2),
   );
   Workmanager().registerPeriodicTask(
     "alarm", "task3",

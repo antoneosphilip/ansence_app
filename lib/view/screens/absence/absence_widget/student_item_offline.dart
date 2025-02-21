@@ -15,6 +15,8 @@ import 'package:workmanager/workmanager.dart';
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../utility/database/local/student.dart';
+import '../../../core_widget/custom_Cached_network/cusotm_chaced_netwok.dart';
+import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 
 class StudentAbsenceItemOffline extends StatefulWidget {
   final StudentData studentDataOfflineModel;
@@ -48,17 +50,12 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(width: 16.w),
-          Container(
-            width: 50.w,
-            height: 50.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: widget.studentDataOfflineModel.profileImage != null && widget.studentDataOfflineModel.profileImage!.isNotEmpty
-                    ? FileImage(File(widget.studentDataOfflineModel.profileImage!)) as ImageProvider
-                    : const AssetImage('assets/images/default_image.jpg'),
-              ),
+          GestureDetector(
+            onTap: () => showImageDialog(context,widget.studentDataOfflineModel.profileImage),
+            child: Container(
+              width: 50.w,
+              height: 50.h,
+              child: CustomCachedImage(imageUrl: widget.studentDataOfflineModel.profileImage,),
             ),
           ),
           SizedBox(width: 10.w),

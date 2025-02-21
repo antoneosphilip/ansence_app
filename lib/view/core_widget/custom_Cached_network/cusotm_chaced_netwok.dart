@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:summer_school_app/core/color_manager/color_manager.dart';
 
 class CustomCachedImage extends StatelessWidget {
   final String? imageUrl;
@@ -19,9 +20,7 @@ class CustomCachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (localImage != null && localImage!.isNotEmpty && File(localImage!).existsSync()) {
-      return _buildImage(Image.file(File(localImage!), fit: BoxFit.cover));
-    } else if (imageUrl != null && imageUrl!.isNotEmpty) {
+   if (imageUrl != null && imageUrl!.isNotEmpty) {
       return CachedNetworkImage(
         imageUrl: imageUrl!,
         imageBuilder: (context, imageProvider) => _buildImage(Image(image: imageProvider)),
@@ -55,7 +54,7 @@ class CustomCachedImage extends StatelessWidget {
       width: size,
       height: size,
       child: const Center(
-        child: CircularProgressIndicator(strokeWidth: 2),
+        child: CircularProgressIndicator(strokeWidth: 2,color: ColorManager.colorPrimary,),
       ),
     );
   }
