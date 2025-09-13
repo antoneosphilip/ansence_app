@@ -80,6 +80,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
               activeColor: ColorManager.colorPrimary,
               value: widget.studentAbsenceModel.attendant,
               onChanged: (bool? value) {
+
                 AbsenceCubit.get(context).updateStudentAbsence(
                     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
                       id: widget.studentAbsenceModel.student.absences?.last.id,
@@ -94,6 +95,8 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
                 setState(() {
                   widget.studentAbsenceModel.attendant = value ?? false;
                 });
+
+                AbsenceCubit.get(context).changeAbsence(isValue: value??false);
               },
             ),
             SizedBox(width: 10.w),

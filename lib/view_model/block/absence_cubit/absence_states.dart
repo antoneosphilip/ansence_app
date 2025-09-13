@@ -27,4 +27,5 @@ class GetAllAbsenceErrorState extends AbsenceStates{
 class GetAllAbsenceSuccessState extends AbsenceStates{}
 class OfflineAbsenceStudentsState extends AbsenceStates{}
 class CheckConnectionState extends AbsenceStates{}
+class ChangeAbsenceLength extends AbsenceStates{}
 

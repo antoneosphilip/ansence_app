@@ -25,6 +25,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
   List<GetAllAbsenceModel> getAllStudentAbsenceModel = [];
   StreamSubscription? _subscription;
   bool isConnected = true;
+  int attendanceCount = 0;
 
   Future<void> getAbsence({required int id}) async {
     emit(GetAbsenceLoadingState());
@@ -39,6 +40,13 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         // }
         studentAbsenceModel.clear();
         studentAbsenceModel.addAll(r);
+        attendanceCount=0;
+        for(int i=0;i<r.length;i++){
+          if(r[i].student.absences!.last.attendant!){
+            attendanceCount=attendanceCount+1;
+          }
+        }
+
         emit(GetAbsenceSuccessState());
       },
     );
@@ -49,6 +57,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     emit(UpdateStudentAbsenceLoadingState());
     final response = await absenceRepo.updateStudentAbsence(
         updateAbsenceStudentBody: updateAbsenceStudentBody);
+
     response.fold(
       (l) {
         print("errorrrrr");
@@ -167,6 +176,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
   List<StudentData> offlineStudentAbsence = [];
 
+  int absenceLengthOffline=0;
   Future<void> addOfflineListToAbsence({required int value}) async {
     offlineStudentAbsence = [];
     final box = await Hive.openBox<List<dynamic>>('studentsBox');
@@ -178,6 +188,12 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         print(
             "name${student.name} and attend ${student.absences!.last.attendant!}");
         offlineStudentAbsence.add(student);
+      }
+    }
+    absenceLengthOffline=0;
+    for(int i=0;i<offlineStudentAbsence.length;i++){
+      if(offlineStudentAbsence[i].absences!.last.attendant){
+        absenceLengthOffline=absenceLengthOffline+1;
       }
     }
     emit(OfflineAbsenceStudentsState());
@@ -235,6 +251,8 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
           print(
               "Updated Attendant: ${storedAllStudents[i].absences.last.attendant}");
+          absenceLengthOffline=absenceLengthOffline-1;
+          emit(ChangeAbsenceLength());
         }
 
         await box2.put('students', storedAllStudents);
@@ -272,6 +290,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
           }
         }
       }
+      absenceLengthOffline=absenceLengthOffline+1;
+      emit(ChangeAbsenceLength());
+
     }
     else{
       studentData.absences!.last.attendant == true;
@@ -324,4 +345,16 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     // Retrieve the existing list or initialize an empty list
     getDataAbsenceOfflineList = box.get('studentsAbsence') ?? [];
   }
+
+
+
+  void changeAbsence({required bool isValue}) {
+    print("valuueee $isValue");
+    attendanceCount = isValue
+        ? attendanceCount + 1
+        : attendanceCount - 1;
+    print("legnthhh ${studentAbsenceModel.length}");
+    emit(ChangeAbsenceLength());
+  }
+
 }

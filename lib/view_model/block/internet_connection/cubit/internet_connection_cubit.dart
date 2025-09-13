@@ -35,6 +35,7 @@ class InternetConnectionCubit extends Cubit<InternetConnectionState> {
     });
   }
 
+
   @override
   Future<void> close() async {
     _subscription!.cancel();
