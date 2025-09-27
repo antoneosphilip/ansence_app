@@ -6,6 +6,7 @@ import 'package:summer_school_app/view/screens/details_student/student_details_s
 import 'package:summer_school_app/view/screens/home/home_screen/home_screen.dart';
 import 'package:summer_school_app/view/screens/home_layout/home_layout.dart';
 
+import '../../view/screens/login/login_screen/login_screen.dart';
 import '../../view/screens/setting/setting_screen/loading_Screen.dart';
 import '../../view/screens/splash/splash_screen/splash_screen.dart';
 
@@ -27,8 +28,11 @@ List<GetPage> pages = [
   GetPage(
     name: PageName.loading,
     page: () =>  const LoadingScreen(),
+  ),
+  GetPage(
+    name: PageName.login,
+    page: () =>   LoginPageWrapper(),
   )
-
 
 
 

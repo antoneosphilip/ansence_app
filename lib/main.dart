@@ -245,7 +245,7 @@ class _MyAppState extends State<MyApp> {
                     locale: const Locale('ar'),
                     useInheritedMediaQuery: true,
                     debugShowCheckedModeBanner: false,
-                    initialRoute: PageName.splash,
+                    initialRoute: PageName.login,
                     getPages: pages,
                     theme: ThemeApp.light,
                     builder: EasyLoading.init(),
