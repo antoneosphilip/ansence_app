@@ -116,6 +116,7 @@ class DioHelper {
   }) async {
     dio.options.headers = {
       'Authorization': 'Bearer ${token ?? ''}',
+      'Content-Type':'application/json'
     };
     debugPrint("-------------End Point----------------");
     debugPrint(url);
@@ -140,7 +141,7 @@ class DioHelper {
       return response;
     } on DioError catch (e) {
       debugPrint("-------------Error Data------------------");
-      debugPrint('error is ${e.response!.data}');
+      debugPrint('error is ${e.response?.data}');
       debugPrint("-------------Error Data------------------");
       rethrow;
     }

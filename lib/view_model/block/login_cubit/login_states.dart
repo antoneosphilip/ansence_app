@@ -3,14 +3,14 @@ abstract class AuthStates {}
 
 class AuthInitialState extends AuthStates {}
 
-class AuthLoadingState extends AuthStates {}
+class SignUpLoadingState extends AuthStates {}
 
-class AuthSuccessState extends AuthStates {}
+class SignUpSuccessState extends AuthStates {}
 
-class AuthErrorState extends AuthStates {
+class SignUpErrorState extends AuthStates {
   final String error;
 
-  AuthErrorState(this.error);
+  SignUpErrorState(this.error);
 }
 
 class ChangeClassState extends AuthStates {}

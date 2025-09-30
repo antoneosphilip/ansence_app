@@ -32,47 +32,29 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    AuthCubit.get(context).animationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    AuthCubit.get(context).fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: AuthCubit.get(context).animationController, curve: Curves.easeInOut),
     );
 
-    _slideAnimation = Tween<Offset>(
+    AuthCubit.get(context).slideAnimation = Tween<Offset>(
       begin: Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: AuthCubit.get(context).animationController, curve: Curves.easeOut));
 
-    _animationController.forward();
+    AuthCubit.get(context).animationController.forward();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
+
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -390,9 +372,9 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
       backgroundColor: ColorManager.colorWhite,
       body: SafeArea(
         child: FadeTransition(
-          opacity: _fadeAnimation,
+          opacity: AuthCubit.get(context).fadeAnimation,
           child: SlideTransition(
-            position: _slideAnimation,
+            position: AuthCubit.get(context).slideAnimation,
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(context.w > 600 ? context.w * 0.05 : context.w * 0.05),
@@ -401,14 +383,14 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                   constraints: BoxConstraints(maxWidth: 600),
                   child: BlocConsumer<AuthCubit, AuthStates>(
                     listener: (context, state) {
-                      if (state is AuthSuccessState) {
+                      if (state is SignUpSuccessState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('تم إنشاء الحساب بنجاح!'),
                             backgroundColor: ColorManager.colorPrimary,
                           ),
                         );
-                      } else if (state is AuthErrorState) {
+                      } else if (state is SignUpErrorState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.error),
@@ -422,7 +404,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                       final cubit = AuthCubit.get(context);
 
                       return Form(
-                        key: _formKey,
+                        key: cubit.formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -470,7 +452,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
 
                             // Form Fields
                             _buildTextField(
-                              controller: _nameController,
+                              controller: AuthCubit.get(context).nameController,
                               labelText: 'الاسم الكامل',
                               prefixIcon: Icons.person,
                               validator: (value) {
@@ -482,7 +464,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             ),
 
                             _buildTextField(
-                              controller: _phoneController,
+                              controller: AuthCubit.get(context).phoneController,
                               labelText: 'رقم الهاتف',
                               prefixIcon: Icons.phone,
                               keyboardType: TextInputType.phone,
@@ -495,7 +477,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             ),
 
                             _buildTextField(
-                              controller: _emailController,
+                              controller: AuthCubit.get(context).emailController,
                               labelText: 'البريد الإلكتروني',
                               prefixIcon: Icons.email,
                               keyboardType: TextInputType.emailAddress,
@@ -511,7 +493,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             ),
 
                             _buildTextField(
-                              controller: _passwordController,
+                              controller: AuthCubit.get(context).passwordController,
                               labelText: 'كلمة المرور',
                               prefixIcon: Icons.lock,
                               obscureText: true,
@@ -527,7 +509,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                             ),
 
                             _buildTextField(
-                              controller: _confirmPasswordController,
+                              controller: AuthCubit.get(context).confirmPasswordController,
                               labelText: 'تأكيد كلمة المرور',
                               prefixIcon: Icons.lock_outline,
                               obscureText: true,
@@ -535,7 +517,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 if (value == null || value.isEmpty) {
                                   return 'يرجى تأكيد كلمة المرور';
                                 }
-                                if (value != _passwordController.text) {
+                                if (value != AuthCubit.get(context).passwordController.text) {
                                   return 'كلمة المرور غير متطابقة';
                                 }
                                 return null;
@@ -558,15 +540,11 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 maxHeight: 60.w,
                               ),
                               child: ElevatedButton(
-                                onPressed: state is AuthLoadingState
+                                onPressed: state is SignUpLoadingState
                                     ? null
                                     : () {
-                                  if (_formKey.currentState!.validate()) {
+                                  if (cubit.formKey.currentState!.validate()) {
                                     cubit.signUp(
-                                      name: _nameController.text,
-                                      phone: _phoneController.text,
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
                                     );
                                   }
                                 },
@@ -578,7 +556,7 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                   ),
                                   elevation: 3,
                                 ),
-                                child: state is AuthLoadingState
+                                child: state is SignUpLoadingState
                                     ? SizedBox(
                                   width: 20.w,
                                   height: 20.h,

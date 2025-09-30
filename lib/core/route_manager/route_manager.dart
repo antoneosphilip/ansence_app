@@ -34,9 +34,6 @@ List<GetPage> pages = [
     page: () =>   LoginPageWrapper(),
   )
 
-
-
-
   // GetPage(
   //     name: PageName.rateScreen,
   //     page: () =>  RateScreen(),

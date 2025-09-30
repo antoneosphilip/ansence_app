@@ -7,12 +7,14 @@ import 'package:summer_school_app/view/screens/sign_up/sign_up_screen/sign_up_sc
 import 'package:summer_school_app/view_model/block/login_cubit/login_cubit.dart';
 import 'package:summer_school_app/view_model/block/login_cubit/login_states.dart';
 import '../../../../core/color_manager/color_manager.dart';
+import '../../../../core/service_locator/service_locator.dart';
+import '../../../../view_model/repo/auth_repo/auth.dart';
 
 class LoginPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubit(),
+      create: (context) => AuthCubit(sl.get<AuthRepo>()),
       child: LoginPage(),
     );
   }

@@ -32,6 +32,7 @@ import 'package:summer_school_app/view/screens/setting/setting_screen/loading_Sc
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 import 'package:summer_school_app/view_model/repo/absence_repo/absence.dart';
+import 'package:summer_school_app/view_model/repo/auth_repo/auth.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/color_manager/color_manager.dart';

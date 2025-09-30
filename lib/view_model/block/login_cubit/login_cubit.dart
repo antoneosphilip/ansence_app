@@ -1,14 +1,30 @@
+import 'package:either_dart/either.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:summer_school_app/model/auth_response/sign_up_body.dart';
 
 import '../../../model/auth_response/class_data.dart';
+import '../../repo/auth_repo/auth.dart';
 import 'login_states.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
-  AuthCubit() : super(AuthInitialState());
+  AuthRepo authRepo;
+
+  AuthCubit(this.authRepo) : super(AuthInitialState());
 
   static AuthCubit get(context) => BlocProvider.of<AuthCubit>(context);
 
   List<ClassData> classes = [];
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  late AnimationController animationController;
+  late Animation<double> fadeAnimation;
+  late Animation<Offset> slideAnimation;
 
   void addClass() {
     classes.add(ClassData());
@@ -61,29 +77,38 @@ class AuthCubit extends Cubit<AuthStates> {
     return null;
   }
 
-  void signUp({
-    required String name,
-    required String phone,
-    required String email,
-    required String password,
-  }) {
+  RegisterBody registerBody=RegisterBody(name: '', email: '', password: '', confirmPassword: '', phoneNumber: '', servantClasses: {});
+  Map<String,int> servantClassesMap={};
+  void signUp() {
     String? classValidationMessage = getClassValidationMessage();
 
     if (classValidationMessage != null) {
-      emit(AuthErrorState(classValidationMessage));
+      emit(SignUpErrorState(classValidationMessage));
       return;
     }
-
-    emit(AuthLoadingState());
-
-    try {
-      Future.delayed(Duration(seconds: 2), () {
-        emit(AuthSuccessState());
-      });
-    } catch (error) {
-      emit(AuthErrorState('حدث خطأ غير متوقع'));
+    for(var item in classes){
+      servantClassesMap[item.classNumber.toString()]=item.subject=='ألحان'?1:item.subject=='قبطي'?2:item.subject=='طقس'?3:0;
     }
+
+    registerBody = RegisterBody(name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        confirmPassword: confirmPasswordController.text,
+        phoneNumber: phoneController.text,
+        servantClasses:servantClassesMap
+    );
+    emit(SignUpLoadingState());
+    print("dataa ${registerBody.servantClasses}");
+
+    final response = authRepo.signUp(registerBody: registerBody);
+    response.fold((left){
+      emit(SignUpErrorState(left.apiErrorModel.message.toString()));
+    }, (right) {
+    emit(SignUpSuccessState());
+    },
+    );
   }
+
   void login({
     required String phone,
     required String password,
@@ -111,5 +136,15 @@ class AuthCubit extends Cubit<AuthStates> {
       emit(LoginErrorState('حدث خطأ غير متوقع'));
     }
   }
+  // @override
+  // void dispose() {
+  //   animationController.dispose();
+  //   nameController.dispose();
+  //   phoneController.dispose();
+  //   emailController.dispose();
+  //   passwordController.dispose();
+  //   confirmPasswordController.dispose();
+  //   super.dispose();
+  // }
 }
 
