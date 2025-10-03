@@ -1,6 +1,7 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:summer_school_app/model/auth_response/sign_in_body.dart';
 import 'package:summer_school_app/model/auth_response/sign_up_body.dart';
 
 import '../../../model/auth_response/class_data.dart';
@@ -77,7 +78,8 @@ class AuthCubit extends Cubit<AuthStates> {
     return null;
   }
 
-  RegisterBody registerBody=RegisterBody(name: '', email: '', password: '', confirmPassword: '', phoneNumber: '', servantClasses: {});
+  RegisterBody? registerBody;
+  LoginBody? loginBody;
   Map<String,int> servantClassesMap={};
   void signUp() {
     String? classValidationMessage = getClassValidationMessage();
@@ -98,9 +100,9 @@ class AuthCubit extends Cubit<AuthStates> {
         servantClasses:servantClassesMap
     );
     emit(SignUpLoadingState());
-    print("dataa ${registerBody.servantClasses}");
+    print("dataa ${registerBody?.servantClasses}");
 
-    final response = authRepo.signUp(registerBody: registerBody);
+    final response = authRepo.signUp(registerBody: registerBody!);
     response.fold((left){
       emit(SignUpErrorState(left.apiErrorModel.message.toString()));
     }, (right) {
@@ -109,32 +111,23 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  void login({
-    required String phone,
-    required String password,
-  }) {
+  void login() {
+
     emit(LoginLoadingState());
 
-    try {
-      // محاكاة عملية تسجيل الدخول
-      Future.delayed(Duration(seconds: 2), () {
-        // يمكن إضافة validation هنا
-        if (phone.isEmpty || password.isEmpty) {
-          emit(LoginErrorState('يرجى ملء جميع الحقول'));
-          return;
-        }
+    loginBody = LoginBody(
+      password: passwordController.text,
+      phoneNumber: phoneController.text
+    );
+    print("dataa ${registerBody?.servantClasses}");
 
-        if (password.length < 6) {
-          emit(LoginErrorState('كلمة المرور يجب أن تكون 6 أحرف على الأقل'));
-          return;
-        }
-
-        // في حالة النجاح
-        emit(LoginSuccessState());
-      });
-    } catch (error) {
-      emit(LoginErrorState('حدث خطأ غير متوقع'));
-    }
+    final response = authRepo.signIn(loginBody: loginBody!);
+    response.fold((left){
+      emit(LoginErrorState(left.apiErrorModel.message.toString()));
+    }, (right) {
+      emit(LoginSuccessState());
+    },
+    );
   }
   // @override
   // void dispose() {

@@ -13,6 +13,8 @@ class SignUpErrorState extends AuthStates {
   SignUpErrorState(this.error);
 }
 
+
+
 class ChangeClassState extends AuthStates {}
 
 class LoginLoadingState extends AuthStates {}

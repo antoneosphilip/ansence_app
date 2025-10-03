@@ -13,6 +13,7 @@ abstract class EndPoint{
     return "absences/class/$id";
   }
   static const String signup = "servant/register";
+  static const String signIn = "servant/login";
 
   static const String getAllAbsence = "students";
 

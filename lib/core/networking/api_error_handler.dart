@@ -3,8 +3,6 @@ import 'package:dio/dio.dart';
 import 'api_constants.dart';
 import 'api_error_model.dart';
 
-
-
 // TODO: wallahy I will refactor this .. Omar Ahmed
 enum DataSource {
   NO_CONTENT,
@@ -19,7 +17,6 @@ enum DataSource {
   SEND_TIMEOUT,
   CACHE_ERROR,
   NO_INTERNET_CONNECTION,
-  // API_LOGIC_ERROR,
   DEFAULT
 }
 
@@ -69,7 +66,9 @@ class ResponseMessage {
 
 extension DataSourceExtension on DataSource {
   ApiErrorModel getFailure() {
+    print("sourceee ${this}");
     switch (this) {
+
       case DataSource.NO_CONTENT:
         return ApiErrorModel(
             code: ResponseCode.NO_CONTENT, message: ResponseMessage.NO_CONTENT);
@@ -125,7 +124,9 @@ class ErrorHandler implements Exception {
   late ApiErrorModel apiErrorModel;
 
   ErrorHandler.handle(dynamic error) {
+
     if (error is DioException) {
+      print("errorr ${error.response}");
       // dio error so its an error from response of the API or from dio itself
       apiErrorModel = _handleError(error);
     } else {
@@ -139,34 +140,83 @@ ApiErrorModel _handleError(DioException error) {
   switch (error.type) {
     case DioExceptionType.connectionTimeout:
       return DataSource.CONNECT_TIMEOUT.getFailure();
+
     case DioExceptionType.sendTimeout:
       return DataSource.SEND_TIMEOUT.getFailure();
+
     case DioExceptionType.receiveTimeout:
       return DataSource.RECIEVE_TIMEOUT.getFailure();
-    case DioExceptionType.badResponse:
-      if (error.response != null &&
-          error.response?.statusCode != null &&
-          error.response?.statusMessage != null) {
-        return ApiErrorModel.fromJson(error.response!.data);
-      } else {
-        return DataSource.DEFAULT.getFailure();
-      }
-    case DioExceptionType.unknown:
-      if (error.response != null &&
-          error.response?.statusCode != null &&
-          error.response?.statusMessage != null) {
-        return ApiErrorModel.fromJson(error.response!.data);
-      } else {
-        return DataSource.DEFAULT.getFailure();
-      }
+
     case DioExceptionType.cancel:
       return DataSource.CANCEL.getFailure();
+
     case DioExceptionType.connectionError:
-      return DataSource.DEFAULT.getFailure();
     case DioExceptionType.badCertificate:
-      return DataSource.DEFAULT.getFailure();
+      return DataSource.NO_INTERNET_CONNECTION.getFailure();
+
     case DioExceptionType.badResponse:
-      return DataSource.DEFAULT.getFailure();
+      return _handleResponseError(error);
+
+    case DioExceptionType.unknown:
+    // لو في response نحاول نستخدمها، لو لا نشوف الـ error message
+      if (error.response != null) {
+        return _handleResponseError(error);
+      } else {
+        // نشوف لو في error message أصلي من Dio
+        if (error.message != null && error.message!.isNotEmpty) {
+          return ApiErrorModel(
+            code: ResponseCode.DEFAULT,
+            message: error.message,
+          );
+        }
+        return DataSource.NO_INTERNET_CONNECTION.getFailure();
+      }
+  }
+}
+
+ApiErrorModel _handleResponseError(DioException error) {
+  if (error.response == null) {
+    return DataSource.DEFAULT.getFailure();
+  }
+
+  final response = error.response!;
+  final statusCode = response.statusCode ?? ResponseCode.DEFAULT;
+
+  // لو مفيش data خالص
+  if (response.data == null) {
+    return ApiErrorModel(
+      code: statusCode,
+      message: response.statusMessage ?? ResponseMessage.DEFAULT,
+    );
+  }
+
+  // لو الـ data مش Map (يعني String مثلاً)
+  if (response.data is! Map<String, dynamic>) {
+    return ApiErrorModel(
+      code: statusCode,
+      message: response.data.toString(),
+    );
+  }
+
+  // نحاول نعمل parsing من الـ Map
+  try {
+    final errorModel = ApiErrorModel.fromJson(response.data);
+
+    // نتأكد إن فعلاً في message جاية من السيرفر
+    if (errorModel.message == null || errorModel.message!.isEmpty) {
+      return ApiErrorModel(
+        code: errorModel.code ?? statusCode,
+        message: response.statusMessage ?? ResponseMessage.DEFAULT,
+      );
+    }
+
+    return errorModel;
+  } catch (e) {
+    // لو الـ parsing فشل نرجع fallback
+    return ApiErrorModel(
+      code: statusCode,
+      message: response.statusMessage ?? ResponseMessage.DEFAULT,
+    );
   }
 }
 
