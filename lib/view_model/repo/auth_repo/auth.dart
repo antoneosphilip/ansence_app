@@ -52,5 +52,60 @@ class AuthRepo {
     }
   }
 
+  Future<Either<ErrorHandler,String>>sendEmail(
+      {required String email}) async {
+    try {
+      final response =
+      await DioHelper.postData(url: EndPoint.sendEmail,data: {},query: {'email':email});
+      print("responseee ${response.data}");
 
+      return const Right("Sing up Successfully");
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      print("errorrr ${e.toString()}");
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+
+  Future<Either<ErrorHandler,String>>checkOtp(
+      {required String email,required String otp}) async {
+    try {
+      final response =
+      await DioHelper.postData(url: EndPoint.sendEmail,data: {},query: {'email':email,'otp':otp});
+      print("responseee ${response.data}");
+
+      return const Right("Sing up Successfully");
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      print("errorrr ${e.toString()}");
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+
+  Future<Either<ErrorHandler,String>>changePassword(
+      {required String email,required String password,required String confirmPassword}) async {
+    try {
+      final response =
+      await DioHelper.postData(url: EndPoint.changePassword,data: {},query: {'email':email,'password':password,'confirmPassword':confirmPassword});
+      print("responseee ${response.data}");
+
+      return const Right("Sing up Successfully");
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      print("errorrr ${e.toString()}");
+      return Left(ErrorHandler.handle(e));
+    }
+  }
 }

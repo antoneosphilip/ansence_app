@@ -19,6 +19,13 @@ abstract class EndPoint{
 
   static const String sendNotification = "https://fcm.googleapis.com/v1/projects/absence-app-633e1/messages:send";
 
+  static const String sendEmail = "servant/send-email";
+
+  static const String checkOtp = "servant/check-otp";
+
+  static const String changePassword = "servant/change-password";
+
+
 }
 
 

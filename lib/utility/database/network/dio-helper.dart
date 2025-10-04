@@ -113,6 +113,8 @@ class DioHelper {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     String? ContentType,
+  Map<String, dynamic>? query,
+
   }) async {
     dio.options.headers = {
       'Authorization': 'Bearer ${token ?? ''}',
@@ -134,6 +136,7 @@ class DioHelper {
         data: data,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
+        queryParameters:query,
       );
       debugPrint("-------------Response Data----------------");
       debugPrint('response is => ${response.data}');

@@ -22,6 +22,7 @@ class AuthCubit extends Cubit<AuthStates> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final otpController = TextEditingController();
 
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
@@ -126,6 +127,42 @@ class AuthCubit extends Cubit<AuthStates> {
       emit(LoginErrorState(left.apiErrorModel.message.toString()));
     }, (right) {
       emit(LoginSuccessState());
+    },
+    );
+  }
+
+  void sendEmail() {
+    emit(SendEmailLoadingState());
+    print("dataa ${registerBody?.servantClasses}");
+    final response = authRepo.sendEmail(email: emailController.text);
+    response.fold((left){
+      emit(SendEmailErrorState(left.apiErrorModel.message.toString()));
+    }, (right) {
+      emit(SendEmailSuccessState());
+    },
+    );
+  }
+
+  void checkOtp() {
+    emit(CheckOtpLoadingState());
+    print("dataa ${registerBody?.servantClasses}");
+    final response = authRepo.checkOtp(email: emailController.text, otp: otpController.text);
+    response.fold((left){
+      emit(CheckOtpErrorState(left.apiErrorModel.message.toString()));
+    }, (right) {
+      emit(CheckOtpSuccessState());
+    },
+    );
+  }
+
+  void changePassword() {
+    emit(ChangePasswordLoadingState());
+    print("dataa ${registerBody?.servantClasses}");
+    final response = authRepo.changePassword(email: emailController.text, password: passwordController.text,confirmPassword: confirmPasswordController.text);
+    response.fold((left){
+      emit(ChangePasswordErrorState(left.apiErrorModel.message.toString()));
+    }, (right) {
+      emit(ChangePasswordSuccessState());
     },
     );
   }
