@@ -14,14 +14,12 @@ import 'package:summer_school_app/view_model/block/login_cubit/login_states.dart
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../core/service_locator/service_locator.dart';
 import '../../../../view_model/repo/auth_repo/auth.dart';
+import '../../forget_password/forget_password_screen/forget_password_screen.dart';
 
 class LoginPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(sl.get<AuthRepo>()),
-      child: LoginPage(),
-    );
+    return LoginPage();
   }
 }
 
@@ -426,12 +424,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           alignment: Alignment.centerLeft,
                                           child: TextButton(
                                             onPressed: () {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Text('ميزة استعادة كلمة المرور قريباً'),
-                                                  backgroundColor: ColorManager.colorPrimary,
-                                                ),
-                                              );
+                                               Get.to( EnterEmailScreen());
                                             },
                                             child: Text(
                                               'نسيت كلمة المرور؟',
@@ -552,7 +545,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   TextButton(
                                     onPressed: () {
                                       Get.to(
-                                            () => SignUpPageWrapper(authCubit: AuthCubit.get(context)),
+                                            () => SignUpPageWrapper(),
                                         transition: Transition.rightToLeftWithFade,
                                         duration: Duration(milliseconds: 1000),
                                       );

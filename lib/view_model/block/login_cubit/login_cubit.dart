@@ -17,6 +17,9 @@ class AuthCubit extends Cubit<AuthStates> {
 
   List<ClassData> classes = [];
   final formKey = GlobalKey<FormState>();
+  final formKeyForget = GlobalKey<FormState>();
+  final formKeyEnterEmail = GlobalKey<FormState>();
+
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();

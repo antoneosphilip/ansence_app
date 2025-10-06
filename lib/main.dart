@@ -31,6 +31,7 @@ import 'package:summer_school_app/view/core_widget/work_manager_function.dart';
 import 'package:summer_school_app/view/screens/setting/setting_screen/loading_Screen.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
+import 'package:summer_school_app/view_model/block/login_cubit/login_cubit.dart';
 import 'package:summer_school_app/view_model/repo/absence_repo/absence.dart';
 import 'package:summer_school_app/view_model/repo/auth_repo/auth.dart';
 import 'package:workmanager/workmanager.dart';
@@ -229,7 +230,11 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(
           create: (BuildContext context) =>
               AbsenceCubit(sl.get<AbsenceRepo>())..checkConnection(),
-        )
+        ),
+        BlocProvider(
+          create: (BuildContext context) =>
+          AuthCubit(sl.get<AuthRepo>()),
+        ),
       ],
       child: BlocBuilder<AbsenceCubit, AbsenceStates>(
         builder: (context, state) {

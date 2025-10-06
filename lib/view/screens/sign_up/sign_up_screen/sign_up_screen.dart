@@ -15,16 +15,12 @@ extension Responsive on BuildContext {
 }
 
 class SignUpPageWrapper extends StatelessWidget {
-  final AuthCubit authCubit;
 
-  const SignUpPageWrapper({super.key, required this.authCubit});
+  const SignUpPageWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: authCubit,
-      child: SignUpPage(),
-    );
+    return SignUpPage();
   }
 }
 

@@ -56,7 +56,9 @@ class AuthRepo {
       {required String email}) async {
     try {
       final response =
-      await DioHelper.postData(url: EndPoint.sendEmail,data: {},query: {'email':email});
+      await DioHelper.postData(url: EndPoint.sendEmail,data: {
+
+      },query: {'email':email});
       print("responseee ${response.data}");
 
       return const Right("Sing up Successfully");
