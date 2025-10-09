@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:summer_school_app/utility/database/local/cache_helper.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_states.dart';
 import 'package:summer_school_app/view_model/repo/missing_repo/missing_repo.dart';
@@ -28,7 +29,7 @@ class MissingScreen extends StatelessWidget {
               ||current is UpdateStudentMissingSuccessState,
             listener: (context, state) {
               if(state is CompleteAllStudentMissingSuccessState ){
-                showSnackBarWidget(context,"شكرا لافتقادك 😍");
+                showSnackBarWidget(context," شكرا لافتقادك يا ${CacheHelper.getDataString(key: 'name')}");
               }
             },
             builder: (context, state) {

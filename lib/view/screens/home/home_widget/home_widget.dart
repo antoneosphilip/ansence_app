@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
 import '../../../../core/color_manager/color_manager.dart';
+import '../../../../utility/database/local/cache_helper.dart';
+import '../../../../view_model/block/absence_cubit/absence_cubit.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
@@ -23,11 +25,12 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   late Animation<double> _floatingAnimation;
   late Animation<double> _pulseAnimation;
 
-  final String userName = "أنطونيوس فليب";
+ 
 
   @override
   void initState() {
     super.initState();
+    AbsenceCubit.get(context).getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: 1200),
@@ -384,7 +387,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       ],
                                     ).createShader(bounds),
                                     child: Text(
-                                      userName,
+                                      CacheHelper.getDataString(key: 'name')??"",
                                       style: TextStyle(
                                         fontSize: 28.sp,
                                         fontWeight: FontWeight.w900,

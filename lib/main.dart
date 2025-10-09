@@ -276,18 +276,14 @@ Future<String> getAccessToken() async {
   final Map<String, dynamic> serviceAccountJson = <String, String>{
     "type": "service_account",
     "project_id": "absence-app-633e1",
-    "private_key_id": "d2d3280286cfb290e3bfa88f13a912e455c6e400",
-    "private_key":
-    "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDHsVL41atYbSnx\nOrKHbDdjfPxF5eLfJ4THbZ0cmBAClZ8oFAy2ud+7ER4NQF4ObPJsKd1GLlJcVyRD\naOtI01Si/5XybmMuflleNFkasN/Wj41CHViC023r9iwWGk5hPIawixPftfxYd/zA\ndSaJovd5jnwutd5ILo+76mjDQuCWT0JfpvBGtdi8D7axtwAftN/wwdkRddon39KL\n/oD928WdMmw6uHQMigdX34hIdHbf92eNVjFo/Y8pzjlKsV17TSamxnT/2r+86kDs\n9l8J+U0h8v/03Z+kXxKg8ePnpTS6SPABaVY9eVn/FwpFD5MCTJGYUrepj/G1EL/i\ncnvbIpx3AgMBAAECggEATii+k/x1gze+6dcSl2SozTzXNLiEstkx5CioDNALvCc5\n0yL90usvgXVysLcX2UeVHvbHz7dDrzbAT84aATgN8XpeAzRnh4QWkIOmuIawJbes\nD0uTICmG5YtFuCT1tqNNCH52+eGt8iaMe/ueaNKrUB2Px2yRoujugxt9g6eCZfHQ\nDFMa7ypkMyXckxRcP6ZHvHifsZBV8NpU3/Rmhxw3p+bKLgy0c3IHKGcXk7h3CmVZ\ndsZHhO+/4E84A7a98gytKtyHzOvxDDLj8pNCl6AS2vW49R99TJ2nVelmfgOv+cCX\nn8T32FucSQ99Fhghp+Dc/0Qrdn1/GsG6/LB4zHjt0QKBgQD3nXvHAlZf12BXwF9p\n4A+H0EetQfvQbQPnCgD4ftXdJXDqwXr74Aug6LBDgAEa6q9sGxbc3175bKVsofRq\nJdB7wvGGjaZJafcjDGrpoYsnJRgVVyyB3bVvzSU7I/zlOReRl0q3mFJyNg/salKb\nMKeoBiLfGZegiOrRLDQaMR1miQKBgQDOdGl26OHHa+Ui8+15mwdOI6W2dl0ro/ZC\nnIPH6iwTCrLdNmJruiMEIsY89eEz6Mg89FxZdzGIttnafgQAnAzZH1sv9gjt4mob\nsmJ39sevaeHVYTziNrCfY3dD68klL0AbDhtj1sndRP47m/2xDMBRrB+hhoJduZP8\nXEnNyg8q/wKBgQD16jqmr6SWtLDjFZPs83CZIno9EN4E5m/Mwfuqz1SYt/mHvDXm\n9mC2IsIDl5oBYHht9g1juJd7QbKcy8+QqBOBBl+WkRFHseyWq1t2wlAPxWBAuX3j\nUAxEh8nlDV25TVUh685xvd6LvTNdSU7W/6BSWB3D0ofrEG+c47ivFn4reQKBgDpy\nGD0ydmBXOhnoBi1r5uiHDO2Xmo61LwzydBgPQgTt/W7Ea55lpm4QTiCJ1wQz/SPM\nZaxqItq6MPg6vnVRuA1rZAwy0ZpOg41ttZSShzswdV9L1MmRg/TLWsMep+Xf93zx\nRG3CK4l5c6N6aJpLqtI0MQwwIQ3ZcHx7v+UDM8IPAoGBAM/hhKShzzvN8eTOL2H/\nmQWShsZklSbmE7lkwR/lUIBFt2P0KJcT7W4ET85+Etyn6MVrXQEzmxiluzYnYIxl\nskpZGaQyMDWSotCZcYsFaPXwfADU0Uh47yws4KcPnYUAYyGuBhroNgvqCbdbP4dQ\n409MrSLu2HDxnuwyi1mgVzIZ\n-----END PRIVATE KEY-----\n",
-    "client_email":
-    "firebase-adminsdk-jcch7@absence-app-633e1.iam.gserviceaccount.com",
+    "private_key_id": "cafd3ade563bc0d724e8814a8aaa198ce967eaa9",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/KRec3DfcMnm0\ncnzXFvzVYUqfULqqrGCoFTL4Ff1NuQGQFMZA1TD5MhFrjprQmkPB6q1GNJ0W7cRe\n4NvLGeFuJTKmfUWm8jhO93l9p6MUkCN3YsFSyauzuALV/CpnO6bjlCB0wqYoAdlO\n95EMCZB61i+w2NeYgWW6jMfuR0LaG09Rcw/wH7g6hL4QCeGbfavaM8Ud2xusDXp3\n41IcBD+QjfNxXdUqET5wyF2w0/iMlDH3vS/Q4eVEntvIoYqQFG8dh2DW5opq8fQU\nL9nfO8aUrnPxWdO/HQTsKozJZxo6m3Pw51AziAkTglWd4IJBHr3y79f8zbl3gecl\nBGTEYpxtAgMBAAECggEAJMI33G27XyAkp5aRW4H73eNOyGprbrjlgETNT4fY9Opj\nustH4T0tpOmkEGj0a7MSXvZr2fFxmLBhf7YhBcHlB7tm7T1vGJ6AxeyQI+HJugFK\nlKE8mBkYJ5+1ieTq2X2Oxrnb8N/iOBS87xKrhWNMcVaBBrJ36MdPIsuCAZeZ6xsa\nWEibTLLurGYi2MYusoNPvcq+B+r5r8KKdGvDBlT8NM2WX+d1bDP2HhCqF5koZpIe\n374bDmE1j3eMGKmF/v5txgJRW4qO7AV6DFPQQrqXVvvWYmI1XxKZBMUswD8EHlYv\nPNbArxu8Tgf9u+X7+qHO8b2yBmHtnVYE+fPeu2/+qQKBgQDywEtwOB+Ty+8T0CtL\n/nv8gxpvvOpy7+yc4uxXRz58M3+kiQ23JxSZmrVW7MabbnbpS7g6uwMLpPjvbRNS\nMiQZAZWCPjSjht4iZ8Nfd2zXotak+2agbYu3NWA0bJa/0H93I4tz+tSn7r7+qfdu\nSBKI01Mug5UUSg6pIf/Q3uJKKQKBgQDJl/nkBI8FsguwQQlzyB9dBC2gI/aAlwfc\nJT1G5PZiLmyyqzuO3fEf4Gc79mE1iA+Nh0mLyK15NJzD+XzzQPzw1KqymDBUtLUm\na/c2+lr3I8qGn694Dg9uKGwMRL8pB4un/dAGQO3vlCsSaoiisL1mAK0dqsSFcSSu\nqvSY3fxQpQKBgBL+iOiW+6GM64AZYcnod7siZwcnOREVROZhuyx5HqKJRQuSzcfu\n/uWl/Vp33HJ9CkDm89tklrBqkC/r0P81fS2XuiMeyu+gtfDrPZZSuemFjFYMddNH\nvw7u1kBD3ufTYKXp2heRIOKjA77ZfcrbSNf78R5KnXeg89S4HFQznHFBAoGAO4Vp\nvM8zw0S8er/ZIJxX1kjjh8LWh0UQhwlfvEziCj8WzPIN1bLl/LlvAZ9POFUB8pGd\nP25y+bR1DM/e+puXkyvXcn/I1Vm9mqiKB2uH7CxfIbyIPHQ6ThYVQNITdvPJYkJo\nZ1BIcFJZHUjjKtXwNevBMV84QwYTBJdpPLFeTBkCgYEA1Wu5pJruZjOthDBmyBFq\nYH3sMi0z7dIf4bXZMLEg4vPt/k922v4vKUnmjXPWZ4pvKfdXw0ga8hTBJaiP2SUk\nMGJdKQuYmJ8yLeNA+m4za5YkY9XhrCZ6dUVU3L9qqKoUevZZdoC0ATq4dLekA9vR\n0NF4a662d70d/snTLJa7YCY=\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-jcch7@absence-app-633e1.iam.gserviceaccount.com",
     "client_id": "117323631294260373207",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url":
-    "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url":
-    "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-jcch7%40absence-app-633e1.iam.gserviceaccount.com",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-jcch7%40absence-app-633e1.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
   };
   List<String> scopes = [

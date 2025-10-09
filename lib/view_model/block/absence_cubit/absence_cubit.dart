@@ -10,6 +10,7 @@ import 'package:summer_school_app/utility/database/local/absence.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../../../model/get_absence_model/get_members_model.dart';
 import '../../../model/update_absence_student/update_absence_student_body.dart';
 import '../../../utility/database/local/student.dart';
 import '../../repo/absence_repo/absence.dart';
@@ -197,6 +198,56 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       }
     }
     emit(OfflineAbsenceStudentsState());
+  }
+
+  NumbersModel? numbersModel;
+  NumbersModel? numbersOfflineModel;
+
+  // الدالة الجديدة لجلب وتخزين الـ classes
+  Future<void> getClassNumbers({required String id}) async {
+    emit(GetClassesNumberLoadingState());
+
+    final response = await absenceRepo.getClassesNumber(id: id);
+
+    response.fold(
+          (l) {
+        print("Error loading classes: ${l.apiErrorModel.message}");
+        emit(GetClassesNumberErrorState(l.apiErrorModel.message.toString()));
+      },
+          (r) async {
+        try {
+          // حفظ الـ model
+          numbersModel = r;
+
+          // فتح box للـ classes
+          final box = await Hive.openBox<List<dynamic>>('classesBox');
+
+          // مسح البيانات القديمة
+          await box.clear();
+
+          // تخزين الأرقام مباشرة (مش محتاجين toJson لأنها int)
+          await box.put('classes', r.numbers);
+          print("Classes stored successfully! Total: ${r.numbers.length}");
+          await getClassesFromLocal();
+          emit(GetClassesNumberSuccessState());
+        } catch (e) {
+          print("Error storing classes: $e");
+
+          emit(GetClassesNumberErrorState("فشل تخزين البيانات"));
+        }
+      },
+    );
+  }
+  // دالة لقراءة الـ classes من الـ offline storage
+  Future<void> getClassesFromLocal() async {
+    try {
+      final box = await Hive.openBox<List<dynamic>>('classesBox');
+      final data = box.get('classes');
+
+      numbersOfflineModel=NumbersModel.fromJson(data!);
+    } catch (e) {
+      print("Error reading local classes: $e");
+    }
   }
 
   void checkConnection() {

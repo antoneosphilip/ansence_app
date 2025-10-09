@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
 import 'package:summer_school_app/core/style_font_manager/style_manager.dart';
+import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';
 import 'package:summer_school_app/view/screens/absence/absence_widget/student_item_offline.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 
@@ -46,13 +47,15 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                   text: 'الغياب',
                 ),
                 SizedBox(height: 15.h),
+                state is GetClassesNumberLoadingState?
+                Center(child: CustomLoading()):
                 AbsenceCubit.get(context).isConnected
                     ? Row(
                         children: [
                           const CustomDropDown(
                             isAbsence: true,
                           ),
-                          const Spacer(),
+
                           AbsenceCubit.get(context).attendanceCount == 0
                               ? const SizedBox()
                               : Row(

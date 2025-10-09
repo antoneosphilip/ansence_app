@@ -479,9 +479,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                             onPressed: state is LoginLoadingState
                                                 ? null
                                                 : () {
-                                              Get.to(
-                                                    () => HomeScreen(),
-                                              );
+                                              // Get.to(
+                                              //       () => HomeScreen(),
+                                              // );
                                               if (_formKey.currentState!.validate()) {
                                                 cubit.login();
                                               } else {

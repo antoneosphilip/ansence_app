@@ -5,6 +5,7 @@ import 'package:summer_school_app/core/networking/api_error_handler.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 
 import '../../../model/get_absence_model/get_absence_model.dart';
+import '../../../model/get_absence_model/get_members_model.dart';
 import '../../../model/update_absence_student/update_absence_student_body.dart';
 import '../../../utility/database/network/end_points.dart';
 
@@ -17,6 +18,22 @@ class AbsenceRepo {
       await DioHelper.getData(url: EndPoint.getStudentAbsence(id));
       List<dynamic> jsonData = response.data;
       return Right(jsonData.map((item) => StudentAbsenceModel.fromJson(item)).toList());
+    } on DioException catch (e) {
+      debugPrint("-------------Response Data----------------");
+      debugPrint(e.response?.data.toString());
+      debugPrint("-------------Response Data----------------");
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+  Future<Either<ErrorHandler, NumbersModel>> getClassesNumber(
+      {required String id}) async {
+    try {
+      final response =
+      await DioHelper.getData(url: EndPoint.getClassesNumber,queryParameters: {'servantId':'487eddf8-ad3a-4941-8ed3-ca5015929516'});
+      List<dynamic> jsonData = response.data;
+      return Right(NumbersModel.fromJson(response.data));
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());

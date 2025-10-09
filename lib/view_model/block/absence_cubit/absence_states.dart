@@ -29,3 +29,10 @@ class OfflineAbsenceStudentsState extends AbsenceStates{}
 class CheckConnectionState extends AbsenceStates{}
 class ChangeAbsenceLength extends AbsenceStates{}
 
+
+class GetClassesNumberLoadingState extends AbsenceStates{}
+class GetClassesNumberErrorState extends AbsenceStates{
+  final String error;
+  GetClassesNumberErrorState(this.error);
+}
+class GetClassesNumberSuccessState extends AbsenceStates{}

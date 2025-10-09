@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summer_school_app/model/auth_response/sign_in_body.dart';
 import 'package:summer_school_app/model/auth_response/sign_up_body.dart';
 
 import '../../../model/auth_response/class_data.dart';
+import '../../../model/auth_response/sign_in_Response.dart';
+import '../../../utility/database/local/cache_helper.dart';
 import '../../repo/auth_repo/auth.dart';
 import 'login_states.dart';
 
@@ -114,7 +119,7 @@ class AuthCubit extends Cubit<AuthStates> {
     },
     );
   }
-
+  SignInResponse? signInResponse;
   void login() {
 
     emit(LoginLoadingState());
@@ -128,7 +133,10 @@ class AuthCubit extends Cubit<AuthStates> {
     final response = authRepo.signIn(loginBody: loginBody!);
     response.fold((left){
       emit(LoginErrorState(left.apiErrorModel.message.toString()));
-    }, (right) {
+    }, (right) async {
+      signInResponse=right;
+      await CacheHelper.put(key: 'id', value: right.id);
+     await CacheHelper.put(key: 'name', value: right.userName);
       emit(LoginSuccessState());
     },
     );

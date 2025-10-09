@@ -5,6 +5,7 @@ abstract class EndPoint{
   static String getStudentAbsence(int id) {
     return "students/class/$id";
   }
+  static String getClassesNumber="servant/get-classes";
 
   static String updateStudentAbsence(int id) {
     return "absences/$id";

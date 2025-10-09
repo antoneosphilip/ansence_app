@@ -12,7 +12,12 @@
           "package_name": "com.example.summer_school_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "771399540510-l567aus78nlotr3j567ddasdgh2aj1tv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDA9OP_0iY2Dl9W4tB-l57jr0uNxCqyh1I"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771399540510-l567aus78nlotr3j567ddasdgh2aj1tv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

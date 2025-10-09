@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:summer_school_app/core/networking/api_error_handler.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 
+import '../../../model/auth_response/sign_in_Response.dart';
 import '../../../model/auth_response/sign_in_body.dart';
 import '../../../model/auth_response/sign_up_body.dart';
 import '../../../model/get_absence_model/get_absence_model.dart';
@@ -32,7 +33,7 @@ class AuthRepo {
     }
   }
 
-  Future<Either<ErrorHandler,String>>signIn(
+  Future<Either<ErrorHandler,SignInResponse>>signIn(
       {required LoginBody loginBody}) async {
     try {
       print("Body => ${loginBody.toJson()}");
@@ -40,7 +41,7 @@ class AuthRepo {
       await DioHelper.postData(url: EndPoint.signIn,data: loginBody.toJson());
       print("responseee ${response.data}");
 
-      return const Right("Sing up Successfully");
+      return  Right(SignInResponse.fromJson(response.data));
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());
