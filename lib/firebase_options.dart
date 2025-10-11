@@ -70,6 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '771399540510',
     projectId: 'absence-app-633e1',
     storageBucket: 'absence-app-633e1.firebasestorage.app',
+    androidClientId: '771399540510-cl0v588jmms16e8ac5omk5utp6hlrdg4.apps.googleusercontent.com',
     iosBundleId: 'com.example.summerSchoolApp',
   );
+
 }

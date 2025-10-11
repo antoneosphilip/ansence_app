@@ -10,59 +10,59 @@ import '../../../core_widget/call_button_whatsapp/call_buttom_whatsapp.dart';
 import 'call_button_item.dart';
 
 class CallButtons extends StatelessWidget {
-  final GetMissingStudentModel getMissingStudentModel;
+  final GetMissingStudentModelAbsenceModel getMissingStudentModel;
 
   const CallButtons({super.key, required this.getMissingStudentModel});
 
   @override
   Widget build(BuildContext context) {
-    return !checkClass(getMissingStudentModel.studentClass!)
+    return !checkClass(getMissingStudentModel.student.studentClass??0)
         ? Row(
             children: [
               SizedBox(
-                width: getMissingStudentModel.dadPhone != null &&
-                        getMissingStudentModel.mamPhone != null
+                width: getMissingStudentModel.student.dadPhone != null &&
+                        getMissingStudentModel.student.mamPhone != null
                     ? 16.w
-                    : getMissingStudentModel.dadPhone != null &&
-                            getMissingStudentModel.mamPhone == null
+                    : getMissingStudentModel.student.dadPhone != null &&
+                            getMissingStudentModel.student.mamPhone == null
                         ? 30.w
-                        : getMissingStudentModel.dadPhone == null &&
-                                getMissingStudentModel.mamPhone != null
+                        : getMissingStudentModel.student.dadPhone == null &&
+                                getMissingStudentModel.student.mamPhone != null
                             ? 10.w
                             : 0.w,
               ),
-              getMissingStudentModel.dadPhone != null
+              getMissingStudentModel.student.dadPhone != null
                   ? Expanded(
                       child: CallButton(
                       text: 'الاتصال بالأب',
-                      phoneNumber: getMissingStudentModel.dadPhone!,
+                      phoneNumber: getMissingStudentModel.student.dadPhone!,
                     ))
                   : const SizedBox(),
               SizedBox(
                 width: 16.w,
               ),
-              getMissingStudentModel.mamPhone != null
+              getMissingStudentModel.student.mamPhone != null
                   ? Expanded(
                       child: CallButton(
                       text: 'الاتصال بالأم',
-                      phoneNumber: getMissingStudentModel.mamPhone!,
+                      phoneNumber: getMissingStudentModel.student.mamPhone!,
                     ))
                   : const SizedBox(),
               SizedBox(
-                width: getMissingStudentModel.dadPhone != null &&
-                        getMissingStudentModel.mamPhone != null
+                width: getMissingStudentModel.student.dadPhone != null &&
+                        getMissingStudentModel.student.mamPhone != null
                     ? 16.w
-                    : getMissingStudentModel.dadPhone != null &&
-                            getMissingStudentModel.mamPhone == null
+                    : getMissingStudentModel.student.dadPhone != null &&
+                            getMissingStudentModel.student.mamPhone == null
                         ? 10.w
-                        : getMissingStudentModel.dadPhone == null &&
-                                getMissingStudentModel.mamPhone != null
+                        : getMissingStudentModel.student.dadPhone == null &&
+                                getMissingStudentModel.student.mamPhone != null
                             ? 25.w
                             : 0.w,
               ),
             ],
           )
-        : getMissingStudentModel.studPhone != null
+        : getMissingStudentModel.student.studPhone != null
             ? Row(
                 children: [
                   SizedBox(
@@ -72,7 +72,7 @@ class CallButtons extends StatelessWidget {
                     child: CallButtonWhatsapp(
                       onTab: (){
                         MissingCubit.get(context)
-                            .makeDirectCall('0${getMissingStudentModel.studPhone}');
+                            .makeDirectCall('0${getMissingStudentModel.student.studPhone}');
                       }
                       , text: 'الأتصال بالطالب',
                       svg: 'assets/images/call.svg',
@@ -85,7 +85,7 @@ class CallButtons extends StatelessWidget {
                       child: CallButtonWhatsapp(
                         onTab: (){
                           MissingCubit.get(context)
-                              .openWhatsApp(getMissingStudentModel.studPhone!);
+                              .openWhatsApp(getMissingStudentModel.student.studPhone!);
                         }
                         , text: 'مراسلة', svg: 'assets/images/whastapp.svg',)
                   ),

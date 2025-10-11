@@ -23,6 +23,7 @@ class ReasonTextFormField extends StatelessWidget {
               width: 1.w,
             ),
           ),
+
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.r),
             borderSide:  BorderSide(

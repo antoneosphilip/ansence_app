@@ -10,19 +10,35 @@ import 'package:summer_school_app/view_model/block/missing_cubit/missing_states.
 
 import 'missing_student_item.dart';
 
-class MissingStudentListView extends StatelessWidget {
+class MissingStudentListView extends StatefulWidget {
   final MissingCubit missingCubit;
   final MissingStates state;
-  const MissingStudentListView({super.key, required this.missingCubit, required this.state });
+  final bool fromStatusMissing;
+  final String? numberClass;
+  const MissingStudentListView({super.key, required this.missingCubit, required this.state,  this.fromStatusMissing=false,  this.numberClass, });
 
   @override
+  State<MissingStudentListView> createState() => _MissingStudentListViewState();
+}
+
+class _MissingStudentListViewState extends State<MissingStudentListView> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.fromStatusMissing) {
+      MissingCubit.get(context)
+          .getAbsenceMissing(id: int.parse(widget.numberClass??'0'));
+    }
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-    return state is GetMissingStudentLoadingState
+    return widget.state is GetMissingStudentLoadingState
         ? const Center(child: CustomLoading())
-        : state is GetMissingStudentErrorState
+        : widget.state is GetMissingStudentErrorState
         ? const CustomError()
-        : (state is GetMissingStudentSuccessState|| state is UpdateStudentMissingSuccessState)&&
-    missingCubit.studentMissingModelList.isNotEmpty
+        : (widget.state is GetMissingStudentSuccessState|| widget.state is UpdateStudentMissingSuccessState)&&
+    widget.missingCubit.studentMissingModelList.isNotEmpty
         ? Column(
       children: [
         ListView.separated(
@@ -32,7 +48,7 @@ class MissingStudentListView extends StatelessWidget {
               return MissingStudentItem(
                 studentMissingModel: MissingCubit.get(context)
                     .studentMissingModelList[index],
-                missingCubit: missingCubit,
+                missingCubit: widget.missingCubit,
               );
             },
             separatorBuilder: (context, index) {
@@ -48,8 +64,8 @@ class MissingStudentListView extends StatelessWidget {
         )
       ],
     ):
-    (state is GetMissingStudentSuccessState|| state is UpdateStudentMissingSuccessState)&&
-    missingCubit.studentMissingModelList.isEmpty?
+    (widget.state is GetMissingStudentSuccessState|| widget.state is UpdateStudentMissingSuccessState)&&
+    widget.missingCubit.studentMissingModelList.isEmpty?
     const CustomNoData()
         : const SizedBox();
   }

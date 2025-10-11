@@ -12,13 +12,14 @@ import '../../../core_widget/custom_Cached_network/cusotm_chaced_netwok.dart';
 import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 
 class MissingStudentItem extends StatelessWidget {
-  final GetMissingStudentModel studentMissingModel;
+  final GetMissingStudentModelAbsenceModel studentMissingModel;
   final MissingCubit missingCubit;
 
   const MissingStudentItem({super.key, required this.studentMissingModel, required this.missingCubit});
 
   @override
   Widget build(BuildContext context) {
+    print("nameeeee ${studentMissingModel.student.id}");
     return InkWell(
       onTap: () {
         Get.to(
@@ -33,27 +34,27 @@ class MissingStudentItem extends StatelessWidget {
         children: [
           SizedBox(width: 16.w),
           GestureDetector(
-            onTap: () => showImageDialog(context, studentMissingModel.profileImage,),
+            onTap: () => showImageDialog(context, studentMissingModel.student.profileImage,),
             child: SizedBox(
               width: 50.w,
               height: 50.h,
-              child: CustomCachedImage(imageUrl:  studentMissingModel.profileImage),
+              child: CustomCachedImage(imageUrl:  studentMissingModel.student.profileImage),
             ),
           ),
           SizedBox(width: 10.w),
           TextWidget(
-            text: studentMissingModel.studentName!,
+            text: studentMissingModel.student.studentName??"",
             textStyle: TextStyleManager.textStyle20w700
                 .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
           ),
           const Spacer(),
-          studentMissingModel.absences
-              ?.last.absenceReason!.isNotEmpty??false
-              ? const Icon(
-                  Icons.check,
-                  color: ColorManager.colorPrimary,
-                )
+          (studentMissingModel.student.absences != null &&
+              studentMissingModel.student.absences!.isNotEmpty &&
+              studentMissingModel.student.absences!.last.absenceReason != null &&
+              studentMissingModel.student.absences!.last.absenceReason!.isNotEmpty)
+              ? const Icon(Icons.check, color: ColorManager.colorPrimary)
               : const SizedBox(),
+
           SizedBox(
             width: 16.w,
           ),

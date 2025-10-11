@@ -15,7 +15,7 @@ class MissingCubit extends Cubit<MissingStates> {
   MissingCubit(this.missingRepo) : super(MissingInitialState());
 
   static MissingCubit get(context) => BlocProvider.of<MissingCubit>(context);
-  List<GetMissingStudentModel> studentMissingModelList = [];
+  List<GetMissingStudentModelAbsenceModel> studentMissingModelList = [];
   final reasonTextController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
@@ -34,6 +34,7 @@ class MissingCubit extends Cubit<MissingStates> {
         print("sucessssssssssss gettt;");
         studentMissingModelList.clear();
         studentMissingModelList.addAll(r);
+
 
         emit(GetMissingStudentSuccessState());
       },
@@ -71,13 +72,16 @@ class MissingCubit extends Cubit<MissingStates> {
             updateAbsenceStudentBody.studentId!));
       },
       (r) {
-        print("lastttttttttttttttttt${studentMissingModelList.last.id}");
+        print("lastttttttttttttttttt${studentMissingModelList.last.student.id}");
         for (var element in studentMissingModelList) {
-          if (element.id == updateAbsenceStudentBody.studentId) {
-            element.absences!.last.absenceReason =
-                updateAbsenceStudentBody.absenceReason;
+          if (element.student.id == updateAbsenceStudentBody.studentId) {
+            final lastAbsence = element.student.absences!.last.copyWith(
+              absenceReason: updateAbsenceStudentBody.absenceReason,
+            );
+            element.student.absences![element.student.absences!.length - 1] = lastAbsence;
           }
         }
+
         emit(UpdateStudentMissingSuccessState());
       },
     );
@@ -86,9 +90,9 @@ class MissingCubit extends Cubit<MissingStates> {
   bool isDoneAbsence = false;
   bool isShowFirstOne=false;
   bool checkIfDoneAllAbsence(
-      {required GetMissingStudentModel getMissingStudentModel}) {
+      {required GetMissingStudentModelAbsenceModel getMissingStudentModel}) {
     for (var element in studentMissingModelList) {
-      if(element.absences!.last.absenceReason!.isNotEmpty){
+      if(element.student.absences!.last.absenceReason!.isNotEmpty){
         isDoneAbsence=true;
       }
       else{

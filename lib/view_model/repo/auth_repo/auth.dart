@@ -59,7 +59,7 @@ class AuthRepo {
       final response =
       await DioHelper.postData(url: EndPoint.sendEmail,data: {
 
-      },query: {'email':email});
+      },queryParameters: {'email':email});
       print("responseee ${response.data}");
 
       return const Right("Sing up Successfully");
@@ -78,7 +78,7 @@ class AuthRepo {
       {required String email,required String otp}) async {
     try {
       final response =
-      await DioHelper.postData(url: EndPoint.sendEmail,data: {},query: {'email':email,'otp':otp});
+      await DioHelper.postData(url: EndPoint.sendEmail,data: {},queryParameters: {'email':email,'otp':otp});
       print("responseee ${response.data}");
 
       return const Right("Sing up Successfully");
@@ -97,7 +97,7 @@ class AuthRepo {
       {required String email,required String password,required String confirmPassword}) async {
     try {
       final response =
-      await DioHelper.postData(url: EndPoint.changePassword,data: {},query: {'email':email,'password':password,'confirmPassword':confirmPassword});
+      await DioHelper.postData(url: EndPoint.changePassword,data: {},queryParameters: {'email':email,'password':password,'confirmPassword':confirmPassword});
       print("responseee ${response.data}");
 
       return const Right("Sing up Successfully");

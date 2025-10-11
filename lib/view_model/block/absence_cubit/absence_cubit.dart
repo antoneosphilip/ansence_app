@@ -10,8 +10,11 @@ import 'package:summer_school_app/utility/database/local/absence.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../../../model/get_absence_model/get_capacity.dart';
 import '../../../model/get_absence_model/get_members_model.dart';
+import '../../../model/get_missing_student_model/get_missing_classes.dart';
 import '../../../model/update_absence_student/update_absence_student_body.dart';
+import '../../../utility/database/local/cache_helper.dart';
 import '../../../utility/database/local/student.dart';
 import '../../repo/absence_repo/absence.dart';
 import 'absence_states.dart';
@@ -22,7 +25,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
   AbsenceCubit(this.absenceRepo) : super(AbsenceInitialState());
 
   static AbsenceCubit get(context) => BlocProvider.of<AbsenceCubit>(context);
-  List<StudentAbsenceModel> studentAbsenceModel = [];
+  List<Student> studentAbsenceModel = [];
   List<GetAllAbsenceModel> getAllStudentAbsenceModel = [];
   StreamSubscription? _subscription;
   bool isConnected = true;
@@ -43,7 +46,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         studentAbsenceModel.addAll(r);
         attendanceCount=0;
         for(int i=0;i<r.length;i++){
-          if(r[i].student.absences!.last.attendant!){
+          if(r[i].absences!.last.attendant!){
             attendanceCount=attendanceCount+1;
           }
         }
@@ -52,6 +55,16 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       },
     );
   }
+  ClassStatisticsResponse? classStatisticsResponse;
+  List<ClassStatistics> ?classStatistic;
+  int totalCapacity = 0;
+  int totalAttendants = 0;
+  int totalAbsents = 0;
+  ClassStatistics? firstClass;
+  ClassStatisticsResponse? classStatisticsOfflineResponse;
+
+
+
 
   Future<void> updateStudentAbsence(
       {required UpdateAbsenceStudentBody updateAbsenceStudentBody}) async {
@@ -130,7 +143,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
         for (var item in r) {
           final student = item;
-          print("studId ${student.absences!.last.id}");
+          print("studId ${student.id}");
+          print("studName ${student.studentName}");
+
           // final lastAbsenceStudent=item.student.absences!.last;
           final lastAbsence = student.absences?.isNotEmpty == true
               ? Absence(
@@ -145,14 +160,14 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
           final studentModel = StudentData(
             id: student.id!,
             name: student.studentName!,
-            studentClass: student.studentClass!,
-            level: student.level!,
+            studentClass: student.studentClass??0,
+            level: student.level??0,
             birthDate: student.birthDate,
             absences: lastAbsence != null ? [lastAbsence] : [],
             gender: student.gender!,
             notes: student.notes ?? "",
             numberOfAbsences: student.numberOfAbsences!,
-            shift: student.shift!,
+            shift: student.shift??0,
             age: student.age,
             dadPhone: student.dadPhone,
             mamPhone: student.mamPhone,
@@ -167,10 +182,12 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         }
 
         await box.put('students', studentList);
+        // await getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
 
         print("Data stored successfully!");
-          showFlutterToast(message: "تم تحميل الداتا بنجاح", state: ToastState.SUCCESS);
         emit(GetAllAbsenceSuccessState());
+        showFlutterToast(message: "تم تحميل الداتا بنجاح", state: ToastState.SUCCESS);
+
       },
     );
   }
@@ -185,7 +202,11 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     List<dynamic>? storedStudents = box.get('students', defaultValue: []);
 
     for (var student in storedStudents!) {
+      print("chosssee ${student.studentClass} ");
+      print("chosssee2222 ${value} ");
+
       if (student.studentClass == value) {
+        print("equallll");
         print(
             "name${student.name} and attend ${student.absences!.last.attendant!}");
         offlineStudentAbsence.add(student);
@@ -202,8 +223,173 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
   NumbersModel? numbersModel;
   NumbersModel? numbersOfflineModel;
+// Fixed getCapacities method
+  Future<void> getCapacities({required String servantId}) async {
+    emit(GetCapacityLoadingState());
+    final response = await absenceRepo.getCapacities(id: servantId);
+    response.fold(
+          (l) {
+        print("errorrrrrrrrrrrrrr ${l.apiErrorModel.message}");
+        emit(GetCapacityErrorState(l.apiErrorModel.message.toString()));
+      },
+          (r) async {
+        classStatisticsResponse = r;
+        if (r.classes.isNotEmpty) {
+          firstClass = r.classes.first;
+        }
 
+        final box = await Hive.openBox<List<dynamic>>('capacityBox');
+        await box.clear();
+
+        // ✅ Convert ClassStatistics objects to JSON maps
+        List<Map<String, dynamic>> classesJson =
+        r.classes.map((cls) => cls.toJson()).toList();
+
+        await box.put('capacity', classesJson);
+        print("rrrrrrrrr ${classesJson}");
+        print("sssssssttttt ${classesJson}");
+
+        await getCapacityFromLocal();
+        emit(GetCapacitySuccessState());
+      },
+    );
+  }
+
+// Fixed getCapacityFromLocal method
+  Future<void> getCapacityFromLocal() async {
+    try {
+      final box = await Hive.openBox<List<dynamic>>('capacityBox');
+      final data = box.get('capacity');
+      print("dataaaaaaaa ${data}");
+
+      if (data != null && data is List) {
+        // ✅ Cast Map<dynamic, dynamic> to Map<String, dynamic>
+        List<Map<String, dynamic>> classesJson = data.map((item) {
+          return Map<String, dynamic>.from(item as Map);
+        }).toList();
+
+        classStatisticsOfflineResponse = ClassStatisticsResponse.fromJson(classesJson);
+        print("Loaded ${classStatisticsOfflineResponse?.classes.length} classes from local storage");
+      } else {
+        print("No capacity data found in local storage");
+      }
+    } catch (e) {
+      print("Error reading local classes: $e");
+    }
+  }
   // الدالة الجديدة لجلب وتخزين الـ classes
+
+  // ✅ دالة لتحديث الإحصائيات الأونلاين
+  Future<void> updateOnlineStatistics({
+    required int classNumber,
+    required bool isAttendant,
+  }) async {
+    if (classStatisticsResponse != null) {
+      final classIndex = classStatisticsResponse!.classes
+          .indexWhere((cls) => cls.classNumber == classNumber);
+
+      if (classIndex != -1) {
+        final currentClass = classStatisticsResponse!.classes[classIndex];
+
+        final updatedClass = ClassStatistics(
+          classNumber: currentClass.classNumber,
+          capacity: currentClass.capacity,
+          numberOfAttendants: isAttendant
+              ? currentClass.numberOfAttendants + 1
+              : currentClass.numberOfAttendants - 1,
+          numberOfAbsents: isAttendant
+              ? currentClass.numberOfAbsents - 1
+              : currentClass.numberOfAbsents + 1,
+        );
+        print("updateee dataaa");
+        // استبدال الفصل المحدث
+        classStatisticsResponse!.classes[classIndex] = updatedClass;
+
+        // تحديث firstClass إذا كان نفس الفصل
+        if (firstClass?.classNumber == classNumber) {
+          firstClass = updatedClass;
+        }
+
+        emit(UpdateStatisticsState());
+        print("✅ تم تحديث إحصائيات الفصل $classNumber - أونلاين");
+      }
+    }
+  }
+
+// ✅ دالة لتحديث الإحصائيات الأوفلاين
+  Future<void> updateOfflineStatistics({
+    required int classNumber,
+    required bool isAttendant,
+  }) async {
+    print("updateee dataaa${classNumber}");
+
+    if (classStatisticsOfflineResponse != null) {
+
+      // البحث عن الفصل المحدد
+      final classIndex = classStatisticsOfflineResponse!.classes
+          .indexWhere((cls) => cls.classNumber == classNumber);
+
+      if (classIndex != -1) {
+
+        final currentClass = classStatisticsOfflineResponse!.classes[classIndex];
+
+        // تحديث الأعداد
+        final updatedClass = ClassStatistics(
+          classNumber: currentClass.classNumber,
+          capacity: currentClass.capacity,
+          numberOfAttendants: isAttendant
+              ? currentClass.numberOfAttendants + 1
+              : currentClass.numberOfAttendants - 1,
+          numberOfAbsents: isAttendant
+              ? currentClass.numberOfAbsents - 1
+              : currentClass.numberOfAbsents + 1,
+        );
+        // استبدال الفصل المحدث
+        classStatisticsOfflineResponse!.classes[classIndex] = updatedClass;
+
+        // حفظ التحديث في Hive
+        await saveOfflineStatisticsToHive();
+
+        emit(UpdateStatisticsState());
+        print("✅ تم تحديث إحصائيات الفصل $classNumber - أوفلاين");
+      }
+    }
+  }
+
+// ✅ دالة مساعدة لحفظ الإحصائيات في Hive
+  Future<void> saveOfflineStatisticsToHive() async {
+    try {
+      final box = await Hive.openBox<List<dynamic>>('capacityBox');
+
+      if (classStatisticsOfflineResponse != null) {
+        List<Map<String, dynamic>> classesJson =
+        classStatisticsOfflineResponse!.classes
+            .map((cls) => cls.toJson())
+            .toList();
+
+        await box.put('capacity', classesJson);
+        print("💾 تم حفظ الإحصائيات المحدثة في Hive");
+      }
+    } catch (e) {
+      print("❌ خطأ في حفظ الإحصائيات: $e");
+    }
+  }
+
+// ✅ دالة موحدة لتحديث الإحصائيات (أونلاين وأوفلاين)
+  Future<void> updateStatistics({
+    required int classNumber,
+    required bool isAttendant,
+  }) async {
+    await updateOnlineStatistics(
+      classNumber: classNumber,
+      isAttendant: isAttendant,
+    );
+    await updateOfflineStatistics(
+      classNumber: classNumber,
+      isAttendant: isAttendant,
+    );
+
+  }
   Future<void> getClassNumbers({required String id}) async {
     emit(GetClassesNumberLoadingState());
 
@@ -238,12 +424,30 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       },
     );
   }
+  MissingClasses? numbersMissingClassesModel;
+  Future<void> checkMissingClasses(
+      {required String servantId}) async {
+    emit(GetMissingClassesLoadingState());
+    final response = await absenceRepo.checkMissingStudents(
+        servantId: servantId);
+
+    response.fold(
+          (l) {
+        print("errorrrrr");
+        emit(GetMissingClassesErrorState(l.apiErrorModel.message.toString()));
+      },
+          (r) {
+            numbersMissingClassesModel=r;
+        emit(GetMissingClassesSuccessState());
+      },
+    );
+  }
   // دالة لقراءة الـ classes من الـ offline storage
   Future<void> getClassesFromLocal() async {
     try {
       final box = await Hive.openBox<List<dynamic>>('classesBox');
       final data = box.get('classes');
-
+      print("dataaaaa ${data}");
       numbersOfflineModel=NumbersModel.fromJson(data!);
     } catch (e) {
       print("Error reading local classes: $e");

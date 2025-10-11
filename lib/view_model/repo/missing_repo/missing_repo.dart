@@ -11,13 +11,21 @@ import '../../../utility/database/network/end_points.dart';
 
 class MissingRepo {
 
-  Future<Either<ErrorHandler, List<GetMissingStudentModel>>> getAbsenceMissing(
-      {required int id}) async {
+  Future<Either<ErrorHandler, List<GetMissingStudentModelAbsenceModel>>> getAbsenceMissing({
+    required int id,
+  }) async {
     try {
-      final response =
-      await DioHelper.getData(url: EndPoint.getStudentMissing(id));
+      final response = await DioHelper.getData(url: EndPoint.getStudentMissing(id));
+
       List<dynamic> jsonData = response.data;
-      return Right(jsonData.map((item) => GetMissingStudentModel.fromJson(item as Map<String, dynamic>)).toList());
+
+      final List<GetMissingStudentModelAbsenceModel> students =
+      jsonData.map((item) {
+        return GetMissingStudentModelAbsenceModel.fromJson(
+            item as Map<String, dynamic>);
+      }).toList();
+
+      return Right(students);
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());
@@ -27,6 +35,7 @@ class MissingRepo {
       return Left(ErrorHandler.handle(e));
     }
   }
+
 
   Future<Either<ErrorHandler, Response>> updateStudentMissing(
       {

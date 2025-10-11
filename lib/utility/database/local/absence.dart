@@ -5,10 +5,10 @@ part 'absence.g.dart';
 @HiveType(typeId: 1)
 class Absence {
   @HiveField(0)
-  final int id;
+  final String id;
 
   @HiveField(1)
-  final int studentId;
+  final String studentId;
 
   @HiveField(2)
   final String absenceDate;

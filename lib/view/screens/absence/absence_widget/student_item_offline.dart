@@ -75,7 +75,10 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
               value==false?
               AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
               AbsenceCubit.get(context).deleteStudentFromList(studentData: widget.studentDataOfflineModel);
-
+              AbsenceCubit.get(context).updateStatistics(
+                classNumber: widget.studentDataOfflineModel.studentClass ?? 0,
+                isAttendant: value ?? false,
+              );
 
               // AbsenceCubit.get(context).updateStudentAbsence(
               //     updateAbsenceStudentBody: UpdateAbsenceStudentBody(

@@ -28,6 +28,36 @@ abstract class TextStyleManager {
     fontWeight: FontWeight.w500,
 
   );
-
-
+  static final TextStyle textStyle12w500 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w500,
+  );
+  static final TextStyle textStyle14w500 = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
+  );
+  static final TextStyle textStyle12w400 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+  );
+  static final TextStyle textStyle16w600 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+  );
+  static final TextStyle textStyle16w800 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w800,
+  );
+  static final TextStyle textStyle18w600 = TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w600,
+  );
+  static final TextStyle textStyle16w400 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w400,
+  );
+  static final TextStyle textStyle18w500 = TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w500,
+  );
 }

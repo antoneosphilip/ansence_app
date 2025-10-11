@@ -1,6 +1,6 @@
 class UpdateAbsenceStudentBody {
-   int? id;
-  int? studentId;
+   String? id;
+  String? studentId;
   String? absenceDate;
   String ?absenceReason;
   bool? attendant;

@@ -1,38 +1,75 @@
-abstract class AbsenceStates{}
-class AbsenceInitialState extends AbsenceStates{}
+abstract class AbsenceStates {}
 
+class AbsenceInitialState extends AbsenceStates {}
 
-/////       Get Absence       /////////////
-class GetAbsenceLoadingState extends AbsenceStates{}
-class GetAbsenceErrorState extends AbsenceStates{
+// Get Absence States
+class GetAbsenceLoadingState extends AbsenceStates {}
+
+class GetAbsenceSuccessState extends AbsenceStates {}
+
+class GetAbsenceErrorState extends AbsenceStates {
   final String error;
   GetAbsenceErrorState(this.error);
 }
-class GetAbsenceSuccessState extends AbsenceStates{}
 
-class UpdateStudentAbsenceLoadingState extends AbsenceStates{}
-class UpdateStudentAbsenceErrorState extends AbsenceStates{
-  final String error;
-  final int studentId;
-  UpdateStudentAbsenceErrorState(this.error, this.studentId, );
-}
-class UpdateStudentAbsenceSuccessState extends AbsenceStates{}
+// Get All Absence States
+class GetAllAbsenceLoadingState extends AbsenceStates {}
 
+class GetAllAbsenceSuccessState extends AbsenceStates {}
 
-class GetAllAbsenceLoadingState extends AbsenceStates{}
-class GetAllAbsenceErrorState extends AbsenceStates{
+class GetAllAbsenceErrorState extends AbsenceStates {
   final String error;
   GetAllAbsenceErrorState(this.error);
 }
-class GetAllAbsenceSuccessState extends AbsenceStates{}
-class OfflineAbsenceStudentsState extends AbsenceStates{}
-class CheckConnectionState extends AbsenceStates{}
-class ChangeAbsenceLength extends AbsenceStates{}
 
+// Update Student Absence States
+class UpdateStudentAbsenceLoadingState extends AbsenceStates {}
 
-class GetClassesNumberLoadingState extends AbsenceStates{}
-class GetClassesNumberErrorState extends AbsenceStates{
+class UpdateStudentAbsenceSuccessState extends AbsenceStates {}
+
+class UpdateStudentAbsenceErrorState extends AbsenceStates {
+  final String error;
+  final String studentId;
+  UpdateStudentAbsenceErrorState(this.error, this.studentId);
+}
+
+// Get Capacity States
+class GetCapacityLoadingState extends AbsenceStates {}
+
+class GetCapacitySuccessState extends AbsenceStates {}
+
+class GetCapacityErrorState extends AbsenceStates {
+  final String error;
+  GetCapacityErrorState(this.error);
+}
+
+// Get Classes Number States
+class GetClassesNumberLoadingState extends AbsenceStates {}
+
+class GetClassesNumberSuccessState extends AbsenceStates {}
+
+class GetClassesNumberErrorState extends AbsenceStates {
   final String error;
   GetClassesNumberErrorState(this.error);
 }
-class GetClassesNumberSuccessState extends AbsenceStates{}
+
+// Get Missing Classes States
+class GetMissingClassesLoadingState extends AbsenceStates {}
+
+class GetMissingClassesSuccessState extends AbsenceStates {}
+
+class GetMissingClassesErrorState extends AbsenceStates {
+  final String error;
+  GetMissingClassesErrorState(this.error);
+}
+
+// Offline States
+class OfflineAbsenceStudentsState extends AbsenceStates {}
+
+class ChangeAbsenceLength extends AbsenceStates {}
+
+// Statistics States
+class StatisticsUpdatedState extends AbsenceStates {}
+
+class LocalStatisticsLoadedState extends AbsenceStates {}
+class UpdateStatisticsState extends AbsenceStates {}

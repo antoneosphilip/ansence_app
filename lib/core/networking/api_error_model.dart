@@ -1,16 +1,20 @@
-
 class ApiErrorModel {
-   String? message;
-   int? code;
+  final int? code;
+  final String? message;
 
-  ApiErrorModel({
-    required this.message,
-    this.code,
-  });
+  ApiErrorModel({this.code, this.message});
 
-   ApiErrorModel.fromJson(Map<String, dynamic> json){
-     message=json['message'];
-     code=json['code'];
-   }
+  factory ApiErrorModel.fromJson(Map<String, dynamic> json) {
+    return ApiErrorModel(
+      code: json['code'],
+      message: json['message'],
+    );
+  }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'code': code,
+      'message': message,
+    };
+  }
 }

@@ -24,7 +24,7 @@ void callbackDispatcher() {
     print("Executing background task: $task");
 
     await Firebase.initializeApp();
-    await DioHelper.init();
+     DioHelper.init();
     await CacheHelper.init();
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
     final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -214,7 +214,7 @@ void callbackDispatcher() {
       print("successsssss");
       final now = DateTime.now();
 
-      if (now.weekday == DateTime.friday && now.hour < 15) {
+      if (now.weekday == DateTime.thursday) {
         try {
           final response = await DioHelper.getData(url: EndPoint.getAllAbsence);
           final box = await Hive.openBox<List<dynamic>>('studentsBox');

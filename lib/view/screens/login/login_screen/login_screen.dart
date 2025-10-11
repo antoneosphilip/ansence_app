@@ -15,6 +15,7 @@ import '../../../../core/color_manager/color_manager.dart';
 import '../../../../core/service_locator/service_locator.dart';
 import '../../../../view_model/repo/auth_repo/auth.dart';
 import '../../forget_password/forget_password_screen/forget_password_screen.dart';
+import '../../home_layout/home_layout.dart';
 
 class LoginPageWrapper extends StatelessWidget {
   @override
@@ -238,7 +239,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       if (state is LoginSuccessState) {
                       showFlutterToast(message: 'تم تسجيل الدخول بنجاح!', state: ToastState.SUCCESS);
                       Get.to(
-                            () => HomeScreen(),
+                            () => HomeLayoutScreen(),
                       );
                       } else if (state is LoginErrorState) {
                         showFlutterToast(message: state.error, state: ToastState.ERROR);

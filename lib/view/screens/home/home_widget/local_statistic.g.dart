@@ -1,43 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'absence.dart';
+part of 'local_statistic.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AbsenceAdapter extends TypeAdapter<Absence> {
+class ClassStatisticsAdapter extends TypeAdapter<ClassStatistics> {
   @override
-  final int typeId = 1;
+  final int typeId = 0;
+
   @override
-  Absence read(BinaryReader reader) {
+  ClassStatistics read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Absence(
-      id: fields[0] as String,
-      studentId: fields[1] as String,
-      absenceDate: fields[2] as String,
-      absenceReason: fields[3] as String,
-      attendant: fields[4] as bool,
+    return ClassStatistics(
+      classNumber: fields[0] as int,
+      capacity: fields[1] as int,
+      numberOfAttendants: fields[2] as int,
+      numberOfAbsents: fields[3] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Absence obj) {
+  void write(BinaryWriter writer, ClassStatistics obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.studentId)
-      ..writeByte(2)
-      ..write(obj.absenceDate)
-      ..writeByte(3)
-      ..write(obj.absenceReason)
       ..writeByte(4)
-      ..write(obj.attendant);
+      ..writeByte(0)
+      ..write(obj.classNumber)
+      ..writeByte(1)
+      ..write(obj.capacity)
+      ..writeByte(2)
+      ..write(obj.numberOfAttendants)
+      ..writeByte(3)
+      ..write(obj.numberOfAbsents);
   }
 
   @override
@@ -46,7 +44,7 @@ class AbsenceAdapter extends TypeAdapter<Absence> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AbsenceAdapter &&
+      other is ClassStatisticsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

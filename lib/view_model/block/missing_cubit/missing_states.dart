@@ -13,7 +13,7 @@ class GetMissingStudentSuccessState extends MissingStates{}
 class UpdateStudentMissingLoadingState extends MissingStates{}
 class UpdateStudentMissingErrorState extends MissingStates{
   final String error;
-  final int studentId;
+  final String studentId;
   UpdateStudentMissingErrorState(this.error, this.studentId, );
 }
 class UpdateStudentMissingSuccessState extends MissingStates{}

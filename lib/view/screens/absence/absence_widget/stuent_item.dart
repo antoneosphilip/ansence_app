@@ -18,7 +18,7 @@ import '../../../core_widget/custom_Cached_network/cusotm_chaced_netwok.dart';
 import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 
 class StudentAbsenceItem extends StatefulWidget {
-  final StudentAbsenceModel studentAbsenceModel;
+  final Student studentAbsenceModel;
 
   const StudentAbsenceItem({super.key, required this.studentAbsenceModel});
 
@@ -33,9 +33,13 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
       listener: (BuildContext context, state) {
         if (state is UpdateStudentAbsenceErrorState) {
           print("errorUpdate");
-          if (widget.studentAbsenceModel.student.id == state.studentId) {
-            widget.studentAbsenceModel.attendant =
-            !widget.studentAbsenceModel.attendant;
+          if (widget.studentAbsenceModel.id == state.studentId) {
+            final updatedAbsence = widget.studentAbsenceModel.absences!.last.copyWith(
+              attendant: !widget.studentAbsenceModel.absences!.last.attendant,
+            );
+
+            widget.studentAbsenceModel.absences![widget.studentAbsenceModel.absences!.length - 1] = updatedAbsence;
+
             showFlutterToast(
                 message: "حدث خطأ برجاء المحاولة لاحقا",
                 state: ToastState.ERROR);
@@ -57,18 +61,18 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
             SizedBox(width: 16.w),
             GestureDetector(
               onTap: (){
-                print( widget.studentAbsenceModel.student.profileImage,);
-                showImageDialog(context, widget.studentAbsenceModel.student.profileImage,);
+                print( widget.studentAbsenceModel.profileImage,);
+                showImageDialog(context, widget.studentAbsenceModel.profileImage,);
               },
               child: SizedBox(
                 width: 50.w,
                 height: 50.h,
-               child: CustomCachedImage(imageUrl: widget.studentAbsenceModel.student.profileImage,),
+               child: CustomCachedImage(imageUrl: widget.studentAbsenceModel.profileImage,),
               ),
             ),
             SizedBox(width: 10.w),
             TextWidget(
-              text: widget.studentAbsenceModel.student.studentName!
+              text: widget.studentAbsenceModel.studentName!
                   .split(' ')
                   .take(3)
                   .join(' '),
@@ -78,22 +82,29 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
             const Spacer(),
             Checkbox(
               activeColor: ColorManager.colorPrimary,
-              value: widget.studentAbsenceModel.attendant,
+              value: widget.studentAbsenceModel.absences!.last.attendant,
               onChanged: (bool? value) {
 
                 AbsenceCubit.get(context).updateStudentAbsence(
                     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
-                      id: widget.studentAbsenceModel.student.absences?.last.id,
+                      id: widget.studentAbsenceModel.absences?.last.id,
                       studentId: widget
-                          .studentAbsenceModel.student.absences?.last.studentId,
-                      attendant: !widget.studentAbsenceModel.attendant,
+                          .studentAbsenceModel.absences?.last.studentId,
+                      attendant: !widget.studentAbsenceModel.absences!.last.attendant,
                       absenceDate: widget
-                          .studentAbsenceModel.student.absences?.last
+                          .studentAbsenceModel.absences?.last
                           .absenceDate,
                       absenceReason: '',
                     ));
+                AbsenceCubit.get(context).updateStatistics(
+                  classNumber: widget.studentAbsenceModel.studentClass ?? 0,
+                  isAttendant: value ?? false,
+                );
                 setState(() {
-                  widget.studentAbsenceModel.attendant = value ?? false;
+                  final updatedAbsence = widget.studentAbsenceModel.absences!.last.copyWith(
+                    attendant: value ?? false,
+                  );
+                  widget.studentAbsenceModel.absences![widget.studentAbsenceModel.absences!.length - 1] = updatedAbsence;
                 });
 
                 AbsenceCubit.get(context).changeAbsence(isValue: value??false);

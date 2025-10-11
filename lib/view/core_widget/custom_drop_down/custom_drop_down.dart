@@ -60,7 +60,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                   ],
                 ),
                 items:
-                AbsenceCubit.get(context).isConnected?
+                AbsenceCubit.get(context).isConnected||AbsenceCubit.get(context).numbersModel!=null?
                 AbsenceCubit.get(context).numbersModel?.numbers.toSet()
                     .map((int item) => DropdownMenuItem<String>(
                   value: item.toString(),

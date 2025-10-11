@@ -137,6 +137,10 @@ class AuthCubit extends Cubit<AuthStates> {
       signInResponse=right;
       await CacheHelper.put(key: 'id', value: right.id);
      await CacheHelper.put(key: 'name', value: right.userName);
+      await CacheHelper.put(key: 'phone', value: right.phoneNumber);
+      await CacheHelper.put(key: 'email', value: right.email);
+      await CacheHelper.put(key: 'role', value: right.role);
+
       emit(LoginSuccessState());
     },
     );
