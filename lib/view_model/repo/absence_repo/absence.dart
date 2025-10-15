@@ -69,13 +69,17 @@ class AbsenceRepo {
     try {
       final response =
       await DioHelper.putData(url: EndPoint.updateStudentAbsence(updateAbsenceStudentBody.id!),
-          data: {
-            'Id': updateAbsenceStudentBody.id,
-            'StudentId': updateAbsenceStudentBody.studentId,
-            'AbsenceDate': updateAbsenceStudentBody.absenceDate,
-            'AbsenceReason': updateAbsenceStudentBody.absenceReason,
-            'attendant': updateAbsenceStudentBody.attendant,
-          });
+        data: {
+          "id": updateAbsenceStudentBody.id,
+          "studentId": updateAbsenceStudentBody.studentId,
+          "absenceDate": updateAbsenceStudentBody.absenceDate,
+          "absenceReason": updateAbsenceStudentBody.absenceReason ?? "",
+          "alhanAttendant": updateAbsenceStudentBody.alhanAttendant,
+          "copticAttendant": updateAbsenceStudentBody.copticAttendant,
+          "tacsAttendant": updateAbsenceStudentBody.tacsAttendant,
+        },
+
+      );
 
       return Right(response);
     } on DioException catch (e) {
@@ -159,7 +163,6 @@ class AbsenceRepo {
         final statsResponse = ClassStatisticsResponse.fromJson(dataList);
         print("sucessss");
         return Right(statsResponse);
-
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());

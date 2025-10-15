@@ -85,17 +85,31 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
               value: widget.studentAbsenceModel.absences!.last.attendant,
               onChanged: (bool? value) {
 
-                AbsenceCubit.get(context).updateStudentAbsence(
+                final lastAbsence = widget.studentAbsenceModel.absences?.last;
+
+                if (lastAbsence != null) {
+                  AbsenceCubit.get(context).updateStudentAbsence(
                     updateAbsenceStudentBody: UpdateAbsenceStudentBody(
-                      id: widget.studentAbsenceModel.absences?.last.id,
-                      studentId: widget
-                          .studentAbsenceModel.absences?.last.studentId,
-                      attendant: !widget.studentAbsenceModel.absences!.last.attendant,
-                      absenceDate: widget
-                          .studentAbsenceModel.absences?.last
-                          .absenceDate,
-                      absenceReason: '',
-                    ));
+                      id: lastAbsence.id,
+                      studentId: lastAbsence.studentId,
+                      absenceDate: lastAbsence.absenceDate,
+                      absenceReason: lastAbsence.absenceReason ?? '',
+                      attendant: !lastAbsence.attendant,
+                      alhanAttendant: !lastAbsence.alhanAttendant,
+                      copticAttendant: !lastAbsence.copticAttendant,
+                      tacsAttendant:!lastAbsence.tacsAttendant,
+                      student: lastAbsence.student != null
+                          ? Student(
+                        id: lastAbsence.student!.id,
+                        studentName: lastAbsence.student!.name,
+                        classId: lastAbsence.student!.classId,
+
+                      )
+                          : null,
+                    ),
+                  );
+                }
+
                 AbsenceCubit.get(context).updateStatistics(
                   classNumber: widget.studentAbsenceModel.studentClass ?? 0,
                   isAttendant: value ?? false,

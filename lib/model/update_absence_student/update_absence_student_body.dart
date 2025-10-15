@@ -1,32 +1,55 @@
+import '../get_absence_model/get_absence_model.dart';
+
 class UpdateAbsenceStudentBody {
-   String? id;
+  String? id;
   String? studentId;
   String? absenceDate;
-  String ?absenceReason;
+  String? absenceReason;
+  bool? alhanAttendant;
+  bool? copticAttendant;
+  bool? tacsAttendant;
   bool? attendant;
+  Student? student;
 
-  UpdateAbsenceStudentBody(
-      {required this.id,
-        this.studentId,
-        this.absenceDate,
-        this.absenceReason,
-        this.attendant});
+  UpdateAbsenceStudentBody({
+    this.id,
+    this.studentId,
+    this.absenceDate,
+    this.absenceReason,
+    this.alhanAttendant,
+    this.copticAttendant,
+    this.tacsAttendant,
+    this.attendant,
+    this.student,
+  });
 
-  UpdateAbsenceStudentBody.fromJson(Map<String, dynamic> json) {
-    id = json['Id'];
-    studentId = json['StudentId'];
-    absenceDate = json['AbsenceDate'];
-    absenceReason = json['AbsenceReason'];
-    attendant = json['attendant'];
+  factory UpdateAbsenceStudentBody.fromJson(Map<String, dynamic> json) {
+    return UpdateAbsenceStudentBody(
+      id: json['id'],
+      studentId: json['studentId'],
+      absenceDate: json['absenceDate'],
+      absenceReason: json['absenceReason'],
+      alhanAttendant: json['alhanAttendant'],
+      copticAttendant: json['copticAttendant'],
+      tacsAttendant: json['tacsAttendant'],
+      attendant: json['attendant'],
+      student: json['student'] != null ? Student.fromJson(json['student']) : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Id'] = this.id;
-    data['StudentId'] = this.studentId;
-    data['AbsenceDate'] = this.absenceDate;
-    data['AbsenceReason'] = this.absenceReason;
-    data['attendant'] = this.attendant;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['studentId'] = studentId;
+    data['absenceDate'] = absenceDate;
+    data['absenceReason'] = absenceReason;
+    data['alhanAttendant'] = alhanAttendant;
+    data['copticAttendant'] = copticAttendant;
+    data['tacsAttendant'] = tacsAttendant;
+    data['attendant'] = attendant;
+    if (student != null) {
+      data['student'] = student!.toJson();
+    }
     return data;
   }
 }

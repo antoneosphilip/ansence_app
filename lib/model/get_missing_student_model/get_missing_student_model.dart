@@ -1,3 +1,5 @@
+import '../get_absence_model/get_absence_model.dart';
+
 class GetMissingStudentModelAbsenceModel {
   final GetMissingStudentModel student;
   final bool alhanAbsence;
@@ -117,6 +119,7 @@ class Absence {
   final bool copticAttendant;
   final bool tacsAttendant;
   final bool attendant;
+  final StudentAbsence? student;
 
   Absence({
     required this.id,
@@ -127,6 +130,7 @@ class Absence {
     required this.copticAttendant,
     required this.tacsAttendant,
     required this.attendant,
+    this.student,
   });
 
   factory Absence.fromJson(Map<String, dynamic> json) {
@@ -139,6 +143,7 @@ class Absence {
       copticAttendant: json['copticAttendant'] ?? false,
       tacsAttendant: json['tacsAttendant'] ?? false,
       attendant: json['attendant'] ?? false,
+      student: json['student'] != null ? StudentAbsence.fromJson(json['student']) : null, // ← هنا التحويل
     );
   }
 
@@ -152,8 +157,10 @@ class Absence {
       'copticAttendant': copticAttendant,
       'tacsAttendant': tacsAttendant,
       'attendant': attendant,
+      'student': student?.toJson(), // ← أضفناها
     };
   }
+
   Absence copyWith({
     String? id,
     String? studentId,
@@ -163,6 +170,7 @@ class Absence {
     bool? copticAttendant,
     bool? tacsAttendant,
     bool? attendant,
+    StudentAbsence? student,
   }) {
     return Absence(
       id: id ?? this.id,
@@ -173,7 +181,40 @@ class Absence {
       copticAttendant: copticAttendant ?? this.copticAttendant,
       tacsAttendant: tacsAttendant ?? this.tacsAttendant,
       attendant: attendant ?? this.attendant,
+      student: student ?? this.student,
+    );
+  }
+}
+
+
+class StudentAbsence {
+  final String id;
+  final String name;
+  final String? classId;
+  final String? profileImage;
+
+  StudentAbsence({
+    required this.id,
+    required this.name,
+    this.classId,
+    this.profileImage,
+  });
+
+  factory StudentAbsence.fromJson(Map<String, dynamic> json) {
+    return StudentAbsence(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      classId: json['classId'],
+      profileImage: json['profileImage'],
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'classId': classId,
+      'profileImage': profileImage,
+    };
+  }
 }
