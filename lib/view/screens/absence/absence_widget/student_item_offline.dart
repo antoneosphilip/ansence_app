@@ -70,7 +70,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
           const Spacer(),
           Checkbox(
             activeColor: ColorManager.colorPrimary,
-            value: widget.studentDataOfflineModel.absences!.last.attendant,
+            value: widget.studentDataOfflineModel.lastAttendance,
             onChanged: (bool? value) {
               value==false?
               AbsenceCubit.get(context).addAbsenceStudentList(studentData: widget.studentDataOfflineModel):
@@ -92,7 +92,7 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItemOffline> {
 
 
               setState(() {
-                widget.studentDataOfflineModel.absences!.last.attendant = value ?? false;
+                widget.studentDataOfflineModel.lastAttendance = value ?? false;
               });
 
             },

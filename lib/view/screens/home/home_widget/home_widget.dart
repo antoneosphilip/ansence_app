@@ -1,13 +1,13 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'hide Transition;
+import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:bloc/bloc.dart' hide Transition;
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
+import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
+import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
+
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../utility/database/local/cache_helper.dart';
 import '../../../../view_model/block/absence_cubit/absence_cubit.dart';
@@ -32,14 +32,15 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   late Animation<double> _floatingAnimation;
   late Animation<double> _pulseAnimation;
 
-
-
   @override
   void initState() {
     super.initState();
-    AbsenceCubit.get(context).getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
-    AbsenceCubit.get(context).checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
-    AbsenceCubit.get(context).getCapacities(servantId: CacheHelper.getDataString(key: 'id'));
+    AbsenceCubit.get(context)
+        .getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
+    AbsenceCubit.get(context)
+        .checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
+    AbsenceCubit.get(context)
+        .getCapacities(servantId: CacheHelper.getDataString(key: 'id'));
     AbsenceCubit.get(context).getClassesFromLocal();
     AbsenceCubit.get(context).getCapacityFromLocal();
 
@@ -66,9 +67,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
       begin: Offset(0, 0.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic
-    ));
+        parent: _animationController, curve: Curves.easeOutCubic));
 
     _floatingAnimation = Tween<double>(begin: -10, end: 10).animate(
       CurvedAnimation(parent: _floatingController, curve: Curves.easeInOut),
@@ -88,6 +87,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     _pulseController.dispose();
     super.dispose();
   }
+
   Widget _buildFeatureCard({
     required String title,
     required String subtitle,
@@ -111,7 +111,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                 scale: 1.0,
                 duration: Duration(milliseconds: 200),
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+                  margin:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                   height: 240.h,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -178,7 +179,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         child: Row(
                           children: List.generate(
                             3,
-                                (index) => Container(
+                            (index) => Container(
                               margin: EdgeInsets.only(left: 5),
                               width: 6,
                               height: 6,
@@ -283,9 +284,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.25),
                                       shape: BoxShape.circle,
-                                      boxShadow: [
-
-                                      ],
+                                      boxShadow: [],
                                     ),
                                     child: Icon(
                                       icon,
@@ -309,6 +308,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
       },
     );
   }
+
   Widget _buildStatItem(String value, String label, IconData icon) {
     return Column(
       children: [
@@ -394,13 +394,14 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                     shaderCallback: (bounds) => LinearGradient(
                                       colors: [
                                         ColorManager.colorPrimary,
-                                        ColorManager.colorPrimary.withOpacity(0.7),
+                                        ColorManager.colorPrimary
+                                            .withOpacity(0.7),
                                       ],
                                     ).createShader(bounds),
                                     child: Text(
-                                      CacheHelper.getDataString(key: 'name')??"",
+                                      _getTwoPartName(CacheHelper.getDataString(key: 'name') ?? ""),
                                       style: TextStyle(
-                                        fontSize: 28.sp,
+                                        fontSize: 25.sp,
                                         fontWeight: FontWeight.w900,
                                         color: Colors.white,
                                         height: 1.2,
@@ -414,7 +415,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       vertical: 6.h,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: ColorManager.colorPrimary.withOpacity(0.1),
+                                      color: ColorManager.colorPrimary
+                                          .withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -451,15 +453,14 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       gradient: LinearGradient(
                                         colors: [
                                           ColorManager.colorPrimary,
-                                          ColorManager.colorPrimary.withOpacity(0.8),
+                                          ColorManager.colorPrimary
+                                              .withOpacity(0.8),
                                         ],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ),
                                       borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [
-
-                                      ],
+                                      boxShadow: [],
                                     ),
                                     child: Icon(
                                       Icons.school_rounded,
@@ -475,44 +476,47 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  BlocBuilder<AbsenceCubit,AbsenceStates>(
-                   builder: (context, state) {
-                     return
-                       AbsenceCubit.get(context).classStatisticsOfflineResponse!=null|| AbsenceCubit.get(context).classStatistic!=null?
-                       Padding(
-                       padding: EdgeInsets.symmetric(horizontal: 20.w),
-                       child: Row(
-                         children: [
-                           Container(
-                             width: 5.w,
-                             height: 24.h,
-                             decoration: BoxDecoration(
-                               gradient: LinearGradient(
-                                 colors: [
-                                   ColorManager.colorPrimary,
-                                   ColorManager.colorPrimary.withOpacity(0.5),
-                                 ],
-                                 begin: Alignment.topCenter,
-                                 end: Alignment.bottomCenter,
-                               ),
-                               borderRadius: BorderRadius.circular(10),
-                             ),
-                           ),
-                           SizedBox(width: 12.w),
-                           Text(
-                             'إحصائيات الفصول',
-                             style: TextStyle(
-                               fontSize: 22.sp,
-                               fontWeight: FontWeight.w900,
-                               color: Colors.grey[900],
-                             ),
-                           ),
-                         ],
-                       ),
-                     ):SizedBox();
-                   },
+                  BlocBuilder<AbsenceCubit, AbsenceStates>(
+                    builder: (context, state) {
+                      return AbsenceCubit.get(context)
+                                      .classStatisticsOfflineResponse !=
+                                  null ||
+                              AbsenceCubit.get(context).classStatistic != null
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 5.w,
+                                    height: 24.h,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          ColorManager.colorPrimary,
+                                          ColorManager.colorPrimary
+                                              .withOpacity(0.5),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Text(
+                                    'إحصائيات الفصول',
+                                    style: TextStyle(
+                                      fontSize: 22.sp,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.grey[900],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox();
+                    },
                   ),
-
                   TweenAnimationBuilder<double>(
                     duration: Duration(milliseconds: 1200),
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -520,18 +524,24 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     builder: (context, value, child) {
                       return Transform.scale(
                         scale: value,
-                        child: AbsenceCubit.get(context).classStatisticsResponse!=null
-                            ? BlocBuilder<AbsenceCubit, AbsenceStates>(
+                        child: BlocBuilder<AbsenceCubit, AbsenceStates>(
                           builder: (context, state) {
                             final cubit = AbsenceCubit.get(context);
-                            final first = cubit.firstClass;
 
-                            if (state is GetCapacityLoadingState) {
+                            final classStatistics =
+                                cubit.classStatisticsResponse ??
+                                    cubit.classStatisticsOfflineResponse;
+
+                            if (classStatistics == null) {
                               return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 20.h),
                                 padding: EdgeInsets.all(20.w),
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [Colors.white, Colors.grey.shade50]),
+                                  gradient: LinearGradient(colors: [
+                                    Colors.white,
+                                    Colors.grey.shade50
+                                  ]),
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
@@ -546,10 +556,58 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                   highlightColor: Colors.grey.shade100,
                                   child: Column(
                                     children: [
-                                      Container(height: 30.h, width: 100.w, color: Colors.white),
+                                      Container(
+                                          height: 30.h,
+                                          width: 100.w,
+                                          color: Colors.white),
                                       SizedBox(height: 20.h),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                        children: [
+                                          buildShimmerStatItem(),
+                                          buildShimmerStatItem(),
+                                          buildShimmerStatItem(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (state is GetCapacityLoadingState) {
+                              return Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 20.h),
+                                padding: EdgeInsets.all(20.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [
+                                    Colors.white,
+                                    Colors.grey.shade50
+                                  ]),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.grey.shade300,
+                                  highlightColor: Colors.grey.shade100,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          height: 30.h,
+                                          width: 100.w,
+                                          color: Colors.white),
+                                      SizedBox(height: 20.h),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           buildShimmerStatItem(),
                                           buildShimmerStatItem(),
@@ -563,16 +621,58 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                             }
 
                             if (state is GetAbsenceErrorState) {
-                              return const SizedBox();
+                              showFlutterToast(message: state.error, state: ToastState.ERROR);
+                              return Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 20.h),
+                                padding: EdgeInsets.all(20.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [
+                                    Colors.white,
+                                    Colors.grey.shade50
+                                  ]),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.grey.shade300,
+                                  highlightColor: Colors.grey.shade100,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                          height: 30.h,
+                                          width: 100.w,
+                                          color: Colors.white),
+                                      SizedBox(height: 20.h),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                        children: [
+                                          buildShimmerStatItem(),
+                                          buildShimmerStatItem(),
+                                          buildShimmerStatItem(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
                             }
 
+                            final first = classStatistics.classes.first;
+
                             return GestureDetector(
                               onTap: () {
-                                if (cubit.classStatisticsResponse != null &&
-                                    cubit.classStatisticsResponse!.classes.length > 1) {
+                                if (classStatistics.classes.length > 1) {
                                   Get.to(
-                                        () => AllClassesStatisticsScreen(
-                                      classStatisticsResponse: cubit.classStatisticsResponse!,
+                                    () => AllClassesStatisticsScreen(
+                                      classStatisticsResponse: classStatistics,
                                     ),
                                     transition: Transition.rightToLeftWithFade,
                                     duration: Duration(milliseconds: 500),
@@ -580,7 +680,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                 }
                               },
                               child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20.w, vertical: 20.h),
                                 padding: EdgeInsets.all(20.w),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -599,8 +700,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                 ),
                                 child: Column(
                                   children: [
-                                    // Class number header
-
+                                    // رأس الفصل
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 16.w,
@@ -610,7 +710,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                         gradient: LinearGradient(
                                           colors: [
                                             ColorManager.colorPrimary,
-                                            ColorManager.colorPrimary.withOpacity(0.8),
+                                            ColorManager.colorPrimary
+                                                .withOpacity(0.8),
                                           ],
                                         ),
                                         borderRadius: BorderRadius.circular(15),
@@ -636,9 +737,10 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       ),
                                     ),
                                     SizedBox(height: 20.h),
-                                    // Statistics
+                                    // الإحصائيات
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
                                         _buildStatItemColored(
                                           '${first?.capacity ?? 0}',
@@ -661,7 +763,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       ],
                                     ),
                                     SizedBox(height: 16.h),
-                                    // Attendance percentage bar
+                                    // شريط نسبة الحضور
                                     Container(
                                       height: 8.h,
                                       decoration: BoxDecoration(
@@ -670,9 +772,13 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       ),
                                       child: FractionallySizedBox(
                                         alignment: Alignment.centerRight,
-                                        widthFactor: (first?.capacity ?? 0) > 0
-                                            ? (first?.numberOfAttendants ?? 0) / (first?.capacity ?? 1)
-                                            : 0,
+                                        widthFactor: ((first?.capacity ?? 0) >
+                                                0)
+                                            ? (((first?.numberOfAttendants ??
+                                                        0) /
+                                                    (first?.capacity ?? 1))
+                                                .clamp(0.0, 1.0))
+                                            : 0.0,
                                         child: Container(
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
@@ -681,14 +787,16 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                 Colors.green.shade300,
                                               ],
                                             ),
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
                                         ),
                                       ),
                                     ),
                                     SizedBox(height: 8.h),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'نسبة الحضور: ${(first?.capacity ?? 0) > 0 ? (((first?.numberOfAttendants ?? 0) / (first?.capacity ?? 1)) * 100).toStringAsFixed(1) : 0}%',
@@ -698,16 +806,17 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        if (cubit.classStatisticsResponse != null &&
-                                            cubit.classStatisticsResponse!.classes.length > 1)
+                                        if (classStatistics.classes.length > 1)
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                               horizontal: 10.w,
                                               vertical: 4.h,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: ColorManager.colorPrimary.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(15),
+                                              color: ColorManager.colorPrimary
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
                                             ),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
@@ -715,14 +824,16 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                                 Icon(
                                                   Icons.touch_app,
                                                   size: 14.sp,
-                                                  color: ColorManager.colorPrimary,
+                                                  color:
+                                                      ColorManager.colorPrimary,
                                                 ),
                                                 SizedBox(width: 4.w),
                                                 Text(
                                                   'عرض الكل',
                                                   style: TextStyle(
                                                     fontSize: 11.sp,
-                                                    color: ColorManager.colorPrimary,
+                                                    color: ColorManager
+                                                        .colorPrimary,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
@@ -736,191 +847,11 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                               ),
                             );
                           },
-                        )
-                            :
-                        AbsenceCubit.get(context).classStatisticsOfflineResponse!=null?
-                        BlocBuilder<AbsenceCubit, AbsenceStates>(
-                          builder: (context, state) {
-                            final cubit = AbsenceCubit.get(context);
-                            final first = cubit.classStatisticsOfflineResponse!.classes.first;
-
-                            return GestureDetector(
-                              onTap: () {
-                                if (cubit.classStatisticsOfflineResponse != null &&
-                                    cubit.classStatisticsOfflineResponse!.classes.length > 1) {
-                                  Get.to(
-                                        () => AllClassesStatisticsScreen(
-                                      classStatisticsResponse: cubit.classStatisticsOfflineResponse!,
-                                    ),
-                                    transition: Transition.rightToLeftWithFade,
-                                    duration: Duration(milliseconds: 500),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [Colors.white, Colors.grey.shade50],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: [
-                                    // Class number header
-
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16.w,
-                                        vertical: 8.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            ColorManager.colorPrimary,
-                                            ColorManager.colorPrimary.withOpacity(0.8),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.class_,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
-                                          SizedBox(width: 8.w),
-                                          Text(
-                                            'فصل ${first?.classNumber ?? 0}',
-                                            style: TextStyle(
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 20.h),
-                                    // Statistics
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        _buildStatItemColored(
-                                          '${first?.capacity ?? 0}',
-                                          'سعة الفصل',
-                                          Icons.groups,
-                                          Colors.blue,
-                                        ),
-                                        _buildStatItemColored(
-                                          '${first?.numberOfAttendants ?? 0}',
-                                          'حضور',
-                                          Icons.check_circle,
-                                          Colors.green,
-                                        ),
-                                        _buildStatItemColored(
-                                          '${first?.numberOfAbsents ?? 0}',
-                                          'غياب',
-                                          Icons.event_busy,
-                                          Colors.red,
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 16.h),
-                                    // Attendance percentage bar
-                                    Container(
-                                      height: 8.h,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: FractionallySizedBox(
-                                        alignment: Alignment.centerRight,
-                                        widthFactor: (first?.capacity ?? 0) > 0
-                                            ? (first?.numberOfAttendants ?? 0) / (first?.capacity ?? 1)
-                                            : 0,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Colors.green,
-                                                Colors.green.shade300,
-                                              ],
-                                            ),
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'نسبة الحضور: ${(first?.capacity ?? 0) > 0 ? (((first?.numberOfAttendants ?? 0) / (first?.capacity ?? 1)) * 100).toStringAsFixed(1) : 0}%',
-                                          style: TextStyle(
-                                            fontSize: 13.sp,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        if (cubit.classStatisticsOfflineResponse != null &&
-                                            cubit.classStatisticsOfflineResponse!.classes.length > 1)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 10.w,
-                                              vertical: 4.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: ColorManager.colorPrimary.withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(15),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.touch_app,
-                                                  size: 14.sp,
-                                                  color: ColorManager.colorPrimary,
-                                                ),
-                                                SizedBox(width: 4.w),
-                                                Text(
-                                                  'عرض الكل',
-                                                  style: TextStyle(
-                                                    fontSize: 11.sp,
-                                                    color: ColorManager.colorPrimary,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ):SizedBox()
+                        ),
                       );
                     },
                   ),
                   SizedBox(height: 10.h),
-
-
                   Column(
                     children: [
                       // Section Title
@@ -955,9 +886,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                           ],
                         ),
                       ),
-
                       SizedBox(height: 25.h),
-
                       _buildFeatureCard(
                         title: 'الغياب',
                         subtitle: 'تسجيل ومتابعة غياب الطلاب',
@@ -968,14 +897,13 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         ],
                         onTap: () {
                           Get.to(
-                                () => AbsenceScreen(),
+                            () => AbsenceScreen(),
                             transition: Transition.rightToLeftWithFade,
                             duration: Duration(milliseconds: 500),
                           );
                         },
                         index: 0,
                       ),
-
                       _buildFeatureCard(
                         title: 'الافتقاد',
                         subtitle: 'متابعة الطلاب',
@@ -986,36 +914,38 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         ],
                         onTap: () {
                           Get.to(
-                                () => MissingScreen(),
+                            () => MissingScreen(),
                             transition: Transition.leftToRightWithFade,
                             duration: Duration(milliseconds: 500),
                           );
                         },
                         index: 1,
                       ),
-                      AbsenceCubit.get(context).isConnected&&CacheHelper.getDataString(key: 'role')=='admin'?
-                      _buildFeatureCard(
-                        title: 'افتقاد الامين',
-                        subtitle: 'متابعة الفصول الي تم افتقادها',
-                        icon: Icons.search_rounded,
-                        gradientColors: [
-                          ColorManager.colorPrimary.withOpacity(0.85),
-                          ColorManager.colorPrimary.withOpacity(0.65),
-                        ],
-                        onTap: () {
-                          Get.to(
-                                () => MissingClassesScreen(),
-                            transition: Transition.rightToLeftWithFade,
-                            duration: Duration(milliseconds: 500),
-                          );
-                        },
-                        index: 1,
-                      ):SizedBox(),
+                      AbsenceCubit.get(context).isConnected &&
+                              CacheHelper.getDataString(key: 'role') == 'Admin'
+                          ? _buildFeatureCard(
+                              title: 'افتقاد الامين',
+                              subtitle: 'متابعة الفصول الي تم افتقادها',
+                              icon: Icons.assignment_rounded,
+                              gradientColors: [
+                                ColorManager.colorPrimary.withOpacity(0.85),
+                                ColorManager.colorPrimary.withOpacity(0.65),
+                              ],
+                              onTap: () {
+                                Get.to(
+                                  () => MissingClassesScreen(),
+                                  transition: Transition.rightToLeftWithFade,
+                                  duration: Duration(milliseconds: 500),
+                                );
+                              },
+                              index: 1,
+                            )
+                          : SizedBox(),
                       SizedBox(height: 40.h),
                     ],
                   ),
-
-             ] ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1023,7 +953,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatItemColored(String value, String label, IconData icon, Color color) {
+  Widget _buildStatItemColored(
+      String value, String label, IconData icon, Color color) {
     return Column(
       children: [
         Container(
@@ -1060,4 +991,11 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     );
   }
 }
-
+String _getTwoPartName(String fullName) {
+  final parts = fullName.trim().split(' ');
+  if (parts.length >= 2) {
+    return '${parts[0]} ${parts[1]}'; // أول اسمين فقط
+  } else {
+    return fullName; // لو الاسم كلمة واحدة
+  }
+}

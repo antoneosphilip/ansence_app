@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
 import 'package:summer_school_app/core/style_font_manager/style_manager.dart';
 import 'package:summer_school_app/model/update_absence_student/update_absence_student_body.dart';
+import 'package:summer_school_app/utility/database/local/cache_helper.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view/core_widget/xstation_button_custom/x_station_button_custom.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_cubit.dart';
 import 'package:summer_school_app/view_model/block/missing_cubit/missing_states.dart';
 
@@ -16,22 +18,36 @@ import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 import '../student_profile_widget/call_buttons.dart';
 import '../student_profile_widget/reason_text_form_field.dart';
 
-class StudentProfile extends StatelessWidget {
+class StudentProfile extends StatefulWidget {
   final GetMissingStudentModelAbsenceModel getMissingStudentModel;
   final MissingCubit missingCubit;
+  final String numberClass;
 
   const StudentProfile(
       {super.key,
         required this.getMissingStudentModel,
-        required this.missingCubit});
+        required this.missingCubit, required this.numberClass});
 
   @override
+  State<StudentProfile> createState() => _StudentProfileState();
+}
+
+class _StudentProfileState extends State<StudentProfile> {
+  String role="";
+  @override
+  void initState() {
+    // TODO: implement initState
+    role=CacheHelper.getDataString(key: 'role');
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+
     absenceReasonHandle(
-        getMissingStudentModel: getMissingStudentModel,
-        missingCubit: missingCubit);
+        getMissingStudentModel: widget.getMissingStudentModel,
+        missingCubit: widget.missingCubit);
     return BlocProvider.value(
-        value: missingCubit,
+        value: widget.missingCubit,
         child: BlocConsumer<MissingCubit, MissingStates>(
           listener: (BuildContext context, MissingStates state) async {
             if (state is UpdateStudentMissingLoadingState) {
@@ -43,6 +59,11 @@ class StudentProfile extends StatelessWidget {
               EasyLoading.dismiss();
               showFlutterToast(
                   message: "تم الحفظ بنجاح", state: ToastState.SUCCESS);
+              if(role=='Admin'){
+                print("updateee");
+                AbsenceCubit.get(context).checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
+
+              }
             } else if (state is UpdateStudentMissingErrorState) {
               EasyLoading.dismiss();
               showFlutterToast(
@@ -60,162 +81,165 @@ class StudentProfile extends StatelessWidget {
                 child: Scaffold(
                   backgroundColor: Colors.grey[50],
                   body: SingleChildScrollView(
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildHeader(context),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 50),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHeader(context),
 
-                            SizedBox(height: 25.h),
+                              SizedBox(height: 25.h),
 
-                            // Attendance Status Card
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: ColorManager.colorPrimary.withOpacity(0.08),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'حالة الحضور',
-                                      style: TextStyleManager.textStyle20w500.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                        color: ColorManager.colorPrimary,
+                              // Attendance Status Card
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(20.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: ColorManager.colorPrimary.withOpacity(0.08),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
                                       ),
-                                    ),
-                                    SizedBox(height: 20.h),
-                                    _buildAttendanceItem(
-                                      'قبطي',
-                                      getMissingStudentModel.student.absences?.last.copticAttendant ?? false,
-                                    ),
-                                    SizedBox(height: 12.h),
-                                    _buildAttendanceItem(
-                                      'ألحان',
-                                      getMissingStudentModel.student.absences?.last.alhanAttendant ?? false,
-                                    ),
-                                    SizedBox(height: 12.h),
-                                    _buildAttendanceItem(
-                                      'طقس',
-                                      getMissingStudentModel.student.absences?.last.tacsAttendant ?? false,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'حالة الحضور',
+                                        style: TextStyleManager.textStyle20w500.copyWith(
+                                          fontWeight: FontWeight.w800,
+                                          color: ColorManager.colorPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: 20.h),
+                                      _buildAttendanceItem(
+                                        'قبطي',
+                                        widget.getMissingStudentModel.student.absences?.last.copticAttendant ?? false,
+                                      ),
+                                      SizedBox(height: 12.h),
+                                      _buildAttendanceItem(
+                                        'ألحان',
+                                        widget.getMissingStudentModel.student.absences?.last.alhanAttendant ?? false,
+                                      ),
+                                      SizedBox(height: 12.h),
+                                      _buildAttendanceItem(
+                                        'طقس',
+                                        widget.getMissingStudentModel.student.absences?.last.tacsAttendant ?? false,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
 
 
 
-                            SizedBox(height: 20.h),
+                              SizedBox(height: 20.h),
 
-                            // Absence Reason Card
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      blurRadius: 15,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(8.w),
-                                          decoration: BoxDecoration(
-                                            color: ColorManager.colorPrimary.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(10.r),
+                              // Absence Reason Card
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(20.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        blurRadius: 15,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(8.w),
+                                            decoration: BoxDecoration(
+                                              color: ColorManager.colorPrimary.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(10.r),
+                                            ),
+                                            child: Icon(
+                                              Icons.info_outline,
+                                              color: ColorManager.colorPrimary,
+                                              size: 24.sp,
+                                            ),
                                           ),
-                                          child: Icon(
-                                            Icons.info_outline,
-                                            color: ColorManager.colorPrimary,
-                                            size: 24.sp,
+                                          SizedBox(width: 12.w),
+                                          Text(
+                                            'سبب الغياب',
+                                            style: TextStyleManager.textStyle20w500.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 12.w),
-                                        Text(
-                                          'سبب الغياب',
-                                          style: TextStyleManager.textStyle20w500.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 12.h),
-                                    const ReasonTextFormField(),
-                                  ],
+                                        ],
+                                      ),
+                                      SizedBox(height: 12.h),
+                                      const ReasonTextFormField(),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            SizedBox(height: 25.h),
+                              SizedBox(height: 25.h),
 
-                            CallButtons(
-                              getMissingStudentModel: getMissingStudentModel,
-                            ),
-                            SizedBox(height: 180.h),
-                          ],
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                            child: AbsenceButtonCustom(
-                                textButton: 'حفظ',
-                                onPressed: () async {
-                                  if (MissingCubit.get(context)
-                                      .formKey
-                                      .currentState!
-                                      .validate()) {
-                                    await MissingCubit.get(context)
-                                        .updateStudentMissing(
-                                        updateAbsenceStudentBody:
-                                        UpdateAbsenceStudentBody(
-                                          studentId: getMissingStudentModel.student.id,
-                                          id: getMissingStudentModel.student
-                                              .absences?.last.id,
-                                          absenceReason: MissingCubit.get(context)
-                                              .reasonTextController
-                                              .text,
-                                          absenceDate: getMissingStudentModel.student
-                                              .absences?.last.absenceDate,
-                                          attendant: getMissingStudentModel.student
-                                              .absences?.last.attendant,
-                                        ));
-                                    MissingCubit.get(context)
-                                        .checkIfDoneAllAbsence(
-                                        getMissingStudentModel:
-                                        getMissingStudentModel);
-                                  }
-                                }),
+                              CallButtons(
+                                getMissingStudentModel: widget.getMissingStudentModel,
+                              ),
+                              SizedBox(height: 120.h),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 80.h),
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 2.w),
+                              child: AbsenceButtonCustom(
+                                  textButton: 'حفظ',
+                                  onPressed: () async {
+                                    if (MissingCubit.get(context)
+                                        .formKey
+                                        .currentState!
+                                        .validate()) {
+                                      await MissingCubit.get(context)
+                                          .updateStudentMissing(
+                                          updateAbsenceStudentBody:
+                                          UpdateAbsenceStudentBody(
+                                            studentId: widget.getMissingStudentModel.student.id,
+                                            id: widget.getMissingStudentModel.student
+                                                .absences?.last.id,
+                                            absenceReason: MissingCubit.get(context)
+                                                .reasonTextController
+                                                .text,
+                                            absenceDate: widget.getMissingStudentModel.student
+                                                .absences?.last.absenceDate,
+                                            attendant: widget.getMissingStudentModel.student
+                                                .absences?.last.attendant,
+                                          ));
+                                      MissingCubit.get(context)
+                                          .checkIfDoneAllAbsence(
+                                          getMissingStudentModel:
+                                          widget.getMissingStudentModel);
+                                    }
+                                  }),
+                            ),
+                          ),
+                          SizedBox(height: 80.h),
 
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -226,7 +250,7 @@ class StudentProfile extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final student = getMissingStudentModel.student;
+    final student = widget.getMissingStudentModel.student;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(top: 50.h, bottom: 30.h),
@@ -281,7 +305,7 @@ class StudentProfile extends StatelessWidget {
           GestureDetector(
             onTap: () => showImageDialog(
               context,
-              getMissingStudentModel.student.profileImage,
+              widget.getMissingStudentModel.student.profileImage,
             ),
             child: Container(
               width: 120.w,
@@ -298,9 +322,9 @@ class StudentProfile extends StatelessWidget {
                 ],
               ),
               child: ClipOval(
-                child: getMissingStudentModel.student.profileImage != null
+                child: widget.getMissingStudentModel.student.profileImage != null
                     ? CustomCachedImage(
-                    imageUrl: getMissingStudentModel.student.profileImage)
+                    imageUrl: widget.getMissingStudentModel.student.profileImage)
                     : Image.asset(
                   'assets/images/default_image.jpg',
                   fit: BoxFit.cover,
@@ -374,7 +398,6 @@ class StudentProfile extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildAttendanceItem(String subject, bool isPresent) {
     return Container(

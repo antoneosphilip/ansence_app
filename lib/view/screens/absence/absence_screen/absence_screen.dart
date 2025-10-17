@@ -92,7 +92,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> with TickerProviderStateM
                     SizedBox(height: 15.h),
 
                     state is GetClassesNumberLoadingState
-                        ? Center(child: CustomLoading())
+                        ? const Center(child: CustomLoading())
                         : AbsenceCubit.get(context).isConnected
                         ? Row(
                       children: [

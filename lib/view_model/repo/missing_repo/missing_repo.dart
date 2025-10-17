@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:summer_school_app/core/networking/api_error_handler.dart';
+import 'package:summer_school_app/utility/database/local/cache_helper.dart';
 import 'package:summer_school_app/utility/database/network/dio-helper.dart';
 
 import '../../../model/get_absence_model/get_absence_model.dart';
@@ -49,6 +50,7 @@ class MissingRepo {
             'AbsenceDate': updateAbsenceStudentBody.absenceDate,
             'AbsenceReason': updateAbsenceStudentBody.absenceReason,
             'attendant': updateAbsenceStudentBody.attendant,
+            'ServantId':CacheHelper.getDataString(key: 'id')
           });
 
       return Right(response);

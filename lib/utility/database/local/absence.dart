@@ -17,7 +17,8 @@ class Absence {
   final String absenceReason;
 
   @HiveField(4)
-   bool attendant;
+  bool? attendant;
+
 
   Absence({
     required this.id,
@@ -25,5 +26,6 @@ class Absence {
     required this.absenceDate,
     required this.absenceReason,
     required this.attendant,
+
   });
 }

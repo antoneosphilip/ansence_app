@@ -9,6 +9,7 @@ import 'package:get/get_navigation/get_navigation.dart'; // ✅ هنا هنست�
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view/screens/home/home_screen/home_screen.dart';
 import 'package:summer_school_app/view/screens/sign_up/sign_up_screen/sign_up_screen.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:summer_school_app/view_model/block/login_cubit/login_cubit.dart';
 import 'package:summer_school_app/view_model/block/login_cubit/login_states.dart';
 import '../../../../core/color_manager/color_manager.dart';
@@ -238,6 +239,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     listener: (context, state) {
                       if (state is LoginSuccessState) {
                       showFlutterToast(message: 'تم تسجيل الدخول بنجاح!', state: ToastState.SUCCESS);
+                      AbsenceCubit.get(context).getAllAbsenceFromStart();
+
                       Get.to(
                             () => HomeLayoutScreen(),
                       );

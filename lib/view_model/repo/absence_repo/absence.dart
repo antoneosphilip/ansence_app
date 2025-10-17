@@ -16,10 +16,10 @@ import '../../../utility/database/network/end_points.dart';
 class AbsenceRepo {
 
   Future<Either<ErrorHandler, List<Student>>> getAbsence(
-      {required int id}) async {
+      {required int classNumber,required String servantId}) async {
     try {
       final response =
-      await DioHelper.getData(url: EndPoint.getStudentAbsence(id));
+      await DioHelper.getData(url: EndPoint.getStudentAbsence(classNumber,servantId));
       List<dynamic> jsonData = response.data;
       return Right(jsonData.map((item) => Student.fromJson(item)).toList());
     } on DioException catch (e) {
@@ -74,9 +74,8 @@ class AbsenceRepo {
           "studentId": updateAbsenceStudentBody.studentId,
           "absenceDate": updateAbsenceStudentBody.absenceDate,
           "absenceReason": updateAbsenceStudentBody.absenceReason ?? "",
-          "alhanAttendant": updateAbsenceStudentBody.alhanAttendant,
-          "copticAttendant": updateAbsenceStudentBody.copticAttendant,
-          "tacsAttendant": updateAbsenceStudentBody.tacsAttendant,
+          'Attendant':updateAbsenceStudentBody.attendant,
+          'ServantId':CacheHelper.getDataString(key: 'id')
         },
 
       );
@@ -155,7 +154,7 @@ class AbsenceRepo {
     try {
       final response = await DioHelper.getData(
         url: EndPoint.getCapacity,
-        queryParameters: {'servantId': id},
+
       );
       print("responseeeeeeeeeee ${response.data}");
 

@@ -34,6 +34,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
   Widget build(BuildContext context) {
     return
       BlocBuilder<AbsenceCubit,AbsenceStates>(
+
         builder: (BuildContext context, state) {
           return Padding(
             padding: EdgeInsets.only(right: 16.w),
@@ -100,7 +101,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
                 onChanged: (String? value) async {
                   print("valueee ${value}");
                   AbsenceCubit.get(context).isConnected?
-                  widget.isAbsence? AbsenceCubit.get(context).getAbsence(id: int.parse(value!)):
+                  widget.isAbsence? AbsenceCubit.get(context).getAbsence(classNumber:int.parse(value??"0") ):
                   MissingCubit.get(context).getAbsenceMissing(id: int.parse(value!)):
 
                   AbsenceCubit.get(context).addOfflineListToAbsence(value: int.parse(value!));

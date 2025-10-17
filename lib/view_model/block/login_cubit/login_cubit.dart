@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:either_dart/either.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/get_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:summer_school_app/model/auth_response/sign_in_body.dart';
 import 'package:summer_school_app/model/auth_response/sign_up_body.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 
 import '../../../model/auth_response/class_data.dart';
 import '../../../model/auth_response/sign_in_Response.dart';
@@ -98,7 +101,7 @@ class AuthCubit extends Cubit<AuthStates> {
       return;
     }
     for(var item in classes){
-      servantClassesMap[item.classNumber.toString()]=item.subject=='ألحان'?1:item.subject=='قبطي'?2:item.subject=='طقس'?3:0;
+      servantClassesMap[item.classNumber.toString()]=item.subject=='ألحان'?0:item.subject=='قبطي'?1:item.subject=='طقس'?2:0;
     }
 
     registerBody = RegisterBody(name: nameController.text,
@@ -140,6 +143,7 @@ class AuthCubit extends Cubit<AuthStates> {
       await CacheHelper.put(key: 'phone', value: right.phoneNumber);
       await CacheHelper.put(key: 'email', value: right.email);
       await CacheHelper.put(key: 'role', value: right.role);
+      print("roleee ${right.role}");
 
       emit(LoginSuccessState());
     },

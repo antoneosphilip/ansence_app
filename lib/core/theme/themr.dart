@@ -12,6 +12,11 @@ abstract class ThemeApp {
     scaffoldBackgroundColor: ColorManager.colorWhite,
     primaryColor: ColorManager.colorPrimary,
     bottomSheetTheme: const BottomSheetThemeData(backgroundColor: ColorManager.colorWhite),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: ColorManager.colorPrimary, // لون الكيرسور
+      selectionColor: ColorManager.colorPrimary.withOpacity(0.3), // لون التظليل
+      selectionHandleColor: ColorManager.colorPrimary, // لون النقطة اللي تمسك بيها التحديد
+    ),
     // textTheme:  TextTheme(
     //   bodyLarge: TextStyle(
     //     fontSize: 24.sp,

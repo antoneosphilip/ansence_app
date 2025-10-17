@@ -10,6 +10,7 @@ import 'package:summer_school_app/view_model/repo/missing_repo/missing_repo.dart
 import '../../../../core/service_locator/service_locator.dart';
 import '../../../core_widget/custom_drop_down/custom_drop_down.dart';
 import '../../../core_widget/custom_top_sncak_bar/custom_top_snack_bar.dart';
+import '../missing_widget/celeberate.dart';
 import '../missing_widget/missing_list_view.dart';
 
 class MissingScreen extends StatefulWidget {
@@ -89,8 +90,10 @@ class _MissingScreenState extends State<MissingScreen>
                     current is UpdateStudentMissingSuccessState,
                 listener: (context, state) {
                   if (state is CompleteAllStudentMissingSuccessState) {
-                    showSnackBarWidget(context,
-                        " شكرا لافتقادك يا ${CacheHelper.getDataString(key: 'name')}");
+                    showCelebrationDialog(
+                      context,
+                      CacheHelper.getDataString(key: 'name') ?? 'الطالب',
+                    );
                   }
                 },
                 builder: (context, state) {

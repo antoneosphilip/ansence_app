@@ -353,112 +353,139 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                 ),
                               ),
 
-                            Container(
-                              width: context.w,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: DropdownButtonFormField<int>(
-                                      value: classData.classNumber,
-                                      decoration: InputDecoration(
-                                        labelText: 'رقم الفصل *',
-                                        labelStyle: TextStyle(
-                                          fontSize: context.w * 0.035,
-                                          color: classData.classNumber == null
-                                              ? Colors.red[600]
-                                              : Colors.grey[600],
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: classData.classNumber == null
-                                                ? Colors.red
-                                                : Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: classData.classNumber == null
-                                                ? Colors.red
-                                                : Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: context.w * 0.03,
-                                          vertical: context.h * 0.01,
-                                        ),
-                                      ),
-                                      style: TextStyle(fontSize: context.w * 0.035),
-                                      items: List.generate(30, (index) => index + 1)
-                                          .map((number) => DropdownMenuItem(
-                                        value: number,
-                                        child: Text(
-                                          'الفصل $number',
-                                          style: TextStyle(
-                                              fontSize: context.w * 0.035, color: Colors.black),
-                                        ),
-                                      ))
-                                          .toList(),
-                                      onChanged: (value) {
-                                        cubit.updateClassNumber(index, value);
-                                      },
-                                    ),
+                    Container(
+                      width: context.w,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              value: classData.classNumber,
+                              dropdownColor: Colors.white,
+                              decoration: InputDecoration(
+                                labelText: 'رقم الفصل *',
+                                labelStyle: TextStyle(
+                                  fontSize: context.w * 0.035,
+                                  color: classData.classNumber == null
+                                      ? Colors.red[600]
+                                      : ColorManager.colorPrimary, // ✅ اللون الأساسي بدل الرمادي
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: classData.classNumber == null
+                                        ? Colors.red
+                                        : ColorManager.colorPrimary, // ✅ هنا
                                   ),
-                                  SizedBox(width: context.w * 0.03),
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      value: classData.subject,
-                                      decoration: InputDecoration(
-                                        labelText: 'المادة *',
-                                        labelStyle: TextStyle(
-                                          fontSize: context.w * 0.035,
-                                          color: classData.subject == null
-                                              ? Colors.red[600]
-                                              : Colors.grey[600],
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: classData.subject == null
-                                                ? Colors.red
-                                                : Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10),
-                                          borderSide: BorderSide(
-                                            color: classData.subject == null
-                                                ? Colors.red
-                                                : Colors.grey[300]!,
-                                          ),
-                                        ),
-                                        contentPadding: EdgeInsets.symmetric(
-                                          horizontal: context.w * 0.03,
-                                          vertical: context.h * 0.01,
-                                        ),
-                                      ),
-                                      style: TextStyle(fontSize: context.w * 0.035, color: ColorManager.colorWhite),
-                                      items: ['ألحان', 'قبطي', 'طقس']
-                                          .map((subject) => DropdownMenuItem(
-                                        value: subject,
-                                        child: Text(
-                                          subject,
-                                          style: TextStyle(
-                                              fontSize: context.w * 0.035, color: Colors.black),
-                                        ),
-                                      ))
-                                          .toList(),
-                                      onChanged: classData.classNumber != null
-                                          ? (value) {
-                                        cubit.updateClassSubject(index, value);
-                                      }
-                                          : null,
-                                    ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: classData.classNumber == null
+                                        ? Colors.red
+                                        : ColorManager.colorPrimary, // ✅ وهنا كمان
                                   ),
-                                ],
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: ColorManager.colorPrimary, // ✅ عند التركيز
+                                    width: 1.8,
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: context.w * 0.03,
+                                  vertical: context.h * 0.01,
+                                ),
                               ),
+                              style: TextStyle(fontSize: context.w * 0.035, color: Colors.black),items: [
+                              ...List.generate(34, (index) => index + 1),
+                              101, 102, 201, 202, 301,
+                            ]
+                                .map(
+                                  (number) => DropdownMenuItem(
+                                value: number,
+                                child: Text(
+                                  'الفصل $number',
+                                  style: TextStyle(
+                                    fontSize: context.w * 0.035,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            )
+                                .toList(),
+                              onChanged: (value) {
+                                cubit.updateClassNumber(index, value);
+                              },
                             ),
+                          ),
+                          SizedBox(width: context.w * 0.03),
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              value: classData.subject,
+                              dropdownColor: Colors.white,
+                              decoration: InputDecoration(
+                                labelText: 'المادة *',
+                                labelStyle: TextStyle(
+                                  fontSize: context.w * 0.035,
+                                  color: classData.subject == null
+                                      ? Colors.red[600]
+                                      : ColorManager.colorPrimary, // ✅ هنا كمان
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: classData.subject == null
+                                        ? Colors.red
+                                        : ColorManager.colorPrimary,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: classData.subject == null
+                                        ? Colors.red
+                                        : ColorManager.colorPrimary,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: ColorManager.colorPrimary,
+                                    width: 1,
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: context.w * 0.03,
+                                  vertical: context.h * 0.01,
+                                ),
+                              ),
+                              style: TextStyle(
+                                fontSize: context.w * 0.035,
+                                color: Colors.black,
+                              ),
+                              items: ['ألحان', 'قبطي', 'طقس']
+                                  .map(
+                                    (subject) => DropdownMenuItem(
+                                  value: subject,
+                                  child: Text(
+                                    subject,
+                                    style: TextStyle(
+                                        fontSize: context.w * 0.035, color: Colors.black),
+                                  ),
+                                ),
+                              )
+                                  .toList(),
+                              onChanged: classData.classNumber != null
+                                  ? (value) {
+                                cubit.updateClassSubject(index, value);
+                              }
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                           ],
                         ),
                       ),

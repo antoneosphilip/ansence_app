@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +12,6 @@ import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.
 
 import '../../../../core/Custom_Text/custom_text.dart';
 import '../../../../core/color_manager/color_manager.dart';
-import '../../../../core/networking/api_error_handler.dart';
 import '../../../core_widget/custom_Cached_network/cusotm_chaced_netwok.dart';
 import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 
@@ -27,32 +25,38 @@ class StudentAbsenceItem extends StatefulWidget {
 }
 
 class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
+  late Student _studentModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _studentModel = widget.studentAbsenceModel;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AbsenceCubit, AbsenceStates>(
       listener: (BuildContext context, state) {
         if (state is UpdateStudentAbsenceErrorState) {
-          print("errorUpdate");
-          if (widget.studentAbsenceModel.id == state.studentId) {
-            final updatedAbsence = widget.studentAbsenceModel.absences!.last.copyWith(
-              attendant: !widget.studentAbsenceModel.absences!.last.attendant,
-            );
-
-            widget.studentAbsenceModel.absences![widget.studentAbsenceModel.absences!.length - 1] = updatedAbsence;
+          if (_studentModel.id == state.studentId) {
+            setState(() {
+              _studentModel = _studentModel.copyWith(
+                lastAttendance: !_studentModel.lastAttendance!,
+              );
+            });
 
             showFlutterToast(
-                message: "حدث خطأ برجاء المحاولة لاحقا",
-                state: ToastState.ERROR);
-            setState(() {});
+              message: "حدث خطأ برجاء المحاولة لاحقًا",
+              state: ToastState.ERROR,
+            );
           }
         }
       },
       child: InkWell(
         onTap: () {
           final now = DateTime.now();
-          print("hourr ${ DateTime.wednesday}");
-          print("hourr ${now.day}");
-
+          print("weekday: ${now.weekday}");
+          print("day: ${now.day}");
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,32 +64,33 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
           children: [
             SizedBox(width: 16.w),
             GestureDetector(
-              onTap: (){
-                print( widget.studentAbsenceModel.profileImage,);
-                showImageDialog(context, widget.studentAbsenceModel.profileImage,);
+              onTap: () {
+                print(_studentModel.profileImage);
+                showImageDialog(context, _studentModel.profileImage);
               },
               child: SizedBox(
                 width: 50.w,
                 height: 50.h,
-               child: CustomCachedImage(imageUrl: widget.studentAbsenceModel.profileImage,),
+                child: CustomCachedImage(imageUrl: _studentModel.profileImage),
               ),
             ),
             SizedBox(width: 10.w),
             TextWidget(
-              text: widget.studentAbsenceModel.studentName!
+              text: _studentModel.studentName!
                   .split(' ')
                   .take(3)
                   .join(' '),
-              textStyle: TextStyleManager.textStyle20w700
-                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600),
+              textStyle: TextStyleManager.textStyle20w700.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const Spacer(),
             Checkbox(
               activeColor: ColorManager.colorPrimary,
-              value: widget.studentAbsenceModel.absences!.last.attendant,
+              value: _studentModel.lastAttendance ?? false,
               onChanged: (bool? value) {
-
-                final lastAbsence = widget.studentAbsenceModel.absences?.last;
+                final lastAbsence = _studentModel.absences?.last;
 
                 if (lastAbsence != null) {
                   AbsenceCubit.get(context).updateStudentAbsence(
@@ -94,16 +99,16 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
                       studentId: lastAbsence.studentId,
                       absenceDate: lastAbsence.absenceDate,
                       absenceReason: lastAbsence.absenceReason ?? '',
-                      attendant: !lastAbsence.attendant,
+                      attendant: !( _studentModel.lastAttendance ?? false),
                       alhanAttendant: !lastAbsence.alhanAttendant,
                       copticAttendant: !lastAbsence.copticAttendant,
-                      tacsAttendant:!lastAbsence.tacsAttendant,
+                      tacsAttendant: !lastAbsence.tacsAttendant,
                       student: lastAbsence.student != null
                           ? Student(
                         id: lastAbsence.student!.id,
                         studentName: lastAbsence.student!.name,
                         classId: lastAbsence.student!.classId,
-
+                        lastAttendance: !( _studentModel.lastAttendance ?? false),
                       )
                           : null,
                     ),
@@ -111,17 +116,19 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
                 }
 
                 AbsenceCubit.get(context).updateStatistics(
-                  classNumber: widget.studentAbsenceModel.studentClass ?? 0,
+                  classNumber: _studentModel.studentClass ?? 0,
                   isAttendant: value ?? false,
                 );
+
                 setState(() {
-                  final updatedAbsence = widget.studentAbsenceModel.absences!.last.copyWith(
-                    attendant: value ?? false,
+                  _studentModel = _studentModel.copyWith(
+                    lastAttendance: value ?? false,
                   );
-                  widget.studentAbsenceModel.absences![widget.studentAbsenceModel.absences!.length - 1] = updatedAbsence;
                 });
 
-                AbsenceCubit.get(context).changeAbsence(isValue: value??false);
+                AbsenceCubit.get(context).changeAbsence(
+                  isValue: value ?? false,
+                );
               },
             ),
             SizedBox(width: 10.w),
@@ -131,4 +138,3 @@ class _StudentAbsenceItemState extends State<StudentAbsenceItem> {
     );
   }
 }
-

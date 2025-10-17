@@ -22,7 +22,7 @@ class SignInResponse {
       phoneNumber: json['phoneNumber'] ?? '',
       email: json['email'] ?? '',
       password: json['password'] ?? '',
-      role: 'role',
+      role: json['role'],
     );
   }
 

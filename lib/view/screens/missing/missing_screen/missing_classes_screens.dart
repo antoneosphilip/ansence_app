@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:summer_school_app/view/core_widget/absence_appbar/absence_appbar.dart';
+import 'package:summer_school_app/view/core_widget/custom_error/custom_error.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_cubit.dart';
 import 'package:get/get.dart';
+import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 
 import '../../../../core/color_manager/color_manager.dart';
+import '../../../../utility/database/local/cache_helper.dart';
 import '../missing_widget/missing_classes_widget.dart';
 
 // استخدم هذا الكود في صفحة عرض الفصول
@@ -26,6 +31,7 @@ class _MissingClassesScreenState extends State<MissingClassesScreen>
   @override
   void initState() {
     super.initState();
+    AbsenceCubit.get(context).checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: 1200),
@@ -81,12 +87,30 @@ class _MissingClassesScreenState extends State<MissingClassesScreen>
                   SizedBox(height: 20.h),
 
                   // Missing Classes Widget
-                  MissingClassesWidget(
-                    classesData:
-                    AbsenceCubit.get(context)
-                        .numbersMissingClassesModel
-                        ?.items ??
-                        {},
+                  BlocBuilder<AbsenceCubit,AbsenceStates>(
+                    builder: (BuildContext context, state) {
+                      return
+                        state is GetMissingClassesLoadingState?
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child:const MissingClassesWidget(
+                          classesData:{
+                            '0':true
+                          }
+                        )
+                      ):
+                            state is GetMissingClassesErrorState?
+                        const CustomError():
+                        MissingClassesWidget(
+                        classesData:
+                        AbsenceCubit.get(context)
+                            .numbersMissingClassesModel
+                            ?.items ??
+                            {},
+                      );
+                    },
+
                   ),
                 ],
               ),

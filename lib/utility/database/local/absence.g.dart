@@ -9,6 +9,7 @@ part of 'absence.dart';
 class AbsenceAdapter extends TypeAdapter<Absence> {
   @override
   final int typeId = 1;
+
   @override
   Absence read(BinaryReader reader) {
     final numOfFields = reader.readByte();
@@ -20,7 +21,7 @@ class AbsenceAdapter extends TypeAdapter<Absence> {
       studentId: fields[1] as String,
       absenceDate: fields[2] as String,
       absenceReason: fields[3] as String,
-      attendant: fields[4] as bool,
+      attendant: fields[4] as bool?,
     );
   }
 

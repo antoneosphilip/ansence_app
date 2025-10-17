@@ -50,7 +50,8 @@ class StudentData {
 
   @HiveField(14)
   final String? profileImage;
-
+  @HiveField(15)
+   bool? lastAttendance;
   StudentData({
     required this.id,
     required this.name,
@@ -67,5 +68,6 @@ class StudentData {
     required this.notes,
     required this.absences,
     this.profileImage,
+    required this.lastAttendance
   });
 }

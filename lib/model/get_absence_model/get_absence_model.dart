@@ -40,6 +40,7 @@ class Student {
   int? numberOfAbsences;
   String? notes;
   String? profileImage;
+  bool? lastAttendance;
   int? state;
   List<Absence>? absences;
 
@@ -61,6 +62,7 @@ class Student {
     this.state,
     this.profileImage,
     this.absences,
+    this.lastAttendance,
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -81,6 +83,7 @@ class Student {
       notes: json['notes'],
       state: json['state'],
       profileImage: json['profileImage'],
+      lastAttendance: json['lastAttendance']??true,
       absences: (json['absences'] as List<dynamic>?)
           ?.map((e) => Absence.fromJson(e))
           .toList(),
@@ -106,7 +109,51 @@ class Student {
       'state': state,
       'profileImage': profileImage,
       'absences': absences?.map((e) => e.toJson()).toList(),
+      'lastAttendance': lastAttendance,
     };
+  }
+
+  /// ✅ CopyWith method
+  Student copyWith({
+    String? id,
+    String? studentName,
+    String? classId,
+    int? studentClass,
+    int? level,
+    int? gender,
+    String? birthDate,
+    int? age,
+    String? mamPhone,
+    String? dadPhone,
+    String? studPhone,
+    int? shift,
+    int? numberOfAbsences,
+    String? notes,
+    String? profileImage,
+    bool? lastAttendance,
+    int? state,
+    List<Absence>? absences,
+  }) {
+    return Student(
+      id: id ?? this.id,
+      studentName: studentName ?? this.studentName,
+      classId: classId ?? this.classId,
+      studentClass: studentClass ?? this.studentClass,
+      level: level ?? this.level,
+      gender: gender ?? this.gender,
+      birthDate: birthDate ?? this.birthDate,
+      age: age ?? this.age,
+      mamPhone: mamPhone ?? this.mamPhone,
+      dadPhone: dadPhone ?? this.dadPhone,
+      studPhone: studPhone ?? this.studPhone,
+      shift: shift ?? this.shift,
+      numberOfAbsences: numberOfAbsences ?? this.numberOfAbsences,
+      notes: notes ?? this.notes,
+      state: state ?? this.state,
+      profileImage: profileImage ?? this.profileImage,
+      absences: absences ?? this.absences,
+      lastAttendance: lastAttendance ?? this.lastAttendance,
+    );
   }
 }
 

@@ -62,7 +62,7 @@ Future<void> main() async {
   Workmanager().registerPeriodicTask(
     "download_data", "task2",
     constraints: Constraints(networkType: NetworkType.connected),
-    frequency: const Duration(hours:2),
+    frequency: const Duration(minutes:15),
   );
   Workmanager().registerPeriodicTask(
     "alarm", "task3",
@@ -121,6 +121,7 @@ class _MyAppState extends State<MyApp> {
             result.contains(ConnectivityResult.mobile)) {
           print("online");
           initAysnc();
+
         } else {
           print("offline");
         }
@@ -150,24 +151,26 @@ class _MyAppState extends State<MyApp> {
     if (studentDataList.isNotEmpty) {
       try {
         for (var studItem in studentDataList) {
-          print("listttttt${studItem.id}");
+          print("listttttt${studItem}");
+          print("listtttt222222${studItem.lastAttendance}");
+          print("listttt333333${studItem.lastAttendance}");
+
           await DioHelper.putData(
             url: EndPoint.updateStudentAbsence(studItem.absences.last.id!),
             data: {
-              'Id': studItem.absences.last.id,
-              'StudentId': studItem.absences.last.studentId,
-              'AbsenceDate': studItem.absences.last.absenceDate!,
-              'AbsenceReason': studItem.absences.last.absenceReason!,
-              'attendant': studItem.absences.last.attendant,
+              'id': studItem.absences.last.id,
+              'studentId': studItem.absences.last.studentId,
+              'absenceDate': studItem.absences.last.absenceDate,
+              'absenceReason': studItem.absences.last.absenceReason ?? '',
+              'Attendant': studItem.lastAttendance,
+              'ServantId':CacheHelper.getDataString(key: 'id')
             },
           );
-          print("${studItem.name} upload success");
+          print("${studItem.lastAttendance} upload success");
         }
-
         // تنظيف البيانات
         studentDataList.clear();
         await box.put('studentsAbsence', studentDataList);
-
         var body = {
           "message": {
             "token": token,
@@ -180,7 +183,6 @@ class _MyAppState extends State<MyApp> {
             }
           }
         };
-
         try {
           final http.Response response = await http.post(
             Uri.parse(EndPoint.sendNotification),
@@ -230,7 +232,7 @@ class _MyAppState extends State<MyApp> {
         } catch (e) {
           print("errror${e}");
         }
-        print("Error in background task: $e");
+        print("Error in background task upload: $e");
       }
     }
   }
@@ -263,6 +265,7 @@ class _MyAppState extends State<MyApp> {
                   : PageName.login,
               getPages: pages,
               theme: ThemeApp.light,
+
               builder: (context, widget) {
                 Widget child = widget ?? SizedBox.shrink();
 
@@ -304,8 +307,8 @@ Future<String> getAccessToken() async {
   final Map<String, dynamic> serviceAccountJson = <String, String>{
     "type": "service_account",
     "project_id": "absence-app-633e1",
-    "private_key_id": "cafd3ade563bc0d724e8814a8aaa198ce967eaa9",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/KRec3DfcMnm0\ncnzXFvzVYUqfULqqrGCoFTL4Ff1NuQGQFMZA1TD5MhFrjprQmkPB6q1GNJ0W7cRe\n4NvLGeFuJTKmfUWm8jhO93l9p6MUkCN3YsFSyauzuALV/CpnO6bjlCB0wqYoAdlO\n95EMCZB61i+w2NeYgWW6jMfuR0LaG09Rcw/wH7g6hL4QCeGbfavaM8Ud2xusDXp3\n41IcBD+QjfNxXdUqET5wyF2w0/iMlDH3vS/Q4eVEntvIoYqQFG8dh2DW5opq8fQU\nL9nfO8aUrnPxWdO/HQTsKozJZxo6m3Pw51AziAkTglWd4IJBHr3y79f8zbl3gecl\nBGTEYpxtAgMBAAECggEAJMI33G27XyAkp5aRW4H73eNOyGprbrjlgETNT4fY9Opj\nustH4T0tpOmkEGj0a7MSXvZr2fFxmLBhf7YhBcHlB7tm7T1vGJ6AxeyQI+HJugFK\nlKE8mBkYJ5+1ieTq2X2Oxrnb8N/iOBS87xKrhWNMcVaBBrJ36MdPIsuCAZeZ6xsa\nWEibTLLurGYi2MYusoNPvcq+B+r5r8KKdGvDBlT8NM2WX+d1bDP2HhCqF5koZpIe\n374bDmE1j3eMGKmF/v5txgJRW4qO7AV6DFPQQrqXVvvWYmI1XxKZBMUswD8EHlYv\nPNbArxu8Tgf9u+X7+qHO8b2yBmHtnVYE+fPeu2/+qQKBgQDywEtwOB+Ty+8T0CtL\n/nv8gxpvvOpy7+yc4uxXRz58M3+kiQ23JxSZmrVW7MabbnbpS7g6uwMLpPjvbRNS\nMiQZAZWCPjSjht4iZ8Nfd2zXotak+2agbYu3NWA0bJa/0H93I4tz+tSn7r7+qfdu\nSBKI01Mug5UUSg6pIf/Q3uJKKQKBgQDJl/nkBI8FsguwQQlzyB9dBC2gI/aAlwfc\nJT1G5PZiLmyyqzuO3fEf4Gc79mE1iA+Nh0mLyK15NJzD+XzzQPzw1KqymDBUtLUm\na/c2+lr3I8qGn694Dg9uKGwMRL8pB4un/dAGQO3vlCsSaoiisL1mAK0dqsSFcSSu\nqvSY3fxQpQKBgBL+iOiW+6GM64AZYcnod7siZwcnOREVROZhuyx5HqKJRQuSzcfu\n/uWl/Vp33HJ9CkDm89tklrBqkC/r0P81fS2XuiMeyu+gtfDrPZZSuemFjFYMddNH\nvw7u1kBD3ufTYKXp2heRIOKjA77ZfcrbSNf78R5KnXeg89S4HFQznHFBAoGAO4Vp\nvM8zw0S8er/ZIJxX1kjjh8LWh0UQhwlfvEziCj8WzPIN1bLl/LlvAZ9POFUB8pGd\nP25y+bR1DM/e+puXkyvXcn/I1Vm9mqiKB2uH7CxfIbyIPHQ6ThYVQNITdvPJYkJo\nZ1BIcFJZHUjjKtXwNevBMV84QwYTBJdpPLFeTBkCgYEA1Wu5pJruZjOthDBmyBFq\nYH3sMi0z7dIf4bXZMLEg4vPt/k922v4vKUnmjXPWZ4pvKfdXw0ga8hTBJaiP2SUk\nMGJdKQuYmJ8yLeNA+m4za5YkY9XhrCZ6dUVU3L9qqKoUevZZdoC0ATq4dLekA9vR\n0NF4a662d70d/snTLJa7YCY=\n-----END PRIVATE KEY-----\n",
+    "private_key_id": "6263d2238691f39f8184e0cdaa3f0e9da04bc32d",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC0+fVfPQA8Y9C+\n5Mkl+BEsoLBOeTQpmEUoa2DwoGAdsaxiAbtZsKBMw6lH1Ok0k8sJJZ7gnLJ5WZPU\n+GH4JAb0NCYhF/ig2hxKRk8LJIqN33Q5XB+o57rKQihZOQwZDOyItVWD0FCEtcBN\n0tLuCjDe1N6iL7CMb58MCFAvCXRVCh/oEidWN1eKuHViR2dKENLOYWBPzk6ojid8\nJPtRkIKz73d8pNQSxWYuEsG6Ts+q1RJPfbYsdl5/GE/2TruEH0/pIlCwR5jRKZS1\nXfQWLTXEEeIJfr907CP2/gXAq4YaRZ/wtMpg41hZ6uqwtpLnMgHwQivrB0fBPMiu\nWLewKopRAgMBAAECggEAH0EDpRzty4AZbr4oFsyOeryNdh/saDqJxv80UJoBv18N\nvCc8abLdHCS2OVeFprTXXY8Hrxago+BabW8vzCC8qrPO2ew/3deNBy65O91lqDas\n5bMJLKxIT+G5Ah+d/T2EI9/dEtSI80JIIaiFEOLlqbXtdOjzfm1QdE2DO3xQgNbi\nOApXuhi+4u1M41bIk7FcbtXZDln6eZMlY/b6kSri/jsqusNKfyAqeEE1sjDXXYBS\nffC++X30V8RZQ4jgbkCdEReccN9ffdvOAWqgWeo5nqPAJh7L92Q4jpmQ/Cx3EWKb\nV6fpUTo/+4IGMReLN3K7oRb6zkWQcf2jKQmPuzuqmQKBgQDoTwa9l0aHaPUnamnx\ncUYhpvBET5sSc+VNG2Jhi9QaiBFJaRqi93spbLqdaXcYVeoiRb5sWaWFeuvHAV6f\njPNzIyPiyFDlkZPX2EQIaRFWtyCoBL/dypkMr/AzAKwVUsDUuN15kndBanQ3F9Es\napBaWAPCgfzGb1Bf7DHIwF3urwKBgQDHbsem/NxAvGGM1YmASTVzOCDQoVvLcDNw\nfybKQ43mIgw10EVbWWLmqI+x4MbaP1ivNOA+9gjyOFE+okkXsAi6ZkFv1yO0FH1E\nadJE9o/Tcz0psM7wXQJXxJXz6kMiHUv1dtQsF8MlDhblG3U/yUPl2INED5kIaOb/\n+QJRlQVW/wKBgQDBwMeacQU+AugVS8e4vAUGJDnYf5ySs17YBLL1MK5iwoHIfITe\nzxJF5o1upHvULDPvCcRckhhfT7o+bIIDCIgzy2cuymvOTLDGIXX8ncT8UhhGik+M\nKGGmF0d7AmCEGFUEFnuB3grg4Gy1VoP7S5XCBA5+t/OffU/H8TNEgEzXuQKBgQC7\nE/MbdRWTcGM9vk4G1iXamGtH6iV22CCYxd34XJhuqb+0d1OoVlhNMQ/id41xy3yA\nlmRJC3jm5udnjspr+wik+ikmJbVrRtEfbPj/Eh9m5jIYuq/UkBsTg+h6b2VcSgko\nELkFR6EaUHYvoqtBE6aqpIi2Pr96QRV4Rvji2JyytwKBgQCJUNWvn2/bQuNl7RS+\nS5lNJMwj1YATCncTAbNBEpoi0GMmZ893FMFCRH75gm034cht479tOitC5hHfPxml\nJWH5PiTVwApcrFQPpNGnPbtwE43zOSiF58KNFTgjddA9jaRJlw1KNOWIEjhn0+5S\nyicpTHDsO911lA41oHjX+XbCuw==\n-----END PRIVATE KEY-----\n",
     "client_email": "firebase-adminsdk-jcch7@absence-app-633e1.iam.gserviceaccount.com",
     "client_id": "117323631294260373207",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",

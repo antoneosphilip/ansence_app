@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:either_dart/either.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -10,6 +11,7 @@ import 'package:summer_school_app/utility/database/local/absence.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../../../core/networking/api_error_handler.dart';
 import '../../../model/get_absence_model/get_capacity.dart';
 import '../../../model/get_absence_model/get_members_model.dart';
 import '../../../model/get_missing_student_model/get_missing_classes.dart';
@@ -31,9 +33,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
   bool isConnected = true;
   int attendanceCount = 0;
 
-  Future<void> getAbsence({required int id}) async {
+  Future<void> getAbsence({required int classNumber}) async {
     emit(GetAbsenceLoadingState());
-    final response = await absenceRepo.getAbsence(id: id);
+    final response = await absenceRepo.getAbsence( classNumber: classNumber,servantId:CacheHelper.getDataString(key: 'id') );
     response.fold(
       (l) {
         emit(GetAbsenceErrorState(l.apiErrorModel.message.toString()));
@@ -46,7 +48,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         studentAbsenceModel.addAll(r);
         attendanceCount=0;
         for(int i=0;i<r.length;i++){
-          if(r[i].absences!.last.attendant!){
+          if(r[i].lastAttendance!){
             attendanceCount=attendanceCount+1;
           }
         }
@@ -95,7 +97,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         final response = await absenceRepo.updateStudentAbsence(
           updateAbsenceStudentBody: UpdateAbsenceStudentBody(
             id: studItem.absences.last.id,
-            attendant: studItem.absences.last.attendant,
+            attendant: studItem.lastAttendancet,
             absenceDate: studItem.absences.last.absenceDate!,
             absenceReason: studItem.absences.last.absenceReason!,
             studentId: studItem.absences.last.studentId,
@@ -123,77 +125,130 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
   Future<void> getAllAbsence() async {
     emit(GetAllAbsenceLoadingState());
-    final response = await absenceRepo.getAllAbsence();
-    response.fold(
-      (l) {
-        print("errrorrrrrrrrr${l.apiErrorModel.message}");
-          showFlutterToast(message: "حدث خطأ في تحميل الداتا حاول لاحقا", state: ToastState.ERROR);
-        emit(GetAllAbsenceErrorState(l.apiErrorModel.message.toString()));
-      },
-      (r) async {
-        // for (int i = 0; i < r.length; i++) {
-        //   print(r[i].student.absences);
-        // }
-        //     print("sucessssssssssssssssss");
-        //     getAllStudentAbsenceModel.clear();
-        //     getAllStudentAbsenceModel.addAll(r);
-        final box = await Hive.openBox<List<dynamic>>('studentsBox');
-        await box.clear();
-        List<dynamic> studentList = [];
 
-        for (var item in r) {
-          final student = item;
-          print("studId ${student.id}");
-          print("studName ${student.studentName}");
+    try {
+      List<Student> allStudents = [];
 
-          // final lastAbsenceStudent=item.student.absences!.last;
-          final lastAbsence = student.absences?.isNotEmpty == true
-              ? Absence(
-                  id: student.absences!.last.id!,
-                  studentId: student.absences!.last.studentId!,
-                  absenceDate: student.absences!.last.absenceDate!,
-                  absenceReason: student.absences!.last.absenceReason!,
-                  attendant: student.absences!.last.attendant!,
-                )
-              : null;
+      // تحقق إذا كان في أرقام أوفلاين
+      if (numbersOfflineModel != null && numbersOfflineModel!.numbers.isNotEmpty) {
+        for (var item in numbersOfflineModel!.numbers) {
+          print("numbersss $item");
+          final response = await absenceRepo.getAbsence(classNumber:item,servantId: CacheHelper.getDataString(key: 'id'));
 
-          final studentModel = StudentData(
-            id: student.id!,
-            name: student.studentName!,
-            studentClass: student.studentClass??0,
-            level: student.level??0,
-            birthDate: student.birthDate,
-            absences: lastAbsence != null ? [lastAbsence] : [],
-            gender: student.gender!,
-            notes: student.notes ?? "",
-            numberOfAbsences: student.numberOfAbsences!,
-            shift: student.shift??0,
-            age: student.age,
-            dadPhone: student.dadPhone,
-            mamPhone: student.mamPhone,
-            studPhone: student.studPhone,
-            profileImage: student.profileImage,
+          response.fold(
+                (l) {
+              print("errorrrrrrrrr ${l.apiErrorModel.message}");
+            },
+                (r) {
+              allStudents.addAll(r);
+            },
           );
-
-          if (!studentList
-              .any((s) => s.id == studentModel.id || studentList.isEmpty)) {
-            studentList.add(studentModel);
-          }
         }
+      } else {
+        final response = await absenceRepo.getAllAbsence();
 
-        await box.put('students', studentList);
-        // await getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
+        response.fold(
+              (l) {
+            print("errorrrrrrrrr ${l.apiErrorModel.message}");
+            showFlutterToast(
+              message: "حدث خطأ في تحميل الداتا حاول لاحقا",
+              state: ToastState.ERROR,
+            );
+            emit(GetAllAbsenceErrorState(l.apiErrorModel.message.toString()));
+            return;
+          },
+              (r) {
+            allStudents.addAll(r);
+          },
+        );
+      }
 
-        print("Data stored successfully!");
-        emit(GetAllAbsenceSuccessState());
-        showFlutterToast(message: "تم تحميل الداتا بنجاح", state: ToastState.SUCCESS);
+      // لو مفيش داتا راجعة
+      if (allStudents.isEmpty) {
+        emit(GetAllAbsenceErrorState("No data found"));
+        return;
+      }
 
-      },
-    );
+      // فتح الـ Hive box (يفضل تفتحه في init مرة واحدة)
+      final box = await Hive.openBox<List<dynamic>>('studentsBox');
+      await box.clear();
+
+      List<dynamic> studentList = [];
+
+      for (var student in allStudents) {
+        print("studId ${student.absences?.last.alhanAttendant}");
+        print("studName ${student.studentName}");
+
+        final lastAbsence = student.absences?.isNotEmpty == true
+            ? Absence(
+          id: student.absences?.last.id??'0',
+          studentId: student.absences?.last.studentId??"0",
+          absenceDate: student.absences?.last.absenceDate??"",
+          absenceReason: student.absences?.last.absenceReason??"",
+          attendant: student.lastAttendance ?? true,
+        )
+            : null;
+
+        final studentModel = StudentData(
+          id: student.id??"",
+          name: student.studentName??"",
+          studentClass: student.studentClass??0,
+          level: student.level??0,
+          birthDate: student.birthDate,
+          absences: lastAbsence != null ? [lastAbsence] : [],
+          gender: student.gender??0,
+          notes: student.notes ?? "",
+          numberOfAbsences: student.numberOfAbsences??0,
+          shift: student.shift??0,
+          age: student.age,
+          dadPhone: student.dadPhone,
+          mamPhone: student.mamPhone,
+          studPhone: student.studPhone,
+          profileImage: student.profileImage,
+          lastAttendance: student.lastAttendance??true
+        );
+
+        if (!studentList.any((s) => s.id == studentModel.id)) {
+          studentList.add(studentModel);
+        }
+      }
+
+      await box.put('students', studentList);
+
+      print("Data stored successfully!");
+      getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
+      checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
+      getCapacities(servantId: CacheHelper.getDataString(key: 'id'));
+      getClassesFromLocal();
+      getCapacityFromLocal();
+      emit(GetAllAbsenceSuccessState());
+      showFlutterToast(
+        message: "تم تحميل الداتا بنجاح",
+        state: ToastState.SUCCESS,
+      );
+
+    } catch (e) {
+      print("Exception in getAllAbsence: $e");
+      showFlutterToast(
+        message: "حدث خطأ غير متوقع",
+        state: ToastState.ERROR,
+      );
+      emit(GetAllAbsenceErrorState(e.toString()));
+    }
   }
 
   List<StudentData> offlineStudentAbsence = [];
+  Future<void> getAllAbsenceFromStart() async {
+    if(isConnected){
+      final box = await Hive.openBox<List<dynamic>>('studentsBox');
 
+      List<dynamic>? storedStudents = box.get('students', defaultValue: []);
+      if(storedStudents?.isEmpty??true){
+       getAllAbsence();
+      }
+      }
+
+  }
   int absenceLengthOffline=0;
   Future<void> addOfflineListToAbsence({required int value}) async {
     offlineStudentAbsence = [];
@@ -208,13 +263,13 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       if (student.studentClass == value) {
         print("equallll");
         print(
-            "name${student.name} and attend ${student.absences!.last.attendant!}");
+            "name${student.name} and attend ${student.lastAttendance}");
         offlineStudentAbsence.add(student);
       }
     }
     absenceLengthOffline=0;
     for(int i=0;i<offlineStudentAbsence.length;i++){
-      if(offlineStudentAbsence[i].absences!.last.attendant){
+      if(offlineStudentAbsence[i].lastAttendance??true){
         absenceLengthOffline=absenceLengthOffline+1;
       }
     }
@@ -279,7 +334,72 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
   }
   // الدالة الجديدة لجلب وتخزين الـ classes
 
-  // ✅ دالة لتحديث الإحصائيات الأونلاين
+  // ✅ دالة لتحديث الإحصائيات الأوفلاين مع التحقق من الحدود
+  Future<void> updateOfflineStatistics({
+    required int classNumber,
+    required bool isAttendant,
+  }) async {
+    print("updateee dataaa${classNumber}");
+
+    if (classStatisticsOfflineResponse != null) {
+      // البحث عن الفصل المحدد
+      final classIndex = classStatisticsOfflineResponse!.classes
+          .indexWhere((cls) => cls.classNumber == classNumber);
+
+      if (classIndex != -1) {
+        final currentClass = classStatisticsOfflineResponse!.classes[classIndex];
+
+        // حساب القيم الجديدة
+        int newAttendants = isAttendant
+            ? currentClass.numberOfAttendants + 1
+            : currentClass.numberOfAttendants - 1;
+
+        int newAbsents = isAttendant
+            ? currentClass.numberOfAbsents - 1
+            : currentClass.numberOfAbsents + 1;
+
+
+
+        // 2. عدد الحضور لا يقل عن صفر
+        if (newAttendants < 0) {
+          print("⚠️ تحذير: عدد الحضور لا يمكن أن يكون سالب");
+          newAttendants = 0;
+        }
+
+        // 3. عدد الغياب لا يقل عن صفر
+        if (newAbsents < 0) {
+          print("⚠️ تحذير: عدد الغياب لا يمكن أن يكون سالب");
+          newAbsents = 0;
+        }
+
+        // 4. التأكد من أن المجموع لا يتجاوز السعة
+        if (newAttendants + newAbsents > currentClass.capacity) {
+          print("⚠️ خطأ: مجموع الحضور والغياب يتجاوز السعة");
+          return;
+        }
+
+        // تحديث الأعداد
+        final updatedClass = ClassStatistics(
+          classNumber: currentClass.classNumber,
+          capacity: currentClass.capacity,
+          numberOfAttendants: newAttendants,
+          numberOfAbsents: newAbsents,
+        );
+
+        // استبدال الفصل المحدث
+        classStatisticsOfflineResponse!.classes[classIndex] = updatedClass;
+
+        // حفظ التحديث في Hive
+        await saveOfflineStatisticsToHive();
+
+        emit(UpdateStatisticsState());
+        print("✅ تم تحديث إحصائيات الفصل $classNumber - أوفلاين");
+        print("📊 الحضور: $newAttendants / ${currentClass.capacity}, الغياب: $newAbsents");
+      }
+    }
+  }
+
+// ✅ دالة لتحديث الإحصائيات الأونلاين مع التحقق من الحدود
   Future<void> updateOnlineStatistics({
     required int classNumber,
     required bool isAttendant,
@@ -291,16 +411,40 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       if (classIndex != -1) {
         final currentClass = classStatisticsResponse!.classes[classIndex];
 
+        // حساب القيم الجديدة
+        int newAttendants = isAttendant
+            ? currentClass.numberOfAttendants + 1
+            : currentClass.numberOfAttendants - 1;
+
+        int newAbsents = isAttendant
+            ? currentClass.numberOfAbsents - 1
+            : currentClass.numberOfAbsents + 1;
+
+        // 2. عدد الحضور لا يقل عن صفر
+        if (newAttendants < 0) {
+          print("⚠️ تحذير: عدد الحضور لا يمكن أن يكون سالب");
+          newAttendants = 0;
+        }
+
+        // 3. عدد الغياب لا يقل عن صفر
+        if (newAbsents < 0) {
+          print("⚠️ تحذير: عدد الغياب لا يمكن أن يكون سالب");
+          newAbsents = 0;
+        }
+
+        // 4. التأكد من أن المجموع لا يتجاوز السعة
+        if (newAttendants + newAbsents > currentClass.capacity) {
+          print("⚠️ خطأ: مجموع الحضور والغياب يتجاوز السعة");
+          return;
+        }
+
         final updatedClass = ClassStatistics(
           classNumber: currentClass.classNumber,
           capacity: currentClass.capacity,
-          numberOfAttendants: isAttendant
-              ? currentClass.numberOfAttendants + 1
-              : currentClass.numberOfAttendants - 1,
-          numberOfAbsents: isAttendant
-              ? currentClass.numberOfAbsents - 1
-              : currentClass.numberOfAbsents + 1,
+          numberOfAttendants: newAttendants,
+          numberOfAbsents: newAbsents,
         );
+
         print("updateee dataaa");
         // استبدال الفصل المحدث
         classStatisticsResponse!.classes[classIndex] = updatedClass;
@@ -312,46 +456,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
         emit(UpdateStatisticsState());
         print("✅ تم تحديث إحصائيات الفصل $classNumber - أونلاين");
-      }
-    }
-  }
-
-// ✅ دالة لتحديث الإحصائيات الأوفلاين
-  Future<void> updateOfflineStatistics({
-    required int classNumber,
-    required bool isAttendant,
-  }) async {
-    print("updateee dataaa${classNumber}");
-
-    if (classStatisticsOfflineResponse != null) {
-
-      // البحث عن الفصل المحدد
-      final classIndex = classStatisticsOfflineResponse!.classes
-          .indexWhere((cls) => cls.classNumber == classNumber);
-
-      if (classIndex != -1) {
-
-        final currentClass = classStatisticsOfflineResponse!.classes[classIndex];
-
-        // تحديث الأعداد
-        final updatedClass = ClassStatistics(
-          classNumber: currentClass.classNumber,
-          capacity: currentClass.capacity,
-          numberOfAttendants: isAttendant
-              ? currentClass.numberOfAttendants + 1
-              : currentClass.numberOfAttendants - 1,
-          numberOfAbsents: isAttendant
-              ? currentClass.numberOfAbsents - 1
-              : currentClass.numberOfAbsents + 1,
-        );
-        // استبدال الفصل المحدث
-        classStatisticsOfflineResponse!.classes[classIndex] = updatedClass;
-
-        // حفظ التحديث في Hive
-        await saveOfflineStatisticsToHive();
-
-        emit(UpdateStatisticsState());
-        print("✅ تم تحديث إحصائيات الفصل $classNumber - أوفلاين");
+        print("📊 الحضور: $newAttendants / ${currentClass.capacity}, الغياب: $newAbsents");
       }
     }
   }
@@ -388,8 +493,11 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       classNumber: classNumber,
       isAttendant: isAttendant,
     );
-
   }
+
+// ✅ (اختياري) State جديد للتنبيه عند الوصول للحد الأقصى
+// أضفه في ملف states الخاص بك
+// class MaxCapacityReachedState extends YourStateName {}
   Future<void> getClassNumbers({required String id}) async {
     emit(GetClassesNumberLoadingState());
 
@@ -459,13 +567,14 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       if (result.contains(ConnectivityResult.wifi) ||
           result.contains(ConnectivityResult.mobile)) {
         isConnected = true;
+
         // Workmanager().registerOneOffTask("task-identifier", "simpleTask",
         //   constraints: Constraints(networkType: NetworkType.connected),
         // );
-        showFlutterToast(message: "انت الان في وضع الاونلاين", state: ToastState.SUCCESS,time: 2);
+        showFlutterToast(message: "وضع الاونلاين", state: ToastState.SUCCESS,time: 2);
 
       } else {
-        showFlutterToast(message: "انت الان في وضع الاوفلاين", state: ToastState.ERROR,time: 2);
+        showFlutterToast(message: "وضع الاوفلاين", state: ToastState.ERROR,time: 2);
         isConnected = false;
       }
     });
@@ -496,8 +605,12 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     for (int i = 0; i < storedAllStudents!.length; i++) {
       if (storedAllStudents[i].id == studentData.id) {
         // تعديل القيمة داخل الكائن
-        if (storedAllStudents[i].absences.isNotEmpty) {
-          storedAllStudents[i].absences.last.attendant = false;
+        if (storedAllStudents[i]!=null) {
+          // storedAllStudents[i].absences.last.alhanAttendant = false;
+          // storedAllStudents[i].absences.last.copticAttendant = false;
+          // storedAllStudents[i].absences.last.tacsAttendant = false;
+          storedAllStudents[i].lastAttendance = false;
+
           print("تم التعديل بنجاح");
           print("Student Name: ${storedAllStudents[i].name}");
           print("id : ${storedAllStudents[i].absences!.last.id}");
@@ -505,7 +618,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
 
           print(
-              "Updated Attendant: ${storedAllStudents[i].absences.last.attendant}");
+              "Updated Attendant: ${storedAllStudents[i].lastAttendance}");
           absenceLengthOffline=absenceLengthOffline-1;
           emit(ChangeAbsenceLength());
         }
@@ -534,14 +647,22 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     if(studentDataList.isNotEmpty) {
       print("llll${studentDataList.length}");
       if(!studentDataList.contains(studentData)){
-        studentData.absences!.last.attendant == true;
+        // studentData.absences!.last.alhanAttendant = true;
+        // studentData.absences!.last.copticAttendant = true;
+        // studentData.absences!.last.tacsAttendant = true;
+        studentData.lastAttendance = true;
+
         studentDataList.add(studentData);
       }
       else {
         for (var studentDataListItem in studentDataList) {
           print("llll${studentDataListItem.name}");
           if (studentDataListItem.id == studentData.id) {
-            studentDataListItem.absences.last.attendant == true;
+            // studentData.absences!.last.alhanAttendant = true;
+            // studentData.absences!.last.copticAttendant = true;
+            // studentData.absences!.last.tacsAttendant = true;
+            studentData.lastAttendance = true;
+
           }
         }
       }
@@ -550,12 +671,16 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
     }
     else{
-      studentData.absences!.last.attendant == true;
+      // studentData.absences!.last.alhanAttendant = true;
+      // studentData.absences!.last.copticAttendant= true;
+      // studentData.absences!.last.tacsAttendant = true;
+      studentData.lastAttendance = true;
+
       studentDataList.add(studentData);
     }
     for (var element in studentDataList) {
       print("name in list ${element.name}");
-      print("att in list ${element.absences!.last.attendant}");
+      print("att in list ${element.lastAttendance}");
 
     }await box.put('studentsAbsence', studentDataList);
 
@@ -578,11 +703,15 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       if (storedAllStudents[i].id == studentData.id) {
         // تعديل القيمة داخل الكائن
         if (storedAllStudents[i].absences.isNotEmpty) {
-          storedAllStudents[i].absences.last.attendant = true;
+          // studentData.absences!.last.alhanAttendant = true;
+          // studentData.absences!.last.copticAttendant = true;
+          // studentData.absences!.last.tacsAttendant = true;
+          studentData.lastAttendance = true;
+
           print("تم التعديل بنجاح");
           print("Student Name: ${storedAllStudents[i].name}");
           print(
-              "Updated Attendant: ${storedAllStudents[i].absences.last.attendant}");
+              "Updated Attendant: ${storedAllStudents[i].lastAttendance}");
         }
 
         await box2.put('students', storedAllStudents);

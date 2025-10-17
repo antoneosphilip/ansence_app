@@ -14,8 +14,9 @@ import '../../../core_widget/show_dialog_image/show_dialog_image.dart';
 class MissingStudentItem extends StatelessWidget {
   final GetMissingStudentModelAbsenceModel studentMissingModel;
   final MissingCubit missingCubit;
+  final String numberClass;
 
-  const MissingStudentItem({super.key, required this.studentMissingModel, required this.missingCubit});
+  const MissingStudentItem({super.key, required this.studentMissingModel, required this.missingCubit, required this.numberClass});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class MissingStudentItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Get.to(
-           StudentProfile(getMissingStudentModel: studentMissingModel, missingCubit: missingCubit,),
+           StudentProfile(getMissingStudentModel: studentMissingModel, missingCubit: missingCubit,numberClass:numberClass),
           transition: Transition.zoom,
           duration: const Duration(milliseconds: 350),
         );

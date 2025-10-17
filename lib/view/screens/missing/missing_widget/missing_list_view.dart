@@ -26,8 +26,10 @@ class _MissingStudentListViewState extends State<MissingStudentListView> {
   void initState() {
     // TODO: implement initState
     if (widget.fromStatusMissing) {
-      MissingCubit.get(context)
-          .getAbsenceMissing(id: int.parse(widget.numberClass??'0'));
+      if(widget.numberClass!=null) {
+        MissingCubit.get(context)
+            .getAbsenceMissing(id: int.parse(widget.numberClass ?? '0'));
+      }
     }
     super.initState();
   }
@@ -49,6 +51,7 @@ class _MissingStudentListViewState extends State<MissingStudentListView> {
                 studentMissingModel: MissingCubit.get(context)
                     .studentMissingModelList[index],
                 missingCubit: widget.missingCubit,
+                  numberClass:widget.numberClass??'0',
               );
             },
             separatorBuilder: (context, index) {
