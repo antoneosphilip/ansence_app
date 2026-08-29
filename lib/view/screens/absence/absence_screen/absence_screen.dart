@@ -1,13 +1,9 @@
-// ============= Absence Screen =============
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
-import 'package:summer_school_app/core/style_font_manager/style_manager.dart';
 import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';
 import 'package:summer_school_app/view/screens/absence/absence_widget/student_item_offline.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
-import 'package:get/get.dart';
 
 import '../../../../view_model/block/absence_cubit/absence_cubit.dart';
 import '../../../core_widget/absence_appbar/absence_appbar.dart';
@@ -21,12 +17,11 @@ class AbsenceScreen extends StatefulWidget {
   State<AbsenceScreen> createState() => _AbsenceScreenState();
 }
 
-class _AbsenceScreenState extends State<AbsenceScreen> with TickerProviderStateMixin {
+class _AbsenceScreenState extends State<AbsenceScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -38,30 +33,21 @@ class _AbsenceScreenState extends State<AbsenceScreen> with TickerProviderStateM
     AbsenceCubit.get(context).absenceLengthOffline = 0;
 
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-
-    _pulseController = AnimationController(
-      duration: Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.3),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
 
     _animationController.forward();
   }
@@ -69,132 +55,116 @@ class _AbsenceScreenState extends State<AbsenceScreen> with TickerProviderStateM
   @override
   void dispose() {
     _animationController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorManager.colorScaffold,
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: SlideTransition(
           position: _slideAnimation,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: BlocBuilder<AbsenceCubit, AbsenceStates>(
               builder: (BuildContext context, state) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Enhanced AppBar
-                    const AnimatedAppBar(text: 'الغياب',icon: Icons.event_busy_rounded,),
+                    // Modern AppBar
+                    const AnimatedAppBar(
+                      text: 'الغياب',
+                      icon: Icons.event_busy_rounded,
+                    ),
 
-                    SizedBox(height: 15.h),
+                    const SizedBox(height: 16),
 
                     state is GetClassesNumberLoadingState
                         ? const Center(child: CustomLoading())
-                        : AbsenceCubit.get(context).isConnected
-                        ? Row(
-                      children: [
-                        const CustomDropDown(
-                          isAbsence: true,
-                        ),
-                        const Spacer(),
-                        AbsenceCubit.get(context).attendanceCount == 0
-                            ? const SizedBox()
-                            : Row(
-                          children: [
-                            Text(
-                              "عدد الطلاب الحاضرين : ",
-                              style: TextStyleManager
-                                  .textStyle20w500
-                                  .copyWith(fontSize: 13.sp),
-                            ),
-                            Text(
-                              AbsenceCubit.get(context)
-                                  .attendanceCount
-                                  .toString(),
-                              style: TextStyleManager
-                                  .textStyle20w500
-                                  .copyWith(
-                                fontSize: 13.sp,
-                                color:
-                                ColorManager.colorPrimary,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                          ],
-                        )
-                      ],
-                    )
-                        : Row(
-                      children: [
-                        const CustomDropDown(
-                          isAbsence: true,
-                        ),
-                        const Spacer(),
-                        AbsenceCubit.get(context)
-                            .absenceLengthOffline ==
-                            0
-                            ? const SizedBox()
-                            : Row(
-                          children: [
+                        : Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                const CustomDropDown(
+                                  isAbsence: true,
+                                ),
+                                const Spacer(),
+                                Builder(
+                                  builder: (context) {
+                                    final int count = AbsenceCubit.get(context)
+                                            .isConnected
+                                        ? AbsenceCubit.get(context)
+                                            .attendanceCount
+                                        : AbsenceCubit.get(context)
+                                            .absenceLengthOffline;
 
-                            Text(
-                              "عدد الطلاب الحاضرين : ",
-                              style: TextStyleManager
-                                  .textStyle20w500
-                                  .copyWith(fontSize: 13.sp),
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: ColorManager.colorGreenLight,
+                                        borderRadius:
+                                            BorderRadius.circular(14),
+                                        border: Border.all(
+                                          color: ColorManager.colorGreen
+                                              .withOpacity(0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(
+                                            Icons.check_circle_rounded,
+                                            color: ColorManager.colorGreen,
+                                            size: 16,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'الحاضرين: $count',
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: ColorManager.colorGreen,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
+                          ),
 
-                            Text(
-                              AbsenceCubit.get(context)
-                                  .absenceLengthOffline
-                                  .toString(),
-                              style: TextStyleManager
-                                  .textStyle20w500
-                                  .copyWith(
-                                fontSize: 13.sp,
-                                color:
-                                ColorManager.colorPrimary,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 16.w,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 20.h),
+                    const SizedBox(height: 16),
 
                     AbsenceCubit.get(context).isConnected
                         ? const AbsenceStudentListView()
                         : Padding(
-                      padding: EdgeInsets.only(bottom: 10.h),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return StudentAbsenceItemOffline(
-                            studentDataOfflineModel:
-                            AbsenceCubit.get(context)
-                                .offlineStudentAbsence[index],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 35.h,
-                          );
-                        },
-                        itemCount: AbsenceCubit.get(context)
-                            .offlineStudentAbsence
-                            .length,
-                      ),
-                    ),
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return StudentAbsenceItemOffline(
+                                  studentDataOfflineModel:
+                                      AbsenceCubit.get(context)
+                                          .offlineStudentAbsence[index],
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(
+                                  height: 4,
+                                );
+                              },
+                              itemCount: AbsenceCubit.get(context)
+                                  .offlineStudentAbsence
+                                  .length,
+                            ),
+                          ),
                   ],
                 );
               },

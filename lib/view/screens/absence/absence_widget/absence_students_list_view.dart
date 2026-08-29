@@ -35,8 +35,8 @@ class AbsenceStudentListView extends StatelessWidget {
                           );
                         },
                         separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 35.h,
+                          return const SizedBox(
+                            height: 4,
                           );
                         },
                         itemCount: AbsenceCubit.get(context)

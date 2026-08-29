@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../utility/database/local/cache_helper.dart';
 import '../../../../view_model/block/absence_cubit/absence_cubit.dart';
-
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -15,498 +13,390 @@ class SettingScreen extends StatefulWidget {
   State<SettingScreen> createState() => _SettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> with TickerProviderStateMixin {
+class _SettingScreenState extends State<SettingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
 
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 700),
       vsync: this,
     );
 
-    _pulseController = AnimationController(
-      duration: Duration(milliseconds: 1500),
-      vsync: this,
-    )
-      ..repeat(reverse: true);
-
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.3),
+      begin: const Offset(0, 0.1),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
 
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    // إيقاف الـ animations قبل الـ dispose
-    _pulseController.stop();
-    _animationController.stop();
-
-    // التخلص من الـ controllers
     _animationController.dispose();
-    _pulseController.dispose();
-
     super.dispose();
   }
 
-  Widget _buildInfoCard({
+  Widget _buildInfoTile({
     required String title,
     required String value,
     required IconData icon,
-    required int index,
+    required Color iconColor,
   }) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 800 + (index * 200)),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOutCubic,
-      builder: (context, animValue, child) {
-        return Transform.translate(
-          offset: Offset(0, 40 * (1 - animValue)),
-          child: Opacity(
-            opacity: animValue,
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.white, Colors.grey.shade50],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: ColorManager.colorWhite,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: ColorManager.softShadow,
+        border: Border.all(
+          color: ColorManager.colorGrey4,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: iconColor, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: ColorManager.colorXXGrey,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 15,
-                    offset: Offset(0, 5),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: ColorManager.colorDarkBlue,
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(14.w),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorManager.colorPrimary.withOpacity(0.1),
-                          ColorManager.colorPrimary.withOpacity(0.05),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: ColorManager.colorPrimary,
-                      size: 24.sp,
-                    ),
-                  ),
-                  SizedBox(width: 15.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 5.h),
-                        Text(
-                          value,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.grey[900],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildActionButton({
-    required String title,
-    required IconData icon,
-    required VoidCallback onTap,
-    required int index,
-  }) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 800 + (index * 200)),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOutCubic,
-      builder: (context, animValue, child) {
-        return Transform.translate(
-          offset: Offset(0, 40 * (1 - animValue)),
-          child: Opacity(
-            opacity: animValue,
-            child: GestureDetector(
-              onTap: onTap,
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      ColorManager.colorPrimary,
-                      ColorManager.colorPrimary.withOpacity(0.8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorManager.colorPrimary.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            icon,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                        SizedBox(width: 15.w),
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 18.sp,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLogoutButton({required int index}) {
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 800 + (index * 200)),
-      tween: Tween(begin: 0.0, end: 1.0),
-      curve: Curves.easeOutCubic,
-      builder: (context, animValue, child) {
-        return Transform.translate(
-          offset: Offset(0, 40 * (1 - animValue)),
-          child: Opacity(
-            opacity: animValue,
-            child: GestureDetector(
-              onTap: () {
-                Get.defaultDialog(
-                  title: 'تسجيل الخروج',
-                  titleStyle: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.grey[900],
-                  ),
-                  middleText: 'هل أنت متأكد من تسجيل الخروج؟',
-                  middleTextStyle: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.grey[700],
-                  ),
-                  backgroundColor: Colors.white,
-                  radius: 20,
-                  textCancel: 'إلغاء',
-                  textConfirm: 'تسجيل الخروج',
-                  cancelTextColor: Colors.grey[700],
-                  confirmTextColor: Colors.white,
-                  buttonColor: Colors.red,
-                  onConfirm: () {
-                    // إيقاف الـ animations قبل الخروج
-                    if (mounted) {
-                      _pulseController.stop();
-                      _animationController.stop();
-                    }
-
-                    CacheHelper.clearData();
-                    Get.offAllNamed('/login');
-                    showFlutterToast(
-                        message: "تم تسجيل الخروج بنجاح",
-                        state: ToastState.SUCCESS
-                    );
-                  },
-                );
-              },
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.red.shade400,
-                      Colors.red.shade600,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.logout_rounded,
-                            color: Colors.white,
-                            size: 20.sp,
-                          ),
-                        ),
-                        SizedBox(width: 15.w),
-                        Text(
-                          'تسجيل الخروج',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 18.sp,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final String name = CacheHelper.getDataString(key: 'name') ?? 'الخادم';
+    final String email =
+        CacheHelper.getDataString(key: 'email') ?? 'غير متوفر';
+    final String phone =
+        CacheHelper.getDataString(key: 'phone') ?? 'غير متوفر';
+    final String role = CacheHelper.getDataString(key: 'role') ?? 'خادم';
+
     return Scaffold(
-      backgroundColor: Color(0xFFF8F9FD),
+      backgroundColor: ColorManager.colorScaffold,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 32),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Enhanced Header
-                SizedBox(height: 30.h,),
-                  AnimatedBuilder(
-                    animation: _pulseAnimation,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _pulseAnimation.value,
-                        child: Container(
-                          width: 100.w,
-                          height: 100.w,
+                  // Profile Header Banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
+                    decoration: const BoxDecoration(
+                      color: ColorManager.colorWhite,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(28),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x0a0f172a),
+                          blurRadius: 16,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // Profile Avatar
+                        Container(
+                          width: 80,
+                          height: 80,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                ColorManager.colorPrimary,
-                                ColorManager.colorPrimary.withOpacity(
-                                    0.7),
-                              ],
+                            gradient: const LinearGradient(
+                              colors: GradiantLinearColor.primaryGradiant,
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                            boxShadow: [
-                              // BoxShadow(
-                              //   color: ColorManager.colorPrimary
-                              //       .withOpacity(0.3),
-                              //   blurRadius: 20,
-                              //   offset: Offset(0, 10),
-                              // ),
-                            ],
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: ColorManager.glowShadow(
+                                ColorManager.colorPrimary),
                           ),
-                          child: Icon(
-                            Icons.person,
-                            size: 50.sp,
-                            color: Colors.white,
+                          child: Center(
+                            child: Text(
+                              name.isNotEmpty ? name.substring(0, 1) : 'خ',
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 15.h),
+                        const SizedBox(height: 14),
 
-                  ShaderMask(
-                    shaderCallback: (bounds) =>
-                        LinearGradient(
-                          colors: [
-                            ColorManager.colorPrimary,
-                            ColorManager.colorPrimary.withOpacity(0.7),
-                          ],
-                        ).createShader(bounds),
-                    child: Text(
-                      CacheHelper.getDataString(key: 'name') ??
-                          'المستخدم',
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ColorManager.colorPrimary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.verified_user,
-                          size: 14.sp,
-                          color: ColorManager.colorPrimary,
-                        ),
-                        SizedBox(width: 5.w),
                         Text(
-                          'حساب نشط',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: ColorManager.colorPrimary,
-                            fontWeight: FontWeight.w600,
+                          name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.colorDarkBlue,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: ColorManager.colorPrimary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            role == 'Admin' ? 'أمين الخدمة ⭐' : 'خادم نشط ✓',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: ColorManager.colorPrimary,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: 10.h),
+                  const SizedBox(height: 24),
 
-                  // Section Title
-
-                  SizedBox(height: 20.h),
-
-                  // User Info Cards
-                  _buildInfoCard(
-                    title: 'الاسم',
-                    value: CacheHelper.getDataString(key: 'name') ??
-                        'غير متوفر',
-                    icon: Icons.person_outline,
-                    index: 0,
+                  // User Info Section
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'البيانات الشخصية',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: ColorManager.colorDarkBlue,
+                      ),
+                    ),
                   ),
-                  _buildInfoCard(
+                  const SizedBox(height: 10),
+
+                  _buildInfoTile(
+                    title: 'الاسم الكامل',
+                    value: name,
+                    icon: Icons.person_rounded,
+                    iconColor: ColorManager.colorPrimary,
+                  ),
+                  _buildInfoTile(
                     title: 'البريد الإلكتروني',
-                    value: CacheHelper.getDataString(key: 'email') ??
-                        'غير متوفر',
-                    icon: Icons.email_outlined,
-                    index: 1,
+                    value: email,
+                    icon: Icons.alternate_email_rounded,
+                    iconColor: ColorManager.colorCyan,
                   ),
-                  _buildInfoCard(
+                  _buildInfoTile(
                     title: 'رقم الهاتف',
-                    value: CacheHelper.getDataString(key: 'phone') ??
-                        'غير متوفر',
-                    icon: Icons.phone_outlined,
-                    index: 2,
+                    value: phone,
+                    icon: Icons.phone_rounded,
+                    iconColor: ColorManager.colorGreen,
                   ),
 
-                  SizedBox(height: 20.h),
+                  const SizedBox(height: 24),
 
+                  // Actions Section
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'إدارة البيانات والحساب',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: ColorManager.colorDarkBlue,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
-                  // Action Buttons
-                  _buildActionButton(
-                    title: 'تحميل البيانات',
-                    icon: Icons.cloud_download_outlined,
-                    onTap: () async {
-                      // إيقاف الـ pulse animation أثناء التحميل
-                      if (mounted) {
-                        _pulseController.stop();
-                      }
-
-                      // تحميل البيانات
-                      await AbsenceCubit.get(context).getAllAbsence();
-
-                      if (mounted) {
-                        _pulseController.repeat(reverse: true);
-                      }
-                    },
-                    index: 0,
+                  // Sync Data Action
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: GradiantLinearColor.primaryGradiant,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: ColorManager.glowShadow(
+                          ColorManager.colorPrimary),
+                    ),
+                    child: InkWell(
+                      onTap: () async {
+                        showFlutterToast(
+                            message: "جاري تحديث البيانات...",
+                            state: ToastState.SUCCESS);
+                        await AbsenceCubit.get(context).getAllAbsence();
+                      },
+                      borderRadius: BorderRadius.circular(18),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.cloud_sync_rounded,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                                SizedBox(width: 14),
+                                Text(
+                                  'تحديث ومزامنة البيانات',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
 
-                  SizedBox(height: 10.h),
+                  const SizedBox(height: 8),
 
-                  // Logout Button
-                  _buildLogoutButton(index: 1),
-
-                  SizedBox(height: 50.h),
+                  // Logout Action
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: ColorManager.colorWhite,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: ColorManager.colorRed.withOpacity(0.3),
+                        width: 1.2,
+                      ),
+                      boxShadow: ColorManager.softShadow,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: 'تسجيل الخروج',
+                          titleStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.colorDarkBlue,
+                          ),
+                          middleText: 'هل أنت متأكد من تسجيل الخروج من التطبيق؟',
+                          middleTextStyle: const TextStyle(
+                            fontSize: 14,
+                            color: ColorManager.colorXXGrey,
+                          ),
+                          backgroundColor: ColorManager.colorWhite,
+                          radius: 20,
+                          textCancel: 'إلغاء',
+                          textConfirm: 'تأكيد الخروج',
+                          cancelTextColor: ColorManager.colorXXGrey,
+                          confirmTextColor: Colors.white,
+                          buttonColor: ColorManager.colorRed,
+                          onConfirm: () {
+                            CacheHelper.clearData();
+                            Get.offAllNamed('/login');
+                            showFlutterToast(
+                              message: "تم تسجيل الخروج بنجاح",
+                              state: ToastState.SUCCESS,
+                            );
+                          },
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(18),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 16),
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.logout_rounded,
+                                  color: ColorManager.colorRed,
+                                  size: 22,
+                                ),
+                                SizedBox(width: 14),
+                                Text(
+                                  'تسجيل الخروج',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: ColorManager.colorRed,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: ColorManager.colorRed,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

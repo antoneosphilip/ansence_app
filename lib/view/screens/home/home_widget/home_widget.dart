@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:summer_school_app/view/core_widget/flutter_toast/flutter_toast.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
 
@@ -25,57 +23,36 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   late AnimationController _animationController;
-  late AnimationController _floatingController;
-  late AnimationController _pulseController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _floatingAnimation;
-  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
-    AbsenceCubit.get(context)
-        .getClassNumbers(id: CacheHelper.getDataString(key: 'id'));
-    AbsenceCubit.get(context)
-        .checkMissingClasses(servantId: CacheHelper.getDataString(key: 'id'));
-    AbsenceCubit.get(context)
-        .getCapacities(servantId: CacheHelper.getDataString(key: 'id'));
-    AbsenceCubit.get(context).getClassesFromLocal();
-    AbsenceCubit.get(context).getCapacityFromLocal();
+    final servantId = CacheHelper.getDataString(key: 'id') ?? '';
+    final cubit = AbsenceCubit.get(context);
+    cubit.getClassNumbers(id: servantId);
+    cubit.checkMissingClasses(servantId: servantId);
+    cubit.getCapacities(servantId: servantId);
+    cubit.getClassesFromLocal();
+    cubit.getCapacityFromLocal();
 
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 900),
       vsync: this,
     );
 
-    _floatingController = AnimationController(
-      duration: Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _pulseController = AnimationController(
-      duration: Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
-
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.5),
+      begin: const Offset(0, 0.15),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-        parent: _animationController, curve: Curves.easeOutCubic));
-
-    _floatingAnimation = Tween<double>(begin: -10, end: 10).animate(
-      CurvedAnimation(parent: _floatingController, curve: Curves.easeInOut),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
 
     _animationController.forward();
   }
@@ -83,223 +60,122 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
-    _floatingController.dispose();
-    _pulseController.dispose();
     super.dispose();
   }
 
   Widget _buildFeatureCard({
     required String title,
     required String subtitle,
+    required String tag,
     required IconData icon,
     required List<Color> gradientColors,
     required VoidCallback onTap,
     required int index,
   }) {
     return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 800 + (index * 250)),
+      duration: Duration(milliseconds: 500 + (index * 150)),
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Transform.translate(
-          offset: Offset(0, 60 * (1 - value)),
+          offset: Offset(0, 30 * (1 - value)),
           child: Opacity(
             opacity: value,
-            child: GestureDetector(
+            child: InkWell(
               onTap: onTap,
-              child: AnimatedScale(
-                scale: 1.0,
-                duration: Duration(milliseconds: 200),
-                child: Container(
-                  margin:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-                  height: 240.h,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: gradientColors,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+              borderRadius: BorderRadius.circular(24),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: gradientColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: gradientColors[0].withOpacity(0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
                     ),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      // BoxShadow(
-                      //   color: gradientColors[0].withOpacity(0.4),
-                      //   blurRadius: 25,
-                      //   spreadRadius: 2,
-                      //   offset: Offset(0, 12),
-                      // ),
-                      // BoxShadow(
-                      //   color: Colors.black.withOpacity(0.05),
-                      //   blurRadius: 15,
-                      //   offset: Offset(0, 5),
-                      // ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      // Background patterns
-                      Positioned(
-                        right: -40,
-                        top: -40,
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                Colors.white.withOpacity(0.15),
-                                Colors.white.withOpacity(0.0),
-                              ],
-                            ),
-                          ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Ambient decorative circle
+                    Positioned(
+                      left: -20,
+                      bottom: -20,
+                      child: Container(
+                        width: 110,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.1),
                         ),
                       ),
-                      Positioned(
-                        left: -50,
-                        bottom: -50,
-                        child: Container(
-                          width: 180,
-                          height: 180,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                Colors.white.withOpacity(0.1),
-                                Colors.white.withOpacity(0.0),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Decorative dots
-                      Positioned(
-                        right: 30,
-                        bottom: 30,
-                        child: Row(
-                          children: List.generate(
-                            3,
-                            (index) => Container(
-                              margin: EdgeInsets.only(left: 5),
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.4),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    ),
 
-                      // Content
-                      Padding(
-                        padding: EdgeInsets.all(28.w),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 6.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.25),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      'خدمة',
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  SizedBox(height: 15.h),
-                                  Text(
-                                    title,
-                                    style: TextStyle(
-                                      fontSize: 28.sp,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                      height: 1.2,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                  Text(
-                                    subtitle,
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Colors.white.withOpacity(0.95),
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                  SizedBox(height: 15.h),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 8.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'ابدأ الآن',
-                                          style: TextStyle(
-                                            fontSize: 13.sp,
-                                            fontWeight: FontWeight.bold,
-                                            color: gradientColors[0],
-                                          ),
-                                        ),
-                                        SizedBox(width: 6.w),
-                                        Icon(
-                                          Icons.arrow_back,
-                                          color: gradientColors[0],
-                                          size: 16.sp,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 15.w),
-                            AnimatedBuilder(
-                              animation: _floatingAnimation,
-                              builder: (context, child) {
-                                return Transform.translate(
-                                  offset: Offset(0, _floatingAnimation.value),
-                                  child: Container(
-                                    width: 90.w,
-                                    height: 90.w,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.25),
-                                      shape: BoxShape.circle,
-                                      boxShadow: [],
-                                    ),
-                                    child: Icon(
-                                      icon,
-                                      size: 45.sp,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                              const SizedBox(height: 12),
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                subtitle,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.white.withOpacity(0.9),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: Icon(
+                            icon,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -309,641 +185,441 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatItem(String value, String label, IconData icon) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(12.w),
-          decoration: BoxDecoration(
-            color: ColorManager.colorPrimary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Icon(
-            icon,
-            color: ColorManager.colorPrimary,
-            size: 24.sp,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: ColorManager.colorPrimary,
-          ),
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final String servantName =
+        _getTwoPartName(CacheHelper.getDataString(key: 'name') ?? 'الخادم');
+
     return Scaffold(
-      backgroundColor: Color(0xFFF8F9FD),
+      backgroundColor: ColorManager.colorScaffold,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 32),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Enhanced Header
+                  // Modern Header Section
                   Container(
-                    padding: EdgeInsets.fromLTRB(20.w, 25.h, 20.w, 30.h),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Color(0xFFF8F9FD),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                    decoration: const BoxDecoration(
+                      color: ColorManager.colorWhite,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(28),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x0a0f172a),
+                          blurRadius: 16,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // Servant Avatar
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: GradiantLinearColor.primaryGradiant,
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: ColorManager.glowShadow(
+                                    ColorManager.colorPrimary),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  servantName.isNotEmpty
+                                      ? servantName.substring(0, 1)
+                                      : 'خ',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+
+                            // Welcome Texts
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'مرحباً بك 👋',
                                     style: TextStyle(
-                                      fontSize: 17.sp,
-                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      color: ColorManager.colorXXGrey,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  SizedBox(height: 8.h),
-                                  ShaderMask(
-                                    shaderCallback: (bounds) => LinearGradient(
-                                      colors: [
-                                        ColorManager.colorPrimary,
-                                        ColorManager.colorPrimary
-                                            .withOpacity(0.7),
-                                      ],
-                                    ).createShader(bounds),
-                                    child: Text(
-                                      _getTwoPartName(CacheHelper.getDataString(key: 'name') ?? ""),
-                                      style: TextStyle(
-                                        fontSize: 25.sp,
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.white,
-                                        height: 1.2,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 6.h),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 12.w,
-                                      vertical: 6.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.colorPrimary
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.school,
-                                          size: 14.sp,
-                                          color: ColorManager.colorPrimary,
-                                        ),
-                                        SizedBox(width: 5.w),
-                                        Text(
-                                          'مدرسة السمائيين',
-                                          style: TextStyle(
-                                            fontSize: 13.sp,
-                                            color: ColorManager.colorPrimary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    servantName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorManager.colorDarkBlue,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            AnimatedBuilder(
-                              animation: _pulseAnimation,
-                              builder: (context, child) {
-                                return Transform.scale(
-                                  scale: _pulseAnimation.value,
-                                  child: Container(
-                                    padding: EdgeInsets.all(16.w),
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          ColorManager.colorPrimary,
-                                          ColorManager.colorPrimary
-                                              .withOpacity(0.8),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                      boxShadow: [],
-                                    ),
-                                    child: Icon(
-                                      Icons.school_rounded,
-                                      color: Colors.white,
-                                      size: 32.sp,
+
+                            // Church/App Badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: ColorManager.colorPrimary
+                                    .withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: ColorManager.colorPrimary
+                                      .withOpacity(0.18),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.school_rounded,
+                                    size: 16,
+                                    color: ColorManager.colorPrimary,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'السمائيين',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: ColorManager.colorPrimary,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                );
-                              },
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: 24),
+
+                  // Class Statistics Section Header
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: ColorManager.colorPrimary,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'إحصائيات الفصول',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.colorDarkBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Statistics Card
                   BlocBuilder<AbsenceCubit, AbsenceStates>(
                     builder: (context, state) {
-                      return AbsenceCubit.get(context)
-                                      .classStatisticsOfflineResponse !=
-                                  null ||
-                              AbsenceCubit.get(context).classStatistic != null
-                          ? Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 5.w,
-                                    height: 24.h,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          ColorManager.colorPrimary,
-                                          ColorManager.colorPrimary
-                                              .withOpacity(0.5),
-                                        ],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Text(
-                                    'إحصائيات الفصول',
-                                    style: TextStyle(
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.grey[900],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : SizedBox();
-                    },
-                  ),
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 1200),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    curve: Curves.easeOut,
-                    builder: (context, value, child) {
-                      return Transform.scale(
-                        scale: value,
-                        child: BlocBuilder<AbsenceCubit, AbsenceStates>(
-                          builder: (context, state) {
-                            final cubit = AbsenceCubit.get(context);
+                      final cubit = AbsenceCubit.get(context);
+                      final classStatistics =
+                          cubit.classStatisticsResponse ??
+                              cubit.classStatisticsOfflineResponse;
 
-                            final classStatistics =
-                                cubit.classStatisticsResponse ??
-                                    cubit.classStatisticsOfflineResponse;
+                      if (classStatistics == null ||
+                          state is GetCapacityLoadingState) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: ColorManager.colorWhite,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: ColorManager.cardShadow,
+                          ),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey.shade200,
+                            highlightColor: Colors.grey.shade50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                buildShimmerStatItem(),
+                                buildShimmerStatItem(),
+                                buildShimmerStatItem(),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
 
-                            if (classStatistics == null) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 20.h),
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    Colors.white,
-                                    Colors.grey.shade50
-                                  ]),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
+                      final first = classStatistics.classes.isNotEmpty
+                          ? classStatistics.classes.first
+                          : null;
+
+                      final int capacity = first?.capacity ?? 0;
+                      final int attendants = first?.numberOfAttendants ?? 0;
+                      final int absents = first?.numberOfAbsents ?? 0;
+                      final double attendanceRate =
+                          capacity > 0 ? (attendants / capacity) : 0.0;
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: ColorManager.colorWhite,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: ColorManager.cardShadow,
+                          border: Border.all(
+                            color: ColorManager.colorGrey4,
+                            width: 1,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            if (classStatistics.classes.length > 1) {
+                              Get.to(
+                                () => AllClassesStatisticsScreen(
+                                  classStatisticsResponse: classStatistics,
                                 ),
-                                child: Shimmer.fromColors(
-                                  baseColor: Colors.grey.shade300,
-                                  highlightColor: Colors.grey.shade100,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          height: 30.h,
-                                          width: 100.w,
-                                          color: Colors.white),
-                                      SizedBox(height: 20.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                        children: [
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                transition: Transition.rightToLeftWithFade,
+                                duration: const Duration(milliseconds: 400),
                               );
                             }
-
-                            if (state is GetCapacityLoadingState) {
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 20.h),
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    Colors.white,
-                                    Colors.grey.shade50
-                                  ]),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Shimmer.fromColors(
-                                  baseColor: Colors.grey.shade300,
-                                  highlightColor: Colors.grey.shade100,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          height: 30.h,
-                                          width: 100.w,
-                                          color: Colors.white),
-                                      SizedBox(height: 20.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-
-                            if (state is GetAbsenceErrorState) {
-                              showFlutterToast(message: state.error, state: ToastState.ERROR);
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 20.h),
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    Colors.white,
-                                    Colors.grey.shade50
-                                  ]),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Shimmer.fromColors(
-                                  baseColor: Colors.grey.shade300,
-                                  highlightColor: Colors.grey.shade100,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                          height: 30.h,
-                                          width: 100.w,
-                                          color: Colors.white),
-                                      SizedBox(height: 20.h),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                        children: [
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                          buildShimmerStatItem(),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-
-                            final first = classStatistics.classes.first;
-
-                            return GestureDetector(
-                              onTap: () {
-                                if (classStatistics.classes.length > 1) {
-                                  Get.to(
-                                    () => AllClassesStatisticsScreen(
-                                      classStatisticsResponse: classStatistics,
-                                    ),
-                                    transition: Transition.rightToLeftWithFade,
-                                    duration: Duration(milliseconds: 500),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 20.w, vertical: 20.h),
-                                padding: EdgeInsets.all(20.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [Colors.white, Colors.grey.shade50],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
+                          },
+                          borderRadius: BorderRadius.circular(24),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // رأس الفصل
                                     Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16.w,
-                                        vertical: 8.h,
-                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 6),
                                       decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            ColorManager.colorPrimary,
-                                            ColorManager.colorPrimary
-                                                .withOpacity(0.8),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(15),
+                                        color: ColorManager.colorPrimary
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                                      child: Text(
+                                        'فصل ${first?.classNumber ?? 0}',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: ColorManager.colorPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                    if (classStatistics.classes.length > 1)
+                                      Row(
                                         children: [
-                                          Icon(
-                                            Icons.class_,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
-                                          SizedBox(width: 8.w),
                                           Text(
-                                            'فصل ${first?.classNumber ?? 0}',
-                                            style: TextStyle(
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                            'عرض الكل (${classStatistics.classes.length})',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: ColorManager.colorPrimary,
+                                              fontWeight: FontWeight.w600,
                                             ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            size: 12,
+                                            color: ColorManager.colorPrimary,
                                           ),
                                         ],
                                       ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+
+                                // Metric Badges
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildStatItem(
+                                      '$capacity',
+                                      'سعة الفصل',
+                                      Icons.groups_rounded,
+                                      ColorManager.colorBlue,
+                                      ColorManager.colorBlue.withOpacity(0.1),
                                     ),
-                                    SizedBox(height: 20.h),
-                                    // الإحصائيات
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        _buildStatItemColored(
-                                          '${first?.capacity ?? 0}',
-                                          'سعة الفصل',
-                                          Icons.groups,
-                                          Colors.blue,
-                                        ),
-                                        _buildStatItemColored(
-                                          '${first?.numberOfAttendants ?? 0}',
-                                          'حضور',
-                                          Icons.check_circle,
-                                          Colors.green,
-                                        ),
-                                        _buildStatItemColored(
-                                          '${first?.numberOfAbsents ?? 0}',
-                                          'غياب',
-                                          Icons.event_busy,
-                                          Colors.red,
-                                        ),
-                                      ],
+                                    _buildStatItem(
+                                      '$attendants',
+                                      'حضور',
+                                      Icons.check_circle_rounded,
+                                      ColorManager.colorGreen,
+                                      ColorManager.colorGreenLight,
                                     ),
-                                    SizedBox(height: 16.h),
-                                    // شريط نسبة الحضور
-                                    Container(
-                                      height: 8.h,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: FractionallySizedBox(
-                                        alignment: Alignment.centerRight,
-                                        widthFactor: ((first?.capacity ?? 0) >
-                                                0)
-                                            ? (((first?.numberOfAttendants ??
-                                                        0) /
-                                                    (first?.capacity ?? 1))
-                                                .clamp(0.0, 1.0))
-                                            : 0.0,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Colors.green,
-                                                Colors.green.shade300,
-                                              ],
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                      ),
+                                    _buildStatItem(
+                                      '$absents',
+                                      'غياب',
+                                      Icons.cancel_rounded,
+                                      ColorManager.colorRed,
+                                      ColorManager.colorRedLight,
                                     ),
-                                    SizedBox(height: 8.h),
+                                  ],
+                                ),
+                                const SizedBox(height: 18),
+
+                                // Progress Bar
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          'نسبة الحضور: ${(first?.capacity ?? 0) > 0 ? (((first?.numberOfAttendants ?? 0) / (first?.capacity ?? 1)) * 100).toStringAsFixed(1) : 0}%',
+                                        const Text(
+                                          'نسبة الحضور',
                                           style: TextStyle(
-                                            fontSize: 13.sp,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                            color: ColorManager.colorXXGrey,
                                           ),
                                         ),
-                                        if (classStatistics.classes.length > 1)
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 10.w,
-                                              vertical: 4.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: ColorManager.colorPrimary
-                                                  .withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.touch_app,
-                                                  size: 14.sp,
-                                                  color:
-                                                      ColorManager.colorPrimary,
-                                                ),
-                                                SizedBox(width: 4.w),
-                                                Text(
-                                                  'عرض الكل',
-                                                  style: TextStyle(
-                                                    fontSize: 11.sp,
-                                                    color: ColorManager
-                                                        .colorPrimary,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                        Text(
+                                          '${(attendanceRate * 100).toStringAsFixed(1)}%',
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: ColorManager.colorDarkBlue,
                                           ),
+                                        ),
                                       ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: LinearProgressIndicator(
+                                        value: attendanceRate.clamp(0.0, 1.0),
+                                        minHeight: 8,
+                                        backgroundColor:
+                                            ColorManager.colorGrey4,
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                                ColorManager.colorGreen),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            );
-                          },
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 10.h),
-                  Column(
-                    children: [
-                      // Section Title
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 5.w,
-                              height: 24.h,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    ColorManager.colorPrimary,
-                                    ColorManager.colorPrimary.withOpacity(0.5),
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Text(
-                              'الخدمات الرئيسية',
-                              style: TextStyle(
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.grey[900],
-                              ),
-                            ),
-                          ],
+
+                  const SizedBox(height: 28),
+
+                  // Quick Action Services
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: ColorManager.colorPrimary,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 25.h),
-                      _buildFeatureCard(
-                        title: 'الغياب',
-                        subtitle: 'تسجيل ومتابعة غياب الطلاب',
-                        icon: Icons.event_busy_rounded,
-                        gradientColors: [
-                          ColorManager.colorPrimary,
-                          ColorManager.colorPrimary.withOpacity(0.7),
-                        ],
-                        onTap: () {
-                          Get.to(
-                            () => AbsenceScreen(),
-                            transition: Transition.rightToLeftWithFade,
-                            duration: Duration(milliseconds: 500),
-                          );
-                        },
-                        index: 0,
-                      ),
-                      _buildFeatureCard(
-                        title: 'الافتقاد',
-                        subtitle: 'متابعة الطلاب',
-                        icon: Icons.search_rounded,
-                        gradientColors: [
-                          ColorManager.colorPrimary.withOpacity(0.85),
-                          ColorManager.colorPrimary.withOpacity(0.65),
-                        ],
-                        onTap: () {
-                          Get.to(
-                            () => MissingScreen(),
-                            transition: Transition.leftToRightWithFade,
-                            duration: Duration(milliseconds: 500),
-                          );
-                        },
-                        index: 1,
-                      ),
-                      AbsenceCubit.get(context).isConnected &&
-                              CacheHelper.getDataString(key: 'role') == 'Admin'
-                          ? _buildFeatureCard(
-                              title: 'افتقاد الامين',
-                              subtitle: 'متابعة الفصول الي تم افتقادها',
-                              icon: Icons.assignment_rounded,
-                              gradientColors: [
-                                ColorManager.colorPrimary.withOpacity(0.85),
-                                ColorManager.colorPrimary.withOpacity(0.65),
-                              ],
-                              onTap: () {
-                                Get.to(
-                                  () => MissingClassesScreen(),
-                                  transition: Transition.rightToLeftWithFade,
-                                  duration: Duration(milliseconds: 500),
-                                );
-                              },
-                              index: 1,
-                            )
-                          : SizedBox(),
-                      SizedBox(height: 40.h),
-                    ],
+                        const SizedBox(width: 10),
+                        const Text(
+                          'الخدمات الرئيسية',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.colorDarkBlue,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
+                  const SizedBox(height: 10),
+
+                  // Feature Cards
+                  _buildFeatureCard(
+                    title: 'تسجيل الغياب',
+                    subtitle: 'تسجيل ومتابعة حضور وغياب الطلاب',
+                    tag: 'الخدمة الأساسية',
+                    icon: Icons.how_to_reg_rounded,
+                    gradientColors: GradiantLinearColor.primaryGradiant,
+                    onTap: () {
+                      Get.to(
+                        () => const AbsenceScreen(),
+                        transition: Transition.rightToLeftWithFade,
+                        duration: const Duration(milliseconds: 400),
+                      );
+                    },
+                    index: 0,
+                  ),
+
+                  _buildFeatureCard(
+                    title: 'الافتقاد والمتابعة',
+                    subtitle: 'متابعة الطلاب المتغيبين والتواصل معهم',
+                    tag: 'افتقاد',
+                    icon: Icons.person_search_rounded,
+                    gradientColors: GradiantLinearColor.emeraldGradient,
+                    onTap: () {
+                      Get.to(
+                        () => const MissingScreen(),
+                        transition: Transition.leftToRightWithFade,
+                        duration: const Duration(milliseconds: 400),
+                      );
+                    },
+                    index: 1,
+                  ),
+
+                  if (CacheHelper.getDataString(key: 'role') == 'Admin')
+                    _buildFeatureCard(
+                      title: 'افتقاد الأمين',
+                      subtitle: 'متابعة تقارير افتقاد كافة الفصول',
+                      tag: 'إدارة',
+                      icon: Icons.admin_panel_settings_rounded,
+                      gradientColors: GradiantLinearColor.amberGradient,
+                      onTap: () {
+                        Get.to(
+                          () => const MissingClassesScreen(),
+                          transition: Transition.rightToLeftWithFade,
+                          duration: const Duration(milliseconds: 400),
+                        );
+                      },
+                      index: 2,
+                    ),
                 ],
               ),
             ),
@@ -953,37 +629,39 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatItemColored(
-      String value, String label, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+    Color backgroundColor,
+  ) {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(12.w),
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(15),
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 24.sp,
-          ),
+          child: Icon(icon, color: color, size: 24),
         ),
-        SizedBox(height: 8.h),
+        const SizedBox(height: 8),
         Text(
           value,
           style: TextStyle(
-            fontSize: 20.sp,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: color,
           ),
         ),
-        SizedBox(height: 4.h),
+        const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: Colors.grey[600],
+          style: const TextStyle(
+            fontSize: 12,
+            color: ColorManager.colorXXGrey,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -991,11 +669,12 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     );
   }
 }
+
 String _getTwoPartName(String fullName) {
   final parts = fullName.trim().split(' ');
   if (parts.length >= 2) {
-    return '${parts[0]} ${parts[1]}'; // أول اسمين فقط
+    return '${parts[0]} ${parts[1]}';
   } else {
-    return fullName; // لو الاسم كلمة واحدة
+    return fullName;
   }
 }
