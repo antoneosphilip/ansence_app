@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ColorManager {
-  // Brand Core Colors
-  static const Color colorPrimary = Color(0xff4F46E5); // Indigo 600
-  static const Color colorXPrimary = Color(0xff6366F1); // Indigo 500
-  static const Color colorPrimary2 = Color(0xff4338CA); // Indigo 700
-  static const Color colorPrimaryLight = Color(0xffEEF2FF); // Indigo 50
-  static const Color colorPrimaryDark = Color(0xff312E81); // Indigo 900
-  static const Color colorThird = Color(0xff8B5CF6); // Purple 500
+  // Brand Core Colors (Teal Palette)
+  static const Color colorPrimary = Colors.teal; // #009688
+  static const Color colorXPrimary = Color(0xff0D9488); // Teal 600
+  static const Color colorPrimary2 = Color(0xff00796B); // Teal 700
+  static const Color colorPrimaryLight = Color(0xffE0F2F1); // Teal 50
+  static const Color colorPrimaryDark = Color(0xff004D40); // Teal 900
+  static const Color colorThird = Color(0xff14B8A6); // Teal 500
+  static const Color colorTeal = Colors.teal;
 
   // Semantic & Status
   static const Color colorGreen = Color(0xff10B981); // Emerald 500
@@ -18,7 +19,6 @@ class ColorManager {
   static const Color colorGoldLight = Color(0xffFFFBEB);
   static const Color colorBlue = Color(0xff0EA5E9); // Sky 500
   static const Color colorCyan = Color(0xff06B6D4); // Cyan 500
-  static const Color colorTeal = Color(0xff14B8A6); // Teal 500
 
   // Neutrals & Surfaces
   static const Color colorWhite = Color(0xffFFFFFF);
@@ -39,8 +39,8 @@ class ColorManager {
   static const Color colorXWhite = Color(0xffF1F5F9);
   static const Color colorXXWhite = Color(0xffF8FAFC);
   static const Color colorWhiteDarkMode = Color(0xff1E293B);
-  static const Color colorXXPrimary = Color(0xffC7D2FE);
-  static const Color colorLightColorPrimary = Color(0xffE0E7FF);
+  static const Color colorXXPrimary = Color(0xffB2DFDB);
+  static const Color colorLightColorPrimary = Color(0xffE0F2F1);
 
   // Modern Shadows
   static List<BoxShadow> get softShadow => [
@@ -74,14 +74,19 @@ class ColorManager {
 }
 
 abstract class GradiantLinearColor {
-  static const List<Color> violetGradient = [
-    Color(0xff6366F1),
-    Color(0xff8B5CF6),
+  static const List<Color> primaryGradiant = [
+    Colors.teal,
+    Color(0xff004D40),
   ];
 
-  static const List<Color> primaryGradiant = [
-    Color(0xff4F46E5),
-    Color(0xff06B6D4),
+  static const List<Color> tealGradient = [
+    Color(0xff0D9488),
+    Color(0xff14B8A6),
+  ];
+
+  static const List<Color> violetGradient = [
+    Colors.teal,
+    Color(0xff00796B),
   ];
 
   static const List<Color> emeraldGradient = [
