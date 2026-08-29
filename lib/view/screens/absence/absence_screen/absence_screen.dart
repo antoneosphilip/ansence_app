@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:get/get.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
 import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';

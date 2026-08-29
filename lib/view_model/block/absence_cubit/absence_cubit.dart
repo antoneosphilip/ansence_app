@@ -752,7 +752,8 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     final result = await absenceRepo.addStudentAttendanceByQr(studentId: studentId);
     return result.fold(
       (error) {
-        emit(QrAttendanceErrorState(error.message));
+        emit(QrAttendanceErrorState(
+            error.apiErrorModel.message ?? "حدث خطأ أثناء تسجيل الحضور"));
         return false;
       },
       (data) {
