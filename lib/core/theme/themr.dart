@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../color_manager/color_manager.dart';
 
@@ -14,12 +13,10 @@ abstract class ThemeApp {
           primary: ColorManager.colorPrimary,
           secondary: ColorManager.colorCyan,
           surface: ColorManager.colorWhite,
-          background: ColorManager.colorScaffold,
           error: ColorManager.colorRed,
           onPrimary: ColorManager.colorWhite,
           onSecondary: ColorManager.colorWhite,
           onSurface: ColorManager.colorDarkBlue,
-          onBackground: ColorManager.colorDarkBlue,
           onError: ColorManager.colorWhite,
         ),
         appBarTheme: const AppBarTheme(
@@ -40,7 +37,7 @@ abstract class ThemeApp {
             color: ColorManager.colorDarkBlue,
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: ColorManager.colorWhite,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -54,22 +51,27 @@ abstract class ThemeApp {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: ColorManager.colorWhite,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: ColorManager.colorGrey4, width: 1.2),
+            borderSide:
+                const BorderSide(color: ColorManager.colorGrey4, width: 1.2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: ColorManager.colorGrey4, width: 1.2),
+            borderSide:
+                const BorderSide(color: ColorManager.colorGrey4, width: 1.2),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: ColorManager.colorPrimary, width: 1.8),
+            borderSide:
+                const BorderSide(color: ColorManager.colorPrimary, width: 1.8),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: ColorManager.colorRed, width: 1.2),
+            borderSide:
+                const BorderSide(color: ColorManager.colorRed, width: 1.2),
           ),
           hintStyle: const TextStyle(
             color: ColorManager.colorXXGrey,
@@ -101,7 +103,7 @@ abstract class ThemeApp {
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
         ),
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: ColorManager.colorWhite,
           surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(
