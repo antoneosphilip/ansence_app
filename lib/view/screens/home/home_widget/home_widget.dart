@@ -522,38 +522,27 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                             const SizedBox(width: 14),
 
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'أهلاً بك، $servantName',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: ColorManager.colorDarkBlue,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                  Flexible(
+                                    child: Text(
+                                      'أهلاً بك، $servantName',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: ColorManager.colorDarkBlue,
                                       ),
-                                      const SizedBox(width: 6),
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: const BoxDecoration(
-                                          color: ColorManager.colorGreen,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    ],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                  const SizedBox(height: 2),
-                                  const Text(
-                                    'خدمة مدارس الأحد المباركة',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: ColorManager.colorXXGrey,
+                                  const SizedBox(width: 6),
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: ColorManager.colorGreen,
+                                      shape: BoxShape.circle,
                                     ),
                                   ),
                                 ],

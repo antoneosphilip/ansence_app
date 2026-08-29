@@ -89,58 +89,11 @@ class _AbsenceScreenState extends State<AbsenceScreen>
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const CustomDropDown(
                                   isAbsence: true,
                                 ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  height: 42,
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors:
-                                          GradiantLinearColor.primaryGradiant,
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(14),
-                                    boxShadow: ColorManager.glowShadow(
-                                        ColorManager.colorPrimary),
-                                  ),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      Get.to(
-                                        () => const QrAttendanceScreen(),
-                                        transition: Transition.zoom,
-                                        duration:
-                                            const Duration(milliseconds: 350),
-                                      );
-                                    },
-                                    icon: const Icon(
-                                      Icons.qr_code_scanner_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    label: const Text(
-                                      'مسح QR',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Spacer(),
                                 Builder(
                                   builder: (context) {
                                     final int count = AbsenceCubit.get(context)
