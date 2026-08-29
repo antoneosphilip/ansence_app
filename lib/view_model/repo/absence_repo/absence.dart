@@ -173,6 +173,33 @@ class AbsenceRepo {
     }
   }
 
-
-
+  Future<Either<ErrorHandler, dynamic>> addStudentAttendanceByQr({
+    required dynamic studentId,
+  }) async {
+    try {
+      final response = await DioHelper.postData(
+        url: EndPoint.addStudentAttendance(studentId),
+        data: {
+          'servantId': CacheHelper.getDataString(key: 'id'),
+        },
+      );
+      return Right(response.data);
+    } on DioException catch (e) {
+      // Fallback in case endpoint expects GET or returns directly
+      if (e.response?.statusCode == 405 || e.response?.statusCode == 404) {
+        try {
+          final getResponse = await DioHelper.getData(
+            url: EndPoint.addStudentAttendance(studentId),
+          );
+          return Right(getResponse.data);
+        } catch (_) {
+          return Left(ErrorHandler.handle(e));
+        }
+      }
+      return Left(ErrorHandler.handle(e));
+    } catch (e) {
+      return Left(ErrorHandler.handle(e));
+    }
+  }
 }
+

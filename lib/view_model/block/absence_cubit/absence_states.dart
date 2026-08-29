@@ -73,3 +73,17 @@ class StatisticsUpdatedState extends AbsenceStates {}
 
 class LocalStatisticsLoadedState extends AbsenceStates {}
 class UpdateStatisticsState extends AbsenceStates {}
+
+// QR Attendance States
+class QrAttendanceLoadingState extends AbsenceStates {}
+
+class QrAttendanceSuccessState extends AbsenceStates {
+  final dynamic data;
+  final String studentId;
+  QrAttendanceSuccessState({this.data, required this.studentId});
+}
+
+class QrAttendanceErrorState extends AbsenceStates {
+  final String error;
+  QrAttendanceErrorState(this.error);
+}

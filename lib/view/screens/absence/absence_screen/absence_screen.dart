@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:summer_school_app/core/color_manager/color_manager.dart';
 import 'package:summer_school_app/view/core_widget/custom_loading/custom_loading.dart';
 import 'package:summer_school_app/view/screens/absence/absence_widget/student_item_offline.dart';
+import 'package:summer_school_app/view/screens/qr_attendance/qr_attendance_screen.dart';
 import 'package:summer_school_app/view_model/block/absence_cubit/absence_states.dart';
 
 import '../../../../view_model/block/absence_cubit/absence_cubit.dart';
@@ -90,6 +92,53 @@ class _AbsenceScreenState extends State<AbsenceScreen>
                               children: [
                                 const CustomDropDown(
                                   isAbsence: true,
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  height: 42,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors:
+                                          GradiantLinearColor.primaryGradiant,
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: ColorManager.glowShadow(
+                                        ColorManager.colorPrimary),
+                                  ),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Get.to(
+                                        () => const QrAttendanceScreen(),
+                                        transition: Transition.zoom,
+                                        duration:
+                                            const Duration(milliseconds: 350),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.qr_code_scanner_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    label: const Text(
+                                      'مسح QR',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const Spacer(),
                                 Builder(

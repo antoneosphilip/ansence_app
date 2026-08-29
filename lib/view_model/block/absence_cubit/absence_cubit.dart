@@ -747,4 +747,19 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     emit(ChangeAbsenceLength());
   }
 
+  Future<bool> addStudentAttendanceByQr({required dynamic studentId}) async {
+    emit(QrAttendanceLoadingState());
+    final result = await absenceRepo.addStudentAttendanceByQr(studentId: studentId);
+    return result.fold(
+      (error) {
+        emit(QrAttendanceErrorState(error.message));
+        return false;
+      },
+      (data) {
+        emit(QrAttendanceSuccessState(data: data, studentId: studentId.toString()));
+        return true;
+      },
+    );
+  }
 }
+

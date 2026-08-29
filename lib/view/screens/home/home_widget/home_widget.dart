@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
+import 'package:summer_school_app/view/screens/qr_attendance/qr_attendance_screen.dart';
 
 import '../../../../core/color_manager/color_manager.dart';
 import '../../../../utility/database/local/cache_helper.dart';
@@ -573,9 +574,25 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
 
                   // Feature Cards
                   _buildFeatureCard(
-                    title: 'تسجيل الغياب',
-                    subtitle: 'تسجيل ومتابعة حضور وغياب الطلاب',
-                    tag: 'الخدمة الأساسية',
+                    title: 'تسجيل بالـ QR Code',
+                    subtitle: 'تحضير فوري للطلاب عبر مسح الكود بالكاميرا',
+                    tag: 'سريع وتلقائي ✨',
+                    icon: Icons.qr_code_scanner_rounded,
+                    gradientColors: const [Color(0xff0D9488), Color(0xff14B8A6)],
+                    onTap: () {
+                      Get.to(
+                        () => const QrAttendanceScreen(),
+                        transition: Transition.zoom,
+                        duration: const Duration(milliseconds: 350),
+                      );
+                    },
+                    index: 0,
+                  ),
+
+                  _buildFeatureCard(
+                    title: 'تسجيل الغياب اليدوي',
+                    subtitle: 'تسجيل ومتابعة حضور وغياب الطلاب يدوياً',
+                    tag: 'قائمة الفصل',
                     icon: Icons.how_to_reg_rounded,
                     gradientColors: GradiantLinearColor.primaryGradiant,
                     onTap: () {
@@ -585,7 +602,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 400),
                       );
                     },
-                    index: 0,
+                    index: 1,
                   ),
 
                   _buildFeatureCard(
@@ -601,7 +618,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 400),
                       );
                     },
-                    index: 1,
+                    index: 2,
                   ),
 
                   if (CacheHelper.getDataString(key: 'role') == 'Admin')
@@ -618,7 +635,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                           duration: const Duration(milliseconds: 400),
                         );
                       },
-                      index: 2,
+                      index: 3,
                     ),
                 ],
               ),

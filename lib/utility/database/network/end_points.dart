@@ -15,6 +15,9 @@ abstract class EndPoint{
   static String getStudentMissing(int id) {
     return "absences/class/$id";
   }
+  static String addStudentAttendance(dynamic id) {
+    return "absences/add-student-attendance/$id";
+  }
   static const String signup = "servant/register";
   static const String signIn = "servant/login";
 

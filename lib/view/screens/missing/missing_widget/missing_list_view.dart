@@ -55,8 +55,8 @@ class _MissingStudentListViewState extends State<MissingStudentListView> {
               );
             },
             separatorBuilder: (context, index) {
-              return SizedBox(
-                height: 35.h,
+              return const SizedBox(
+                height: 4,
               );
             },
             itemCount: MissingCubit.get(context)
