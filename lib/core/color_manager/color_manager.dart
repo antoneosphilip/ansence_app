@@ -75,8 +75,8 @@ class ColorManager {
 
 abstract class GradiantLinearColor {
   static const List<Color> primaryGradiant = [
-    Colors.teal,
-    Color(0xff004D40),
+    Color(0xff0D9488),
+    Color(0xff14B8A6),
   ];
 
   static const List<Color> tealGradient = [

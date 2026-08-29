@@ -735,20 +735,17 @@ class _SignUpPageState extends State<SignUpPage> with TickerProviderStateMixin {
                                             maxHeight: 60.w,
                                           ),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(15),
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                ColorManager.colorPrimary,
-                                                ColorManager.colorPrimary.withOpacity(0.8),
-                                              ],
+                                            borderRadius: BorderRadius.circular(16),
+                                            gradient: const LinearGradient(
+                                              colors: GradiantLinearColor.primaryGradiant,
                                               begin: Alignment.centerLeft,
                                               end: Alignment.centerRight,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: ColorManager.colorPrimary.withOpacity(0.4),
-                                                blurRadius: 20,
-                                                offset: Offset(0, 10),
+                                                color: const Color(0xff0D9488).withOpacity(0.35),
+                                                blurRadius: 16,
+                                                offset: const Offset(0, 6),
                                               ),
                                             ],
                                           ),

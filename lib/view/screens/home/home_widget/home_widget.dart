@@ -450,10 +450,25 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 32),
-              child: Column(
+            child: RefreshIndicator(
+              color: ColorManager.colorPrimary,
+              backgroundColor: ColorManager.colorWhite,
+              onRefresh: () async {
+                final servantId =
+                    CacheHelper.getDataString(key: 'id') ?? '';
+                final cubit = AbsenceCubit.get(context);
+                await Future.wait([
+                  cubit.getClassNumbers(id: servantId),
+                  cubit.checkMissingClasses(servantId: servantId),
+                  cubit.getCapacities(servantId: servantId),
+                ]);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Modern Header Section
@@ -836,6 +851,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     ),
                 ],
               ),
+            ),
             ),
           ),
         ),

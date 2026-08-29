@@ -154,14 +154,15 @@ class AbsenceRepo {
     try {
       final response = await DioHelper.getData(
         url: EndPoint.getCapacity,
-
+        queryParameters: {
+          'servantId': id,
+        },
       );
-      print("responseeeeeeeeeee ${response.data}");
+      debugPrint("getCapacity response: ${response.data}");
 
-        final List<dynamic> dataList = response.data;
-        final statsResponse = ClassStatisticsResponse.fromJson(dataList);
-        print("sucessss");
-        return Right(statsResponse);
+      final List<dynamic> dataList = response.data;
+      final statsResponse = ClassStatisticsResponse.fromJson(dataList);
+      return Right(statsResponse);
     } on DioException catch (e) {
       debugPrint("-------------Response Data----------------");
       debugPrint(e.response?.data.toString());
