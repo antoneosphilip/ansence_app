@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
 import 'package:summer_school_app/view/screens/qr_attendance/qr_attendance_screen.dart';
