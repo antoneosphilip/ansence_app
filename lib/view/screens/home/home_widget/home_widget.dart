@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:summer_school_app/view/screens/absence/absence_screen/absence_screen.dart';
 import 'package:summer_school_app/view/screens/missing/missing_screen/missing_screen.dart';
 import 'package:summer_school_app/view/screens/qr_attendance/qr_attendance_screen.dart';
@@ -71,7 +69,6 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     required IconData icon,
     required VoidCallback onTap,
     required int index,
-    Widget? extraAction,
   }) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 400 + (index * 120)),
@@ -107,69 +104,333 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      tag,
-                                      style: const TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    title,
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    subtitle,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white.withOpacity(0.9),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(
-                              icon,
-                              color: Colors.white.withOpacity(0.95),
-                              size: 24,
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                subtitle,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white.withOpacity(0.9),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        if (extraAction != null) ...[
-                          const SizedBox(height: 12),
-                          extraAction,
-                        ],
+                        const SizedBox(width: 12),
+                        Icon(
+                          icon,
+                          color: Colors.white.withOpacity(0.95),
+                          size: 24,
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAbsenceMethodSelection(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+          decoration: const BoxDecoration(
+            color: ColorManager.colorWhite,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x25000000),
+                blurRadius: 20,
+                offset: Offset(0, -4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: ColorManager.colorGrey4,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Title
+              Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: ColorManager.colorPrimary,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'اختر طريقة تسجيل الغياب',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: ColorManager.colorDarkBlue,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Option 1: QR Code Scanner
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xff0D9488), Color(0xff14B8A6)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xff0D9488).withOpacity(0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.to(
+                        () => const QrAttendanceScreen(),
+                        transition: Transition.zoom,
+                        duration: const Duration(milliseconds: 350),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(18),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(
+                              Icons.qr_code_scanner_rounded,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'مسح عبر الـ QR Code',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.25),
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        'سريع ✨',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'تحضير فوري للطلاب عبر مسح الكود بالكاميرا',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Option 2: Manual Absence List
+              Container(
+                decoration: BoxDecoration(
+                  color: ColorManager.colorWhite,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: ColorManager.colorPrimary.withOpacity(0.3),
+                    width: 1.2,
+                  ),
+                  boxShadow: ColorManager.softShadow,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.to(
+                        () => const AbsenceScreen(),
+                        transition: Transition.rightToLeftWithFade,
+                        duration: const Duration(milliseconds: 400),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(18),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: ColorManager.colorPrimary
+                                  .withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(
+                              Icons.playlist_add_check_rounded,
+                              color: ColorManager.colorPrimary,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'تسجيل يدوي من القائمة',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: ColorManager.colorDarkBlue,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: ColorManager.colorPrimary
+                                            .withOpacity(0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        'قائمة الفصل',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          color: ColorManager.colorPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'عرض طلاب الفصل وتحضيرهم بالاسم يدوياً',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: ColorManager.colorXXGrey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: ColorManager.colorPrimary,
+                            size: 14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -235,72 +496,69 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                       ? servantName.substring(0, 1)
                                       : 'خ',
                                   style: const TextStyle(
-                                    color: Colors.white,
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 14),
 
-                            // Welcome Texts
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'مرحباً بك 👋',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: ColorManager.colorXXGrey,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'أهلاً بك، $servantName',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: ColorManager.colorDarkBlue,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: ColorManager.colorGreen,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 2),
-                                  Text(
-                                    servantName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: ColorManager.colorDarkBlue,
+                                  const Text(
+                                    'خدمة مدارس الأحد المباركة',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: ColorManager.colorXXGrey,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
 
-                            // Church/App Badge
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
+                                  horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: ColorManager.colorPrimary
-                                    .withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: ColorManager.colorPrimary
-                                      .withOpacity(0.18),
-                                ),
+                                color:
+                                    ColorManager.colorPrimary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.school_rounded,
-                                    size: 16,
-                                    color: ColorManager.colorPrimary,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    'السمائيين',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: ColorManager.colorPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
+                              child: const Text(
+                                'السمائيين',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: ColorManager.colorPrimary,
+                                ),
                               ),
                             ),
                           ],
@@ -309,46 +567,18 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // Class Statistics Section Header
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 4,
-                          height: 18,
-                          decoration: BoxDecoration(
-                            color: ColorManager.colorPrimary,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'إحصائيات الفصول',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: ColorManager.colorDarkBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Statistics Card
+                  // Live Class Statistics Section
                   BlocBuilder<AbsenceCubit, AbsenceStates>(
                     builder: (context, state) {
                       final cubit = AbsenceCubit.get(context);
-                      final classStatistics =
-                          cubit.classStatisticsResponse ??
-                              cubit.classStatisticsOfflineResponse;
+                      final classStatistics = cubit.isConnected
+                          ? cubit.classStatisticsResponse
+                          : cubit.classStatisticsOfflineResponse;
 
                       if (classStatistics == null ||
-                          state is GetCapacityLoadingState) {
+                          classStatistics.classes.isEmpty) {
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           padding: const EdgeInsets.all(20),
@@ -375,24 +605,14 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                       final first = classStatistics.classes.isNotEmpty
                           ? classStatistics.classes.first
                           : null;
-
-                      final int capacity = first?.capacity ?? 0;
-                      final int attendants = first?.numberOfAttendants ?? 0;
-                      final int absents = first?.numberOfAbsents ?? 0;
-                      final double attendanceRate =
+                      final capacity = first?.capacity ?? 0;
+                      final attendants = first?.numberOfAttendants ?? 0;
+                      final absents = first?.numberOfAbsents ?? 0;
+                      final attendanceRate =
                           capacity > 0 ? (attendants / capacity) : 0.0;
 
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: ColorManager.colorWhite,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: ColorManager.cardShadow,
-                          border: Border.all(
-                            color: ColorManager.colorGrey4,
-                            width: 1,
-                          ),
-                        ),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: InkWell(
                           onTap: () {
                             if (classStatistics.classes.length > 1) {
@@ -401,22 +621,33 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                                   classStatisticsResponse: classStatistics,
                                 ),
                                 transition: Transition.rightToLeftWithFade,
-                                duration: const Duration(milliseconds: 400),
+                                duration: const Duration(milliseconds: 350),
                               );
                             }
                           },
                           borderRadius: BorderRadius.circular(24),
-                          child: Padding(
+                          child: Container(
                             padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: ColorManager.colorWhite,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: ColorManager.cardShadow,
+                              border: Border.all(
+                                color: ColorManager.colorGrey4,
+                                width: 1,
+                              ),
+                            ),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Card Title Row
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 6),
+                                          horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: ColorManager.colorPrimary
                                             .withOpacity(0.1),
@@ -532,7 +763,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     },
                   ),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
                   // Quick Action Services
                   Padding(
@@ -551,7 +782,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         const Text(
                           'الخدمات الرئيسية',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: ColorManager.colorDarkBlue,
                           ),
@@ -565,63 +796,11 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                   // Feature Cards
                   _buildFeatureCard(
                     title: 'تسجيل الغياب',
-                    subtitle: 'تسجيل حضور وغياب الطلاب يدوياً أو عبر الكاميرا',
+                    subtitle: 'تسجيل حضور وغياب الطلاب (يدوي أو عبر الـ QR)',
                     tag: 'الخدمة الأساسية',
                     icon: Icons.how_to_reg_rounded,
-                    onTap: () {
-                      Get.to(
-                        () => const AbsenceScreen(),
-                        transition: Transition.rightToLeftWithFade,
-                        duration: const Duration(milliseconds: 400),
-                      );
-                    },
+                    onTap: () => _showAbsenceMethodSelection(context),
                     index: 0,
-                    extraAction: InkWell(
-                      onTap: () {
-                        Get.to(
-                          () => const QrAttendanceScreen(),
-                          transition: Transition.zoom,
-                          duration: const Duration(milliseconds: 350),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.22),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.35),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.qr_code_scanner_rounded,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              'مسح كود QR فوري',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: Colors.white70,
-                              size: 10,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
 
                   _buildFeatureCard(
