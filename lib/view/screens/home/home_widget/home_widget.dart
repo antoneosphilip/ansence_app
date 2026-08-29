@@ -69,114 +69,104 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
     required String subtitle,
     required String tag,
     required IconData icon,
-    required List<Color> gradientColors,
     required VoidCallback onTap,
     required int index,
+    Widget? extraAction,
   }) {
     return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 500 + (index * 150)),
+      duration: Duration(milliseconds: 400 + (index * 120)),
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Transform.translate(
-          offset: Offset(0, 30 * (1 - value)),
+          offset: Offset(0, 20 * (1 - value)),
           child: Opacity(
             opacity: value,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(24),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gradientColors[0].withOpacity(0.35),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xff0D9488), Color(0xff14B8A6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: Stack(
-                  children: [
-                    // Ambient decorative circle
-                    Positioned(
-                      left: -20,
-                      bottom: -20,
-                      child: Container(
-                        width: 110,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                    ),
-
-                    Row(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff0D9488).withOpacity(0.28),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  tag,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    subtitle,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                title,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                subtitle,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 12),
+                            Icon(
+                              icon,
+                              color: Colors.white.withOpacity(0.95),
+                              size: 24,
+                            ),
+                          ],
                         ),
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: Icon(
-                            icon,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ),
+                        if (extraAction != null) ...[
+                          const SizedBox(height: 12),
+                          extraAction,
+                        ],
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -574,27 +564,10 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
 
                   // Feature Cards
                   _buildFeatureCard(
-                    title: 'تسجيل بالـ QR Code',
-                    subtitle: 'تحضير فوري للطلاب عبر مسح الكود بالكاميرا',
-                    tag: 'سريع وتلقائي ✨',
-                    icon: Icons.qr_code_scanner_rounded,
-                    gradientColors: const [Color(0xff0D9488), Color(0xff14B8A6)],
-                    onTap: () {
-                      Get.to(
-                        () => const QrAttendanceScreen(),
-                        transition: Transition.zoom,
-                        duration: const Duration(milliseconds: 350),
-                      );
-                    },
-                    index: 0,
-                  ),
-
-                  _buildFeatureCard(
-                    title: 'تسجيل الغياب اليدوي',
-                    subtitle: 'تسجيل ومتابعة حضور وغياب الطلاب يدوياً',
-                    tag: 'قائمة الفصل',
+                    title: 'تسجيل الغياب',
+                    subtitle: 'تسجيل حضور وغياب الطلاب يدوياً أو عبر الكاميرا',
+                    tag: 'الخدمة الأساسية',
                     icon: Icons.how_to_reg_rounded,
-                    gradientColors: GradiantLinearColor.primaryGradiant,
                     onTap: () {
                       Get.to(
                         () => const AbsenceScreen(),
@@ -602,7 +575,53 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 400),
                       );
                     },
-                    index: 1,
+                    index: 0,
+                    extraAction: InkWell(
+                      onTap: () {
+                        Get.to(
+                          () => const QrAttendanceScreen(),
+                          transition: Transition.zoom,
+                          duration: const Duration(milliseconds: 350),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.22),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.35),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.qr_code_scanner_rounded,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'مسح كود QR فوري',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              color: Colors.white70,
+                              size: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
 
                   _buildFeatureCard(
@@ -610,7 +629,6 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     subtitle: 'متابعة الطلاب المتغيبين والتواصل معهم',
                     tag: 'افتقاد',
                     icon: Icons.person_search_rounded,
-                    gradientColors: GradiantLinearColor.emeraldGradient,
                     onTap: () {
                       Get.to(
                         () => const MissingScreen(),
@@ -618,7 +636,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 400),
                       );
                     },
-                    index: 2,
+                    index: 1,
                   ),
 
                   if (CacheHelper.getDataString(key: 'role') == 'Admin')
@@ -627,7 +645,6 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                       subtitle: 'متابعة تقارير افتقاد كافة الفصول',
                       tag: 'إدارة',
                       icon: Icons.admin_panel_settings_rounded,
-                      gradientColors: GradiantLinearColor.amberGradient,
                       onTap: () {
                         Get.to(
                           () => const MissingClassesScreen(),
@@ -635,7 +652,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                           duration: const Duration(milliseconds: 400),
                         );
                       },
-                      index: 3,
+                      index: 2,
                     ),
                 ],
               ),
