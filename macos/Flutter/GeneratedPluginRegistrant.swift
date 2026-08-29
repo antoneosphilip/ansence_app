@@ -14,6 +14,7 @@ import shared_preferences_foundation
 import smart_auth
 import sqflite
 import url_launcher_macos
+import workmanager_apple
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   ConnectivityPlusPlugin.register(with: registry.registrar(forPlugin: "ConnectivityPlusPlugin"))
@@ -25,4 +26,5 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   SmartAuthPlugin.register(with: registry.registrar(forPlugin: "SmartAuthPlugin"))
   SqflitePlugin.register(with: registry.registrar(forPlugin: "SqflitePlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
+  WorkmanagerPlugin.register(with: registry.registrar(forPlugin: "WorkmanagerPlugin"))
 }

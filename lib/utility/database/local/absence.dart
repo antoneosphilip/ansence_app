@@ -19,6 +19,14 @@ class Absence {
   @HiveField(4)
   bool? attendant;
 
+  @HiveField(5)
+  bool? alhanAttendant;
+
+  @HiveField(6)
+  bool? copticAttendant;
+
+  @HiveField(7)
+  bool? tacsAttendant;
 
   Absence({
     required this.id,
@@ -26,6 +34,8 @@ class Absence {
     required this.absenceDate,
     required this.absenceReason,
     required this.attendant,
-
+    this.alhanAttendant,
+    this.copticAttendant,
+    this.tacsAttendant,
   });
 }

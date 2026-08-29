@@ -133,13 +133,15 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
       if (numbersOfflineModel != null && numbersOfflineModel!.numbers.isNotEmpty) {
         for (var item in numbersOfflineModel!.numbers) {
           print("numbersss $item");
-          final response = await absenceRepo.getAbsence(classNumber:item,servantId: CacheHelper.getDataString(key: 'id'));
+          final response = await absenceRepo.getAbsence(
+              classNumber: item,
+              servantId: CacheHelper.getDataString(key: 'id') ?? "");
 
           response.fold(
-                (l) {
+            (l) {
               print("errorrrrrrrrr ${l.apiErrorModel.message}");
             },
-                (r) {
+            (r) {
               allStudents.addAll(r);
             },
           );
@@ -148,7 +150,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         final response = await absenceRepo.getAllAbsence();
 
         response.fold(
-              (l) {
+          (l) {
             print("errorrrrrrrrr ${l.apiErrorModel.message}");
             showFlutterToast(
               message: "حدث خطأ في تحميل الداتا حاول لاحقا",
@@ -157,7 +159,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
             emit(GetAllAbsenceErrorState(l.apiErrorModel.message.toString()));
             return;
           },
-              (r) {
+          (r) {
             allStudents.addAll(r);
           },
         );
@@ -181,31 +183,36 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
         final lastAbsence = student.absences?.isNotEmpty == true
             ? Absence(
-          id: student.absences?.last.id??'0',
-          studentId: student.absences?.last.studentId??"0",
-          absenceDate: student.absences?.last.absenceDate??"",
-          absenceReason: student.absences?.last.absenceReason??"",
-          attendant: student.lastAttendance ?? true,
-        )
+                id: student.absences?.last.id ?? '0',
+                studentId: student.absences?.last.studentId ?? "0",
+                absenceDate: student.absences?.last.absenceDate ?? "",
+                absenceReason: student.absences?.last.absenceReason ?? "",
+                attendant: student.lastAttendance ??
+                    student.absences?.last.attendant ??
+                    true,
+                alhanAttendant: student.absences?.last.alhanAttendant ?? true,
+                tacsAttendant: student.absences?.last.tacsAttendant ?? true,
+                copticAttendant: student.absences?.last.copticAttendant ?? true,
+              )
             : null;
 
         final studentModel = StudentData(
-          id: student.id??"",
-          name: student.studentName??"",
-          studentClass: student.studentClass??0,
-          level: student.level??0,
+          id: student.id ?? "",
+          name: student.studentName ?? "",
+          studentClass: student.studentClass ?? 0,
+          level: student.level ?? 0,
           birthDate: student.birthDate,
           absences: lastAbsence != null ? [lastAbsence] : [],
-          gender: student.gender??0,
+          gender: student.gender ?? 0,
           notes: student.notes ?? "",
-          numberOfAbsences: student.numberOfAbsences??0,
-          shift: student.shift??0,
+          numberOfAbsences: student.numberOfAbsences ?? 0,
+          shift: student.shift ?? 0,
           age: student.age,
           dadPhone: student.dadPhone,
           mamPhone: student.mamPhone,
           studPhone: student.studPhone,
           profileImage: student.profileImage,
-          lastAttendance: student.lastAttendance??true
+          lastAttendance: student.lastAttendance ?? true,
         );
 
         if (!studentList.any((s) => s.id == studentModel.id)) {
@@ -269,7 +276,7 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     }
     absenceLengthOffline=0;
     for(int i=0;i<offlineStudentAbsence.length;i++){
-      if(offlineStudentAbsence[i].lastAttendance??true){
+      if(offlineStudentAbsence[i].lastAttendance ?? offlineStudentAbsence[i].absences?.last.attendant ?? true){
         absenceLengthOffline=absenceLengthOffline+1;
       }
     }
@@ -605,17 +612,17 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     for (int i = 0; i < storedAllStudents!.length; i++) {
       if (storedAllStudents[i].id == studentData.id) {
         // تعديل القيمة داخل الكائن
-        if (storedAllStudents[i]!=null) {
-          // storedAllStudents[i].absences.last.alhanAttendant = false;
-          // storedAllStudents[i].absences.last.copticAttendant = false;
-          // storedAllStudents[i].absences.last.tacsAttendant = false;
+        if (storedAllStudents[i] != null) {
+          if (storedAllStudents[i].absences != null &&
+              storedAllStudents[i].absences!.isNotEmpty) {
+            storedAllStudents[i].absences!.last.attendant = false;
+          }
           storedAllStudents[i].lastAttendance = false;
 
           print("تم التعديل بنجاح");
           print("Student Name: ${storedAllStudents[i].name}");
-          print("id : ${storedAllStudents[i].absences!.last.id}");
-          print("studId : ${storedAllStudents[i].absences!.last.studentId!}");
-
+          print("id : ${storedAllStudents[i].absences?.last?.id}");
+          print("studId : ${storedAllStudents[i].absences?.last?.studentId}");
 
           print(
               "Updated Attendant: ${storedAllStudents[i].lastAttendance}");
@@ -647,9 +654,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     if(studentDataList.isNotEmpty) {
       print("llll${studentDataList.length}");
       if(!studentDataList.contains(studentData)){
-        // studentData.absences!.last.alhanAttendant = true;
-        // studentData.absences!.last.copticAttendant = true;
-        // studentData.absences!.last.tacsAttendant = true;
+        if (studentData.absences != null && studentData.absences!.isNotEmpty) {
+          studentData.absences!.last.attendant = true;
+        }
         studentData.lastAttendance = true;
 
         studentDataList.add(studentData);
@@ -658,11 +665,11 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
         for (var studentDataListItem in studentDataList) {
           print("llll${studentDataListItem.name}");
           if (studentDataListItem.id == studentData.id) {
-            // studentData.absences!.last.alhanAttendant = true;
-            // studentData.absences!.last.copticAttendant = true;
-            // studentData.absences!.last.tacsAttendant = true;
-            studentData.lastAttendance = true;
-
+            if (studentDataListItem.absences != null &&
+                studentDataListItem.absences.isNotEmpty) {
+              studentDataListItem.absences.last.attendant = true;
+            }
+            studentDataListItem.lastAttendance = true;
           }
         }
       }
@@ -671,9 +678,9 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
 
     }
     else{
-      // studentData.absences!.last.alhanAttendant = true;
-      // studentData.absences!.last.copticAttendant= true;
-      // studentData.absences!.last.tacsAttendant = true;
+      if (studentData.absences != null && studentData.absences!.isNotEmpty) {
+        studentData.absences!.last.attendant = true;
+      }
       studentData.lastAttendance = true;
 
       studentDataList.add(studentData);
@@ -702,17 +709,16 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     for (int i = 0; i < storedAllStudents!.length; i++) {
       if (storedAllStudents[i].id == studentData.id) {
         // تعديل القيمة داخل الكائن
-        if (storedAllStudents[i].absences.isNotEmpty) {
-          // studentData.absences!.last.alhanAttendant = true;
-          // studentData.absences!.last.copticAttendant = true;
-          // studentData.absences!.last.tacsAttendant = true;
-          studentData.lastAttendance = true;
-
-          print("تم التعديل بنجاح");
-          print("Student Name: ${storedAllStudents[i].name}");
-          print(
-              "Updated Attendant: ${storedAllStudents[i].lastAttendance}");
+        if (storedAllStudents[i].absences != null &&
+            storedAllStudents[i].absences.isNotEmpty) {
+          storedAllStudents[i].absences.last.attendant = true;
         }
+        storedAllStudents[i].lastAttendance = true;
+
+        print("تم التعديل بنجاح");
+        print("Student Name: ${storedAllStudents[i].name}");
+        print(
+            "Updated Attendant: ${storedAllStudents[i].lastAttendance}");
 
         await box2.put('students', storedAllStudents);
 

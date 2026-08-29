@@ -38,6 +38,7 @@ import 'package:summer_school_app/view_model/repo/auth_repo/auth.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'core/color_manager/color_manager.dart';
+import 'core/constants/service_account_keys.dart';
 import 'core/service_locator/service_locator.dart';
 import 'model/get_absence_model/get_absence_model.dart';
 
@@ -152,7 +153,7 @@ class _MyAppState extends State<MyApp> {
       try {
         for (var studItem in studentDataList) {
           print("listttttt${studItem}");
-          print("listtttt222222${studItem.lastAttendance}");
+          print("listtttt222222${studItem.lastAttendance ?? studItem.absences?.last?.studentId}");
           print("listttt333333${studItem.lastAttendance}");
 
           await DioHelper.putData(
@@ -162,8 +163,8 @@ class _MyAppState extends State<MyApp> {
               'studentId': studItem.absences.last.studentId,
               'absenceDate': studItem.absences.last.absenceDate,
               'absenceReason': studItem.absences.last.absenceReason ?? '',
-              'Attendant': studItem.lastAttendance,
-              'ServantId':CacheHelper.getDataString(key: 'id')
+              'Attendant': studItem.lastAttendance ?? studItem.absences.last.attendant,
+              'ServantId': CacheHelper.getDataString(key: 'id')
             },
           );
           print("${studItem.lastAttendance} upload success");
@@ -304,20 +305,6 @@ void _requestIgnoreBatteryOptimizations() async {
 }
 
 Future<String> getAccessToken() async {
-  final Map<String, dynamic> serviceAccountJson = <String, String>{
-    "type": "service_account",
-    "project_id": "absence-app-633e1",
-    "private_key_id": "6263d2238691f39f8184e0cdaa3f0e9da04bc32d",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC0+fVfPQA8Y9C+\n5Mkl+BEsoLBOeTQpmEUoa2DwoGAdsaxiAbtZsKBMw6lH1Ok0k8sJJZ7gnLJ5WZPU\n+GH4JAb0NCYhF/ig2hxKRk8LJIqN33Q5XB+o57rKQihZOQwZDOyItVWD0FCEtcBN\n0tLuCjDe1N6iL7CMb58MCFAvCXRVCh/oEidWN1eKuHViR2dKENLOYWBPzk6ojid8\nJPtRkIKz73d8pNQSxWYuEsG6Ts+q1RJPfbYsdl5/GE/2TruEH0/pIlCwR5jRKZS1\nXfQWLTXEEeIJfr907CP2/gXAq4YaRZ/wtMpg41hZ6uqwtpLnMgHwQivrB0fBPMiu\nWLewKopRAgMBAAECggEAH0EDpRzty4AZbr4oFsyOeryNdh/saDqJxv80UJoBv18N\nvCc8abLdHCS2OVeFprTXXY8Hrxago+BabW8vzCC8qrPO2ew/3deNBy65O91lqDas\n5bMJLKxIT+G5Ah+d/T2EI9/dEtSI80JIIaiFEOLlqbXtdOjzfm1QdE2DO3xQgNbi\nOApXuhi+4u1M41bIk7FcbtXZDln6eZMlY/b6kSri/jsqusNKfyAqeEE1sjDXXYBS\nffC++X30V8RZQ4jgbkCdEReccN9ffdvOAWqgWeo5nqPAJh7L92Q4jpmQ/Cx3EWKb\nV6fpUTo/+4IGMReLN3K7oRb6zkWQcf2jKQmPuzuqmQKBgQDoTwa9l0aHaPUnamnx\ncUYhpvBET5sSc+VNG2Jhi9QaiBFJaRqi93spbLqdaXcYVeoiRb5sWaWFeuvHAV6f\njPNzIyPiyFDlkZPX2EQIaRFWtyCoBL/dypkMr/AzAKwVUsDUuN15kndBanQ3F9Es\napBaWAPCgfzGb1Bf7DHIwF3urwKBgQDHbsem/NxAvGGM1YmASTVzOCDQoVvLcDNw\nfybKQ43mIgw10EVbWWLmqI+x4MbaP1ivNOA+9gjyOFE+okkXsAi6ZkFv1yO0FH1E\nadJE9o/Tcz0psM7wXQJXxJXz6kMiHUv1dtQsF8MlDhblG3U/yUPl2INED5kIaOb/\n+QJRlQVW/wKBgQDBwMeacQU+AugVS8e4vAUGJDnYf5ySs17YBLL1MK5iwoHIfITe\nzxJF5o1upHvULDPvCcRckhhfT7o+bIIDCIgzy2cuymvOTLDGIXX8ncT8UhhGik+M\nKGGmF0d7AmCEGFUEFnuB3grg4Gy1VoP7S5XCBA5+t/OffU/H8TNEgEzXuQKBgQC7\nE/MbdRWTcGM9vk4G1iXamGtH6iV22CCYxd34XJhuqb+0d1OoVlhNMQ/id41xy3yA\nlmRJC3jm5udnjspr+wik+ikmJbVrRtEfbPj/Eh9m5jIYuq/UkBsTg+h6b2VcSgko\nELkFR6EaUHYvoqtBE6aqpIi2Pr96QRV4Rvji2JyytwKBgQCJUNWvn2/bQuNl7RS+\nS5lNJMwj1YATCncTAbNBEpoi0GMmZ893FMFCRH75gm034cht479tOitC5hHfPxml\nJWH5PiTVwApcrFQPpNGnPbtwE43zOSiF58KNFTgjddA9jaRJlw1KNOWIEjhn0+5S\nyicpTHDsO911lA41oHjX+XbCuw==\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-jcch7@absence-app-633e1.iam.gserviceaccount.com",
-    "client_id": "117323631294260373207",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-jcch7%40absence-app-633e1.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
-  };
-
   List<String> scopes = [
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/firebase.database",
@@ -325,15 +312,15 @@ Future<String> getAccessToken() async {
   ];
 
   http.Client client = await auth.clientViaServiceAccount(
-    auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+    auth.ServiceAccountCredentials.fromJson(ServiceAccountKeys.credentials),
     scopes,
   );
 
   auth.AccessCredentials credentials =
-  await auth.obtainAccessCredentialsViaServiceAccount(
-      auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
-      scopes,
-      client);
+      await auth.obtainAccessCredentialsViaServiceAccount(
+          auth.ServiceAccountCredentials.fromJson(ServiceAccountKeys.credentials),
+          scopes,
+          client);
 
   client.close();
   return credentials.accessToken.data;

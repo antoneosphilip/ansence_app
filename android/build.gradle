@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '2.0.21'
     repositories {
         google()
         mavenCentral()
@@ -7,8 +7,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.15' // تأكد من استخدام الإصدار المناسب
-
+        classpath 'com.google.gms:google-services:4.4.2'
     }
 }
 
@@ -25,6 +24,27 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+}
+
+subprojects {
+    plugins.withId("com.android.library") {
+        if (project.android.namespace == null) {
+            try {
+                def manifest = file("${project.projectDir}/src/main/AndroidManifest.xml")
+                if (manifest.exists()) {
+                    def pattern = ~/package=["']([^"']+)["']/
+                    def matcher = pattern.matcher(manifest.text)
+                    if (matcher.find()) {
+                        project.android.namespace = matcher.group(1)
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+            if (project.android.namespace == null) {
+                project.android.namespace = "com.example.${project.name.replaceAll('[^a-zA-Z0-9_]', '_')}"
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {
