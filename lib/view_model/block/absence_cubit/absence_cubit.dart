@@ -611,7 +611,6 @@ class AbsenceCubit extends Cubit<AbsenceStates> {
     }
     for (int i = 0; i < storedAllStudents!.length; i++) {
       if (storedAllStudents[i].id == studentData.id) {
-        // تعديل القيمة داخل الكائن
         if (storedAllStudents[i] != null) {
           if (storedAllStudents[i].absences != null &&
               storedAllStudents[i].absences!.isNotEmpty) {
